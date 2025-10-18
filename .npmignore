@@ -1,0 +1,21 @@
+# Source files
+/src
+
+# Development files
+tsconfig.json
+.gitignore
+.npmignore
+
+# Examples
+/examples
+
+# CI/CD
+.github/
+
+# Tests
+*.test.ts
+*.spec.ts
+
+# Logs and temp files
+*.log
+.env
