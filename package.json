@@ -132,7 +132,7 @@
 		"build:esm": "tsc --project tsconfig.json --module es2020 --outDir ./dist/esm && echo '{\"type\":\"module\",\"sideEffects\":false}' > dist/esm/package.json",
 		"build:types": "tsc --project tsconfig.json --declaration --emitDeclarationOnly --outDir ./dist/types",
 		"test:typecheck": "tsc --project tsconfig.test.json",
-		"test:create-instance": "npm run build && tsx test/create-instance.ts",
+		"test:create-instance": "tsx test/create-instance.ts",
 		"test": "npm run test:typecheck",
 		"prepublishOnly": "npm run clean && npm run build"
 	},

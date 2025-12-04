@@ -4,8 +4,8 @@
  * This test creates a simple nginx instance and waits for it to be ready.
  */
 
-import { loadDefaults } from "../dist/esm/auth/index.js";
-import { createComputeClient } from "../dist/esm/api/compute/index.js";
+import { loadDefaults } from "../src/auth/index.js";
+import { createComputeClient } from "../src/api/compute/index.js";
 import { Timestamp } from "@bufbuild/protobuf";
 
 async function main() {
