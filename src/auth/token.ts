@@ -5,13 +5,40 @@
 import * as fs from "fs/promises";
 import * as path from "path";
 import * as os from "os";
-import { TokenSource, TokenJson, CachedToken } from "./types.js";
-import {
-	extractClaims,
-	isTokenExpired,
-	getTenantId,
-	getTokenExpiration,
-} from "./claims.js";
+import { createClient } from "@connectrpc/connect";
+import { createConnectTransport } from "@connectrpc/connect-node";
+import { Duration } from "@bufbuild/protobuf";
+import { TokenSource, TokenJson } from "./types.js";
+import { extractClaims, getTenantId } from "./claims.js";
+import { UserSessionsService } from "../proto/namespace/private/sessions/users_connect.js";
+
+function getIAMEndpoint(): string {
+	return (
+		process.env.NSC_IAM_ENDPOINT ||
+		process.env.NSC_GLOBAL_ENDPOINT ||
+		"https://private-api.global.namespaceapis.com"
+	);
+}
+
+function getDebugFlags(): Set<string> {
+	const val = process.env.NSC_DEBUG;
+	if (!val) return new Set();
+	return new Set(val.split(",").map((s) => s.trim().toLowerCase()));
+}
+
+function isAuthDebugEnabled(): boolean {
+	return getDebugFlags().has("auth");
+}
+
+function isForceAuthRefreshEnabled(): boolean {
+	return getDebugFlags().has("force-auth-refresh");
+}
+
+function debug(message: string): void {
+	if (isAuthDebugEnabled()) {
+		console.error(`[nsc:auth] ${message}`);
+	}
+}
 
 /**
  * Error thrown when user is not logged in
@@ -49,6 +76,26 @@ async function loadFromFile(tokenPath: string): Promise<LoadedToken> {
 		const tokenJson: TokenJson = JSON.parse(content);
 
 		const dir = path.dirname(tokenPath);
+
+		debug(`Loaded token from ${tokenPath}`);
+		if (tokenJson.session_token) {
+			debug("Token type: session token (will refresh bearer tokens)");
+		} else if (tokenJson.bearer_token) {
+			const claims = extractClaims(tokenJson.bearer_token);
+			if (claims?.exp) {
+				const expiresAt = new Date(claims.exp * 1000);
+				const now = new Date();
+				if (expiresAt > now) {
+					const remainingMs = expiresAt.getTime() - now.getTime();
+					const remainingMins = Math.floor(remainingMs / 60000);
+					debug(`Token type: bearer token (valid for ${remainingMins} minutes)`);
+				} else {
+					debug("Token type: bearer token (expired)");
+				}
+			} else {
+				debug("Token type: bearer token (no expiration)");
+			}
+		}
 
 		return new LoadedToken(
 			tokenJson.bearer_token,
@@ -100,11 +147,16 @@ export async function loadUserToken(): Promise<TokenSource> {
 
 /**
  * Load workload token from standard location
+ * Workload tokens only use bearer tokens directly (no session token refresh)
  */
 export async function loadWorkloadToken(): Promise<TokenSource> {
 	const tokenPath =
 		process.env.NSC_TOKEN_FILE || "/var/run/nsc/token.json";
-	return await loadFromFile(tokenPath);
+	const loaded = await loadFromFile(tokenPath);
+	if (!loaded.bearerToken) {
+		throw new Error("Workload token file does not contain a bearer token");
+	}
+	return new LoadedToken(loaded.bearerToken, undefined, undefined);
 }
 
 /**
@@ -118,10 +170,10 @@ export function fromBearerToken(token: string): TokenSource {
  * LoadedToken implements TokenSource with caching
  */
 class LoadedToken implements TokenSource {
-	private bearerToken?: string;
+	readonly bearerToken?: string;
 	private sessionToken?: string;
 	private cacheDir?: string;
-	private cachePath?: string;
+	private sessionsClient?: ReturnType<typeof createClient<typeof UserSessionsService>>;
 
 	constructor(
 		bearerToken?: string,
@@ -131,21 +183,35 @@ class LoadedToken implements TokenSource {
 		this.bearerToken = bearerToken;
 		this.sessionToken = sessionToken;
 		this.cacheDir = cacheDir;
+	}
 
-		if (cacheDir) {
-			this.cachePath = path.join(cacheDir, "token.cache");
+	private getSessionsClient(): ReturnType<typeof createClient<typeof UserSessionsService>> {
+		if (!this.sessionsClient) {
+			const transport = createConnectTransport({
+				httpVersion: "1.1",
+				baseUrl: getIAMEndpoint(),
+				useBinaryFormat: false,
+				interceptors: [
+					(next) => async (req) => {
+						if (this.sessionToken) {
+							req.header.set("Authorization", `Bearer ${this.sessionToken}`);
+						}
+						return await next(req);
+					},
+				],
+			});
+			this.sessionsClient = createClient(UserSessionsService, transport);
 		}
+		return this.sessionsClient;
 	}
 
 	async issueToken(minDuration: number, force: boolean = false): Promise<string> {
-		// If we have a bearer token (no session token), return it directly
-		if (this.bearerToken && !this.sessionToken) {
-			return this.bearerToken;
-		}
-
-		// If we have a session token, try to get a cached or fresh bearer token
 		if (this.sessionToken) {
 			return await this.issueFromSession(minDuration, force);
+		}
+
+		if (this.bearerToken) {
+			return this.bearerToken;
 		}
 
 		throw new Error("No bearer token or session token available");
@@ -159,71 +225,78 @@ class LoadedToken implements TokenSource {
 			throw new Error("No session token available");
 		}
 
-		// Get tenant ID from session token
-		const sessionTenantId = getTenantId(this.sessionToken);
+		const issueNewToken = async (durationMs: number): Promise<string> => {
+			const client = this.getSessionsClient();
+			const durationSeconds = BigInt(Math.floor(durationMs / 1000));
+			const res = await client.issueTenantTokenFromSession({
+				tokenDuration: new Duration({ seconds: durationSeconds }),
+			});
+			return res.tenantToken;
+		};
 
-		// Try to load cached token if not forcing refresh
-		if (!force && this.cachePath) {
-			const cached = await this.loadCachedToken();
-			if (
-				cached &&
-				cached.tenantId === sessionTenantId &&
-				!this.isCachedTokenExpired(cached, minDuration)
-			) {
-				return cached.token;
+		const forceRefresh = force || isForceAuthRefreshEnabled();
+		if (forceRefresh) {
+			debug("Forcing new token issue");
+			const start = Date.now();
+			const token = await issueNewToken(minDuration);
+			debug(`Issued new bearer token from session (took ${Date.now() - start}ms)`);
+			return token;
+		}
+
+		const sessionClaims = extractClaims(this.sessionToken);
+		if (!sessionClaims) {
+			throw new Error("Failed to extract claims from session token");
+		}
+
+		if (this.cacheDir) {
+			const cachePath = path.join(this.cacheDir, "token.cache");
+			try {
+				const cacheContents = await fs.readFile(cachePath, "utf8");
+				const cacheClaims = extractClaims(cacheContents);
+
+				if (cacheClaims && cacheClaims.tenant_id === sessionClaims.tenant_id) {
+					const nowMs = Date.now();
+					const expiresAtMs = (cacheClaims.exp || 0) * 1000;
+					if (expiresAtMs > nowMs + minDuration) {
+						const remainingMins = Math.floor((expiresAtMs - nowMs) / 60000);
+						debug(`Using cached bearer token (valid for ${remainingMins} minutes)`);
+						return cacheContents;
+					}
+				}
+			} catch {
+				// Cache miss or read error, continue to issue new token
 			}
 		}
 
-		// Issue new token from session
-		// In a real implementation, this would call the IAM service
-		// For now, we'll throw an error indicating this needs to be implemented
-		throw new Error(
-			"Session token refresh not yet implemented - requires IAM service integration"
-		);
-	}
-
-	private async loadCachedToken(): Promise<CachedToken | null> {
-		if (!this.cachePath) {
-			return null;
+		// Request 2x the minimum duration, capped at 1 hour
+		let requestDuration = minDuration * 2;
+		const oneHourMs = 60 * 60 * 1000;
+		if (requestDuration > oneHourMs) {
+			requestDuration = oneHourMs;
 		}
 
-		try {
-			const content = await fs.readFile(this.cachePath, "utf8");
-			return JSON.parse(content) as CachedToken;
-		} catch {
-			return null;
+		debug("Issuing new bearer token from session");
+		const start = Date.now();
+		const newToken = await issueNewToken(requestDuration);
+		const elapsed = Date.now() - start;
+
+		if (this.cacheDir) {
+			const cachePath = path.join(this.cacheDir, "token.cache");
+			try {
+				await fs.writeFile(cachePath, newToken, { mode: 0o600 });
+			} catch {
+				// Ignore cache write errors
+			}
 		}
-	}
 
-	private async saveCachedToken(token: string, expiration: number): Promise<void> {
-		if (!this.cachePath) {
-			return;
+		const newClaims = extractClaims(newToken);
+		if (newClaims?.exp) {
+			const remainingMins = Math.floor((newClaims.exp * 1000 - Date.now()) / 60000);
+			debug(`Issued new bearer token (valid for ${remainingMins} minutes, took ${elapsed}ms)`);
+		} else {
+			debug(`Issued new bearer token (took ${elapsed}ms)`);
 		}
 
-		const tenantId = getTenantId(token);
-		const cached: CachedToken = {
-			token,
-			expiration,
-			tenantId: tenantId || undefined,
-		};
-
-		try {
-			await fs.writeFile(
-				this.cachePath,
-				JSON.stringify(cached),
-				{ mode: 0o600 }
-			);
-		} catch (error) {
-			// Ignore cache write errors
-		}
-	}
-
-	private isCachedTokenExpired(
-		cached: CachedToken,
-		minDuration: number
-	): boolean {
-		const nowMs = Date.now();
-		const requiredValidUntil = nowMs + minDuration;
-		return cached.expiration <= requiredValidUntil;
+		return newToken;
 	}
 }
