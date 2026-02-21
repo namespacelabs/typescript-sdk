@@ -3131,6 +3131,11 @@ export class InstanceExtendedMetadata extends Message<InstanceExtendedMetadata> 
    */
   tlsBackedPort: InstanceExtendedMetadata_AllocatedTlsBackedPort[] = [];
 
+  /**
+   * @generated from field: string command_service_endpoint = 4;
+   */
+  commandServiceEndpoint = "";
+
   constructor(data?: PartialMessage<InstanceExtendedMetadata>) {
     super();
     proto3.util.initPartial(data, this);
@@ -3142,6 +3147,7 @@ export class InstanceExtendedMetadata extends Message<InstanceExtendedMetadata> 
     { no: 1, name: "ssh_metadata", kind: "message", T: InstanceExtendedMetadata_SshMetadata },
     { no: 2, name: "kubernetes_metadata", kind: "message", T: InstanceExtendedMetadata_KubernetesInstanceMetadata },
     { no: 3, name: "tls_backed_port", kind: "message", T: InstanceExtendedMetadata_AllocatedTlsBackedPort, repeated: true },
+    { no: 4, name: "command_service_endpoint", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): InstanceExtendedMetadata {
