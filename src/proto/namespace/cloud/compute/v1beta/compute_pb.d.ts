@@ -2371,6 +2371,11 @@ export declare class InstanceExtendedMetadata extends Message<InstanceExtendedMe
    */
   tlsBackedPort: InstanceExtendedMetadata_AllocatedTlsBackedPort[];
 
+  /**
+   * @generated from field: string command_service_endpoint = 4;
+   */
+  commandServiceEndpoint: string;
+
   constructor(data?: PartialMessage<InstanceExtendedMetadata>);
 
   static readonly runtime: typeof proto3;

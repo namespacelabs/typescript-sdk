@@ -698,6 +698,7 @@ export const InstanceExtendedMetadata = proto3.makeMessageType(
     { no: 1, name: "ssh_metadata", kind: "message", T: InstanceExtendedMetadata_SshMetadata },
     { no: 2, name: "kubernetes_metadata", kind: "message", T: InstanceExtendedMetadata_KubernetesInstanceMetadata },
     { no: 3, name: "tls_backed_port", kind: "message", T: InstanceExtendedMetadata_AllocatedTlsBackedPort, repeated: true },
+    { no: 4, name: "command_service_endpoint", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ],
 );
 
