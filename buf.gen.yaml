@@ -6,3 +6,4 @@ plugins:
     out: src/proto
     opt:
       - target=ts+dts
+      - import_extension=js
