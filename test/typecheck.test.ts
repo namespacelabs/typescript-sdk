@@ -14,7 +14,8 @@ import { createRegistryClient } from "../src/api/registry/index.js";
 import { createVaultClient } from "../src/api/vault/index.js";
 import { createRegionTransport, createGlobalTransport } from "../src/api/clients.js";
 import type { TokenSource } from "../src/auth/types.js";
-import { Timestamp } from "@bufbuild/protobuf";
+import { create } from "@bufbuild/protobuf";
+import { TimestampSchema } from "@bufbuild/protobuf/wkt";
 
 // Test: Authentication token loading
 async function testAuthTokenLoading() {
@@ -54,7 +55,7 @@ async function testComputeClient() {
 			machineArch: "amd64",
 		},
 		documentedPurpose: "test",
-		deadline: Timestamp.now(),
+		deadline: create(TimestampSchema, { seconds: BigInt(Math.floor(Date.now() / 1000)) }),
 		containers: [{
 			name: "test",
 			imageRef: "nginx",
@@ -170,11 +171,11 @@ async function testTransports() {
 // Test: Proto imports
 async function testProtoImports() {
 	// Should be able to import proto types directly
-	const { CreateInstanceRequest } = await import("../src/proto/namespace/cloud/compute/v1beta/compute_pb.js");
-	const { TenantService } = await import("../src/proto/namespace/cloud/iam/v1beta/tenants_connect.js");
+	const { CreateInstanceRequestSchema } = await import("../src/proto/namespace/cloud/compute/v1beta/compute_pb.js");
+	const { TenantService } = await import("../src/proto/namespace/cloud/iam/v1beta/tenants_pb.js");
 
-	// Should be able to create instances
-	const request = new CreateInstanceRequest({
+	// Should be able to create instances using v2 API
+	const request = create(CreateInstanceRequestSchema, {
 		shape: {
 			virtualCpu: 2,
 			memoryMegabytes: 4096,

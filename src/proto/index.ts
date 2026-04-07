@@ -6,7 +6,7 @@
  * @example
  * ```typescript
  * import { CreateInstanceRequest } from '@namespacelabs/sdk/proto/namespace/cloud/compute/v1beta/compute_pb';
- * import { ComputeService } from '@namespacelabs/sdk/proto/namespace/cloud/compute/v1beta/compute_connect';
+ * import { ComputeService } from '@namespacelabs/sdk/proto/namespace/cloud/compute/v1beta/compute_pb';
  * ```
  *
  * Available proto modules:

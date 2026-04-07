@@ -1,0 +1,8 @@
+version: v2
+inputs:
+  - module: buf.build/namespace/cloud
+plugins:
+  - local: protoc-gen-es
+    out: src/proto
+    opt:
+      - target=ts+dts

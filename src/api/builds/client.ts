@@ -6,7 +6,7 @@ import { createClient, type Transport } from "@connectrpc/connect";
 import type { TokenSource } from "../../auth/types.js";
 import { createRegionTransport } from "../clients.js";
 
-import { BuilderService } from "../../proto/namespace/cloud/builder/v1beta/builder_connect.js";
+import { BuilderService } from "../../proto/namespace/cloud/builder/v1beta/builder_pb.js";
 
 /**
  * Builds API client

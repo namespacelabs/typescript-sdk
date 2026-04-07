@@ -6,7 +6,8 @@
 
 import { loadDefaults } from "../src/auth/index.js";
 import { createComputeClient } from "../src/api/compute/index.js";
-import { Timestamp } from "@bufbuild/protobuf";
+import { create } from "@bufbuild/protobuf";
+import { TimestampSchema } from "@bufbuild/protobuf/wkt";
 
 async function main() {
 	console.log("Loading authentication token...");
@@ -26,7 +27,7 @@ async function main() {
 			machineArch: "amd64",
 		},
 		documentedPurpose: "SDK test: create-instance",
-		deadline: Timestamp.fromDate(new Date(Date.now() + 60 * 60 * 1000)), // 1 hour
+		deadline: create(TimestampSchema, { seconds: BigInt(Math.floor((Date.now() + 60 * 60 * 1000) / 1000)) }), // 1 hour
 		containers: [
 			{
 				name: "nginx",
