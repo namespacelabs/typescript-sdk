@@ -6,7 +6,7 @@ import { createClient, type Transport } from "@connectrpc/connect";
 import type { TokenSource } from "../../auth/types.js";
 import { createRegionTransport } from "../clients.js";
 
-import { VaultService } from "../../proto/namespace/cloud/vault/v1beta/vault_connect.js";
+import { VaultService } from "../../proto/namespace/cloud/vault/v1beta/vault_pb.js";
 
 /**
  * Vault API client
