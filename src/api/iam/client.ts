@@ -6,8 +6,8 @@ import { createClient, type Transport } from "@connectrpc/connect";
 import type { TokenSource } from "../../auth/types.js";
 import { createGlobalTransport } from "../clients.js";
 
-import { TenantService } from "../../proto/namespace/cloud/iam/v1beta/tenants_connect.js";
-import { TokenService } from "../../proto/namespace/cloud/iam/v1beta/tokens_connect.js";
+import { TenantService } from "../../proto/namespace/cloud/iam/v1beta/tenants_pb.js";
+import { TokenService } from "../../proto/namespace/cloud/iam/v1beta/tokens_pb.js";
 
 /**
  * IAM API client with tenant and token services

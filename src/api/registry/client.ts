@@ -6,7 +6,7 @@ import { createClient, type Transport } from "@connectrpc/connect";
 import type { TokenSource } from "../../auth/types.js";
 import { createGlobalTransport } from "../clients.js";
 
-import { ContainerRegistryService } from "../../proto/namespace/cloud/registry/v1beta/registry_connect.js";
+import { ContainerRegistryService } from "../../proto/namespace/cloud/registry/v1beta/registry_pb.js";
 
 /**
  * Registry API client

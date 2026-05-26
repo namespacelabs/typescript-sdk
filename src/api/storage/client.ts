@@ -6,7 +6,7 @@ import { createClient, type Transport } from "@connectrpc/connect";
 import type { TokenSource } from "../../auth/types.js";
 import { createRegionTransport } from "../clients.js";
 
-import { ArtifactsService } from "../../proto/namespace/cloud/storage/v1beta/artifact_connect.js";
+import { ArtifactsService } from "../../proto/namespace/cloud/storage/v1beta/artifact_pb.js";
 
 /**
  * Storage API client

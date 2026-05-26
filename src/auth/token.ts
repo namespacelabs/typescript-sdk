@@ -7,10 +7,11 @@ import * as path from "path";
 import * as os from "os";
 import { createClient } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-node";
-import { Duration } from "@bufbuild/protobuf";
+import { create } from "@bufbuild/protobuf";
+import { DurationSchema } from "@bufbuild/protobuf/wkt";
 import { TokenSource, TokenJson } from "./types.js";
 import { extractClaims, getTenantId } from "./claims.js";
-import { UserSessionsService } from "../proto/namespace/private/sessions/users_connect.js";
+import { UserSessionsService } from "../proto/namespace/private/sessions/users_pb.js";
 
 function getIAMEndpoint(): string {
 	return (
@@ -229,7 +230,7 @@ class LoadedToken implements TokenSource {
 			const client = this.getSessionsClient();
 			const durationSeconds = BigInt(Math.floor(durationMs / 1000));
 			const res = await client.issueTenantTokenFromSession({
-				tokenDuration: new Duration({ seconds: durationSeconds }),
+				tokenDuration: create(DurationSchema, { seconds: durationSeconds }),
 			});
 			return res.tenantToken;
 		};

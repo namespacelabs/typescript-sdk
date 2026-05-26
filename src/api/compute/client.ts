@@ -6,11 +6,11 @@ import { createClient, type Transport } from "@connectrpc/connect";
 import type { TokenSource } from "../../auth/types.js";
 import { createRegionTransport } from "../clients.js";
 
-import { ComputeService } from "../../proto/namespace/cloud/compute/v1beta/compute_connect.js";
-import { StorageService } from "../../proto/namespace/cloud/compute/v1beta/storage_connect.js";
-import { UsageService } from "../../proto/namespace/cloud/compute/v1beta/usage_connect.js";
-import { ObservabilityService } from "../../proto/namespace/cloud/compute/v1beta/observability_connect.js";
-import { ManagementService } from "../../proto/namespace/cloud/compute/v1beta/management_connect.js";
+import { ComputeService } from "../../proto/namespace/cloud/compute/v1beta/compute_pb.js";
+import { StorageService } from "../../proto/namespace/cloud/compute/v1beta/storage_pb.js";
+import { UsageService } from "../../proto/namespace/cloud/compute/v1beta/usage_pb.js";
+import { ObservabilityService } from "../../proto/namespace/cloud/compute/v1beta/observability_pb.js";
+import { ManagementService } from "../../proto/namespace/cloud/compute/v1beta/management_pb.js";
 
 /**
  * Compute API client with all compute-related services

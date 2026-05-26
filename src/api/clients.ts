@@ -4,7 +4,6 @@
 
 import { createConnectTransport } from "@connectrpc/connect-node";
 import { createClient, type Transport } from "@connectrpc/connect";
-import type { ServiceType } from "@bufbuild/protobuf";
 import type { TokenSource } from "../auth/types.js";
 import { bearerAuthInterceptor } from "./interceptors.js";
 

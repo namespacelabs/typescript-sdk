@@ -154,14 +154,16 @@
 	},
 	"homepage": "https://github.com/namespacelabs/typescript-sdk#readme",
 	"peerDependencies": {
-		"@bufbuild/protobuf": "^1.10.0",
-		"@connectrpc/connect": "^1.0.0",
-		"@connectrpc/connect-node": "^1.0.0"
+		"@bufbuild/protobuf": "^2.2.0",
+		"@connectrpc/connect": "^2.0.0",
+		"@connectrpc/connect-node": "^2.0.0"
 	},
 	"devDependencies": {
-		"@bufbuild/protobuf": "^1.10.0",
-		"@connectrpc/connect": "^1.7.0",
-		"@connectrpc/connect-node": "^1.7.0",
+		"@bufbuild/buf": "^1.67.0",
+		"@bufbuild/protobuf": "^2.2.0",
+		"@bufbuild/protoc-gen-es": "^2.11.0",
+		"@connectrpc/connect": "^2.0.0",
+		"@connectrpc/connect-node": "^2.0.0",
 		"@types/node": "^20.17.10",
 		"tsx": "^4.20.6",
 		"typescript": "^5.7.2"
