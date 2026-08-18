@@ -11,5 +11,7 @@ export * from "./auth/index.js";
 // Re-export API module
 export * from "./api/index.js";
 
+export * from "./devbox/index.js";
+
 // Note: Proto types are available via '@namespacelabs/sdk/proto' import
 // They are not re-exported from the main module to avoid naming conflicts

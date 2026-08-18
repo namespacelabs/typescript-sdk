@@ -8,3 +8,4 @@
 export * from "./types.js";
 export * from "./claims.js";
 export * from "./token.js";
+export * from "./caching.js";

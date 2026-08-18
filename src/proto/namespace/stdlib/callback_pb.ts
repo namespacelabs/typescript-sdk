@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file proto/namespace/stdlib/callback.proto.
  */
 export const file_proto_namespace_stdlib_callback: GenFile = /*@__PURE__*/
-  fileDesc("CiVwcm90by9uYW1lc3BhY2Uvc3RkbGliL2NhbGxiYWNrLnByb3RvEhBuYW1lc3BhY2Uuc3RkbGliIlcKFEh0dHBDYWxsYmFja0VuZHBvaW50EhAKCHBvc3RfdXJsGAEgASgJEi0KB2hlYWRlcnMYAiADKAsyHC5uYW1lc3BhY2Uuc3RkbGliLkh0dHBIZWFkZXIiYAoKSHR0cEhlYWRlchIMCgRuYW1lGAEgASgJEg0KBXZhbHVlGAIgASgJEjUKCnZhbHVlX2Zyb20YAyABKAsyIS5uYW1lc3BhY2Uuc3RkbGliLlJlc29sdmFibGVWYWx1ZSI5Cg9SZXNvbHZhYmxlVmFsdWUSDgoGc3RhdGljGAEgASgJEhYKDmZyb21fc2VjcmV0X2lkGAIgASgJQj5aPG5hbWVzcGFjZWxhYnMuZGV2L2ludGVybmFsL3B1YmxpYy9nZW4vcHJvdG8vbmFtZXNwYWNlL3N0ZGxpYmIGcHJvdG8z");
+  fileDesc("CiVwcm90by9uYW1lc3BhY2Uvc3RkbGliL2NhbGxiYWNrLnByb3RvEhBuYW1lc3BhY2Uuc3RkbGliInQKFEh0dHBDYWxsYmFja0VuZHBvaW50EhAKCHBvc3RfdXJsGAEgASgJEi0KB2hlYWRlcnMYAiADKAsyHC5uYW1lc3BhY2Uuc3RkbGliLkh0dHBIZWFkZXISGwoTc2lnbl93aXRoX3NlY3JldF9pZBgDIAEoCSJgCgpIdHRwSGVhZGVyEgwKBG5hbWUYASABKAkSDQoFdmFsdWUYAiABKAkSNQoKdmFsdWVfZnJvbRgDIAEoCzIhLm5hbWVzcGFjZS5zdGRsaWIuUmVzb2x2YWJsZVZhbHVlIjkKD1Jlc29sdmFibGVWYWx1ZRIOCgZzdGF0aWMYASABKAkSFgoOZnJvbV9zZWNyZXRfaWQYAiABKAlCPlo8bmFtZXNwYWNlbGFicy5kZXYvaW50ZXJuYWwvcHVibGljL2dlbi9wcm90by9uYW1lc3BhY2Uvc3RkbGliYgZwcm90bzM");
 
 /**
  * @generated from message namespace.stdlib.HttpCallbackEndpoint
@@ -25,6 +25,17 @@ export type HttpCallbackEndpoint = Message<"namespace.stdlib.HttpCallbackEndpoin
    * @generated from field: repeated namespace.stdlib.HttpHeader headers = 2;
    */
   headers: HttpHeader[];
+
+  /**
+   * If present, the body of the callback response will
+   * be signed and provided as an HMAC hash using the specified
+   * secret. The X-Namespace-Signature header will include a
+   * value of the form `ts=<timestamp>,sha256=<hmac>`, where <hmac> is
+   * a SHA256-signed message consisting of `<timestamp>,<response body>`.
+   *
+   * @generated from field: string sign_with_secret_id = 3;
+   */
+  signWithSecretId: string;
 };
 
 /**

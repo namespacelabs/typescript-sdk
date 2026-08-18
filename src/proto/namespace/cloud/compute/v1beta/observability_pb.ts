@@ -2,8 +2,8 @@
 // @generated from file proto/namespace/cloud/compute/v1beta/observability.proto (package namespace.cloud.compute.v1beta, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
-import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
+import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
+import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 import type { Timestamp } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import type { StringMatcher, TimestampRange } from "../../../stdlib/matchers_pb.js";
@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file proto/namespace/cloud/compute/v1beta/observability.proto.
  */
 export const file_proto_namespace_cloud_compute_v1beta_observability: GenFile = /*@__PURE__*/
-  fileDesc("Cjhwcm90by9uYW1lc3BhY2UvY2xvdWQvY29tcHV0ZS92MWJldGEvb2JzZXJ2YWJpbGl0eS5wcm90bxIebmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhIkAKGVN0cmVhbUluc3RhbmNlTG9nc1JlcXVlc3QSEwoLaW5zdGFuY2VfaWQYASABKAkSDgoGZm9sbG93GAIgASgIIpUCCghMb2dCbG9jaxJECgZsYWJlbHMYASADKAsyNC5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuTG9nQmxvY2suTGFiZWxzRW50cnkSPAoFbGluZXMYAiADKAsyLS5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuTG9nQmxvY2suTGluZRotCgtMYWJlbHNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBGlYKBExpbmUSLQoJdGltZXN0YW1wGAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIPCgdjb250ZW50GAIgASgJEg4KBnN0cmVhbRgDIAEoCSLFAQoYRmV0Y2hJbnN0YW5jZUxvZ3NSZXF1ZXN0EhkKEXBhZ2luYXRpb25fY3Vyc29yGAEgASgMEhYKDmxpbmVzX3Blcl9wYWdlGAIgASgFEjsKEm1hdGNoX2luc3RhbmNlX2lkcxgDIAEoCzIfLm5hbWVzcGFjZS5zdGRsaWIuU3RyaW5nTWF0Y2hlchI5Cg90aW1lc3RhbXBfcmFuZ2UYBCABKAsyIC5uYW1lc3BhY2Uuc3RkbGliLlRpbWVzdGFtcFJhbmdlIokBChlGZXRjaEluc3RhbmNlTG9nc1Jlc3BvbnNlEhkKEXBhZ2luYXRpb25fY3Vyc29yGAEgASgMEjkKCGxvZ19saW5lGAIgAygLMicubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkxvZ0xpbmUSFgoOcmV0ZW50aW9uX2RheXMYAyABKAUi3QEKB0xvZ0xpbmUSLQoJdGltZXN0YW1wGAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIPCgdjb250ZW50GAIgASgJEg4KBnN0cmVhbRgDIAEoCRJDCgZsYWJlbHMYBCADKAsyMy5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuTG9nTGluZS5MYWJlbHNFbnRyeRIOCgZzb3VyY2UYBSABKAkaLQoLTGFiZWxzRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ATKeAgoUT2JzZXJ2YWJpbGl0eVNlcnZpY2USewoSU3RyZWFtSW5zdGFuY2VMb2dzEjkubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLlN0cmVhbUluc3RhbmNlTG9nc1JlcXVlc3QaKC5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuTG9nQmxvY2swARKIAQoRRmV0Y2hJbnN0YW5jZUxvZ3MSOC5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuRmV0Y2hJbnN0YW5jZUxvZ3NSZXF1ZXN0GjkubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkZldGNoSW5zdGFuY2VMb2dzUmVzcG9uc2ViBnByb3RvMw", [file_google_protobuf_timestamp, file_proto_namespace_stdlib_matchers]);
+  fileDesc("Cjhwcm90by9uYW1lc3BhY2UvY2xvdWQvY29tcHV0ZS92MWJldGEvb2JzZXJ2YWJpbGl0eS5wcm90bxIebmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhIoABChlTdHJlYW1JbnN0YW5jZUxvZ3NSZXF1ZXN0EhMKC2luc3RhbmNlX2lkGAEgASgJEg4KBmZvbGxvdxgCIAEoCBI+ChVtYXRjaF9jb250YWluZXJfbmFtZXMYAyABKAsyHy5uYW1lc3BhY2Uuc3RkbGliLlN0cmluZ01hdGNoZXIilQIKCExvZ0Jsb2NrEkQKBmxhYmVscxgBIAMoCzI0Lm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5Mb2dCbG9jay5MYWJlbHNFbnRyeRI8CgVsaW5lcxgCIAMoCzItLm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5Mb2dCbG9jay5MaW5lGi0KC0xhYmVsc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAEaVgoETGluZRItCgl0aW1lc3RhbXAYASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEg8KB2NvbnRlbnQYAiABKAkSDgoGc3RyZWFtGAMgASgJIoUCChhGZXRjaEluc3RhbmNlTG9nc1JlcXVlc3QSGQoRcGFnaW5hdGlvbl9jdXJzb3IYASABKAwSFgoObGluZXNfcGVyX3BhZ2UYAiABKAUSOwoSbWF0Y2hfaW5zdGFuY2VfaWRzGAMgASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyEjkKD3RpbWVzdGFtcF9yYW5nZRgEIAEoCzIgLm5hbWVzcGFjZS5zdGRsaWIuVGltZXN0YW1wUmFuZ2USPgoVbWF0Y2hfY29udGFpbmVyX25hbWVzGAUgASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyIokBChlGZXRjaEluc3RhbmNlTG9nc1Jlc3BvbnNlEhkKEXBhZ2luYXRpb25fY3Vyc29yGAEgASgMEjkKCGxvZ19saW5lGAIgAygLMicubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkxvZ0xpbmUSFgoOcmV0ZW50aW9uX2RheXMYAyABKAUi3QEKB0xvZ0xpbmUSLQoJdGltZXN0YW1wGAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIPCgdjb250ZW50GAIgASgJEg4KBnN0cmVhbRgDIAEoCRJDCgZsYWJlbHMYBCADKAsyMy5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuTG9nTGluZS5MYWJlbHNFbnRyeRIOCgZzb3VyY2UYBSABKAkaLQoLTGFiZWxzRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASKWAQoaRmV0Y2hJbnN0YW5jZUVncmVzc1JlcXVlc3QSEwoLaW5zdGFuY2VfaWQYASABKAkSOQoPdGltZXN0YW1wX3JhbmdlGAIgASgLMiAubmFtZXNwYWNlLnN0ZGxpYi5UaW1lc3RhbXBSYW5nZRINCgVsaW1pdBgDIAEoBRIZChFwYWdpbmF0aW9uX2N1cnNvchgEIAEoDCJ3ChtGZXRjaEluc3RhbmNlRWdyZXNzUmVzcG9uc2USPQoHcmVjb3JkcxgBIAMoCzIsLm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5FZ3Jlc3NSZWNvcmQSGQoRcGFnaW5hdGlvbl9jdXJzb3IYAiABKAwiswEKDEVncmVzc1JlY29yZBItCgl0aW1lc3RhbXAYASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEg4KBmRvbWFpbhgCIAEoCRISCgpydWxlX21hdGNoGAMgASgJEjwKBmFjdGlvbhgEIAEoDjIsLm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5FZ3Jlc3NBY3Rpb24SEgoKYW5zd2VyX2lwcxgFIAMoCSpKCgxFZ3Jlc3NBY3Rpb24SEgoOQUNUSU9OX1VOS05PV04QABIJCgVBTExPVxABEggKBERFTlkQAhIRCg1BRFZJU09SWV9ERU5ZEAMyrwMKFE9ic2VydmFiaWxpdHlTZXJ2aWNlEnsKElN0cmVhbUluc3RhbmNlTG9ncxI5Lm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5TdHJlYW1JbnN0YW5jZUxvZ3NSZXF1ZXN0GigubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkxvZ0Jsb2NrMAESiAEKEUZldGNoSW5zdGFuY2VMb2dzEjgubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkZldGNoSW5zdGFuY2VMb2dzUmVxdWVzdBo5Lm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5GZXRjaEluc3RhbmNlTG9nc1Jlc3BvbnNlEo4BChNGZXRjaEluc3RhbmNlRWdyZXNzEjoubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkZldGNoSW5zdGFuY2VFZ3Jlc3NSZXF1ZXN0GjsubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkZldGNoSW5zdGFuY2VFZ3Jlc3NSZXNwb25zZUJaWlhuYW1lc3BhY2VsYWJzLmRldi9pbnRlcm5hbC9wdWJsaWMvZ2VuL3Byb3RvL25hbWVzcGFjZS9jbG91ZC9jb21wdXRlL3YxYmV0YTtjb21wdXRldjFiZXRhYgZwcm90bzM", [file_google_protobuf_timestamp, file_proto_namespace_stdlib_matchers]);
 
 /**
  * @generated from message namespace.cloud.compute.v1beta.StreamInstanceLogsRequest
@@ -29,6 +29,11 @@ export type StreamInstanceLogsRequest = Message<"namespace.cloud.compute.v1beta.
    * @generated from field: bool follow = 2;
    */
   follow: boolean;
+
+  /**
+   * @generated from field: namespace.stdlib.StringMatcher match_container_names = 3;
+   */
+  matchContainerNames?: StringMatcher;
 };
 
 /**
@@ -117,6 +122,11 @@ export type FetchInstanceLogsRequest = Message<"namespace.cloud.compute.v1beta.F
    * @generated from field: namespace.stdlib.TimestampRange timestamp_range = 4;
    */
   timestampRange?: TimestampRange;
+
+  /**
+   * @generated from field: namespace.stdlib.StringMatcher match_container_names = 5;
+   */
+  matchContainerNames?: StringMatcher;
 };
 
 /**
@@ -195,6 +205,136 @@ export const LogLineSchema: GenMessage<LogLine> = /*@__PURE__*/
   messageDesc(file_proto_namespace_cloud_compute_v1beta_observability, 4);
 
 /**
+ * @generated from message namespace.cloud.compute.v1beta.FetchInstanceEgressRequest
+ */
+export type FetchInstanceEgressRequest = Message<"namespace.cloud.compute.v1beta.FetchInstanceEgressRequest"> & {
+  /**
+   * @generated from field: string instance_id = 1;
+   */
+  instanceId: string;
+
+  /**
+   * Optional
+   *
+   * @generated from field: namespace.stdlib.TimestampRange timestamp_range = 2;
+   */
+  timestampRange?: TimestampRange;
+
+  /**
+   * default 20_000
+   *
+   * @generated from field: int32 limit = 3;
+   */
+  limit: number;
+
+  /**
+   * @generated from field: bytes pagination_cursor = 4;
+   */
+  paginationCursor: Uint8Array;
+};
+
+/**
+ * Describes the message namespace.cloud.compute.v1beta.FetchInstanceEgressRequest.
+ * Use `create(FetchInstanceEgressRequestSchema)` to create a new message.
+ */
+export const FetchInstanceEgressRequestSchema: GenMessage<FetchInstanceEgressRequest> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_observability, 5);
+
+/**
+ * @generated from message namespace.cloud.compute.v1beta.FetchInstanceEgressResponse
+ */
+export type FetchInstanceEgressResponse = Message<"namespace.cloud.compute.v1beta.FetchInstanceEgressResponse"> & {
+  /**
+   * @generated from field: repeated namespace.cloud.compute.v1beta.EgressRecord records = 1;
+   */
+  records: EgressRecord[];
+
+  /**
+   * @generated from field: bytes pagination_cursor = 2;
+   */
+  paginationCursor: Uint8Array;
+};
+
+/**
+ * Describes the message namespace.cloud.compute.v1beta.FetchInstanceEgressResponse.
+ * Use `create(FetchInstanceEgressResponseSchema)` to create a new message.
+ */
+export const FetchInstanceEgressResponseSchema: GenMessage<FetchInstanceEgressResponse> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_observability, 6);
+
+/**
+ * @generated from message namespace.cloud.compute.v1beta.EgressRecord
+ */
+export type EgressRecord = Message<"namespace.cloud.compute.v1beta.EgressRecord"> & {
+  /**
+   * @generated from field: google.protobuf.Timestamp timestamp = 1;
+   */
+  timestamp?: Timestamp;
+
+  /**
+   * @generated from field: string domain = 2;
+   */
+  domain: string;
+
+  /**
+   * What rule matcher (if any) lead to the action
+   *
+   * @generated from field: string rule_match = 3;
+   */
+  ruleMatch: string;
+
+  /**
+   * @generated from field: namespace.cloud.compute.v1beta.EgressAction action = 4;
+   */
+  action: EgressAction;
+
+  /**
+   * @generated from field: repeated string answer_ips = 5;
+   */
+  answerIps: string[];
+};
+
+/**
+ * Describes the message namespace.cloud.compute.v1beta.EgressRecord.
+ * Use `create(EgressRecordSchema)` to create a new message.
+ */
+export const EgressRecordSchema: GenMessage<EgressRecord> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_observability, 7);
+
+/**
+ * @generated from enum namespace.cloud.compute.v1beta.EgressAction
+ */
+export enum EgressAction {
+  /**
+   * @generated from enum value: ACTION_UNKNOWN = 0;
+   */
+  ACTION_UNKNOWN = 0,
+
+  /**
+   * @generated from enum value: ALLOW = 1;
+   */
+  ALLOW = 1,
+
+  /**
+   * @generated from enum value: DENY = 2;
+   */
+  DENY = 2,
+
+  /**
+   * Would have been blocked, but allowed because advisory mode enabled
+   *
+   * @generated from enum value: ADVISORY_DENY = 3;
+   */
+  ADVISORY_DENY = 3,
+}
+
+/**
+ * Describes the enum namespace.cloud.compute.v1beta.EgressAction.
+ */
+export const EgressActionSchema: GenEnum<EgressAction> = /*@__PURE__*/
+  enumDesc(file_proto_namespace_cloud_compute_v1beta_observability, 0);
+
+/**
  * ObservabilityService grants you access to logs and metrics of compute resources.
  * See https://namespace.so/docs/architecture/compute/observability for an overview.
  *
@@ -257,6 +397,14 @@ export const ObservabilityService: GenService<{
     methodKind: "unary";
     input: typeof FetchInstanceLogsRequestSchema;
     output: typeof FetchInstanceLogsResponseSchema;
+  },
+  /**
+   * @generated from rpc namespace.cloud.compute.v1beta.ObservabilityService.FetchInstanceEgress
+   */
+  fetchInstanceEgress: {
+    methodKind: "unary";
+    input: typeof FetchInstanceEgressRequestSchema;
+    output: typeof FetchInstanceEgressResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_proto_namespace_cloud_compute_v1beta_observability, 0);

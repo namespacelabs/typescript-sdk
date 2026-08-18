@@ -3,7 +3,7 @@
  */
 
 import { createClient, type Transport } from "@connectrpc/connect";
-import type { TokenSource } from "../../auth/types.js";
+import type { TokenSourceInput } from "../../auth/caching.js";
 import { createRegionTransport } from "../clients.js";
 
 import { ComputeService } from "../../proto/namespace/cloud/compute/v1beta/compute_pb.js";
@@ -28,7 +28,7 @@ export interface ComputeClient {
  */
 export interface ComputeClientOpts {
 	/** Token source for authentication */
-	tokenSource: TokenSource;
+	tokenSource: TokenSourceInput;
 	/** Region (defaults to 'us') */
 	region?: string;
 	/** Custom transport (if provided, region and tokenSource are ignored) */

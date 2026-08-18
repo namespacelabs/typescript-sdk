@@ -12,6 +12,9 @@ import { createBuildsClient } from "../src/api/builds/index.js";
 import { createStorageClient } from "../src/api/storage/index.js";
 import { createRegistryClient } from "../src/api/registry/index.js";
 import { createVaultClient } from "../src/api/vault/index.js";
+import { createDevboxClient, type Devbox } from "../src/devbox/index.js";
+import * as devboxPublicApi from "../src/devbox/index.js";
+import * as sdkPublicApi from "../src/index.js";
 import { createRegionTransport, createGlobalTransport } from "../src/api/clients.js";
 import type { TokenSource } from "../src/auth/types.js";
 import { create } from "@bufbuild/protobuf";
@@ -146,6 +149,69 @@ async function testVaultClient() {
 	const vault = client.vault;
 }
 
+// Test: Devbox client and operational handle types
+async function testDevboxClient() {
+	const client = createDevboxClient({ tokenSource: fromBearerToken("test") });
+	// Token sources may be passed as provider functions, invoked and awaited internally.
+	createDevboxClient({ tokenSource: loadUserToken }).close();
+	// Works without arguments: defaults to loadDefaults (workload
+	// token, falling back to the user token), resolved lazily on first use.
+	createDevboxClient().close();
+	const blueprint = await client.blueprints.create("typescript", {
+		image: "node:22",
+		size: "m",
+		environment: { NODE_ENV: "development" },
+	});
+	const directDevbox = await client.devboxes.create({
+		name: "direct-sdk-test",
+		image: "node:22",
+		size: "s",
+	});
+	const devbox: Devbox = await client.devboxes.create({
+		name: "sdk-test",
+		blueprint: blueprint.name,
+	});
+
+	const execResult = await devbox.exec(["node", "--version"], {
+		cwd: "/workspace",
+		env: { CI: "true" },
+	});
+	const shellResult = await devbox.shell(`printf '%s\\n' "$HOME"`);
+	const terminal = await devbox.terminal.open({ columns: 120, rows: 40 });
+	terminal.write("pwd\n");
+	terminal.resize(160, 50);
+	const removeDataListener = terminal.onData((data) => data.byteLength);
+	removeDataListener();
+	terminal.close();
+
+	await devbox.fs.upload("./package.json", "/workspace/package.json");
+	await devbox.fs.download("/workspace/result.json", "./result.json");
+	await devbox.fs.copy("/workspace/result.json", "/workspace/result-copy.json");
+	await devbox.fs.writeFile("/workspace/message.txt", "hello");
+	const contents: Uint8Array = await devbox.fs.readFile("/workspace/message.txt");
+
+	const images = await client.images.list({ includeBuiltin: true });
+	const image = await client.images.register({ ref: "node:22", name: "node-22" });
+	const inspection = await client.images.inspect(image.ref);
+	await client.images.optimize(image.name);
+	await client.images.optimize(image.name, { site: "custom-site" });
+
+	// @ts-expect-error Blueprint creation does not accept inline image overrides.
+	client.devboxes.create({ name: "invalid", blueprint: "typescript", image: "node:22" });
+	// @ts-expect-error Blueprint creation does not accept inline size overrides.
+	client.devboxes.create({ name: "invalid", blueprint: "typescript", size: "s" });
+	// Machine sizes are open strings so the backend can add names; unknown
+	// names typecheck for creation and are rejected server-side.
+	client.devboxes.create({ name: "future-size", image: "node:22", size: "xxl" });
+	// @ts-expect-error Product APIs expose blueprints, not templates.
+	client.templates;
+	// @ts-expect-error Generated services are internal implementation details.
+	devboxPublicApi.DevBoxService;
+	// @ts-expect-error Generated schemas are not re-exported by the root SDK.
+	sdkPublicApi.CreateRequestSchema;
+	client.close();
+}
+
 // Test: Transport creation
 async function testTransports() {
 	const tokenSource = fromBearerToken("test");
@@ -192,6 +258,7 @@ export {
 	testBuildsClient,
 	testStorageClient,
 	testVaultClient,
+	testDevboxClient,
 	testTransports,
 	testProtoImports,
 };

@@ -49,6 +49,11 @@ The SDK provides multiple ways to load authentication tokens, following patterns
 
 ### Token Loading Functions
 
+Each function returns a `TokenSource` (or a promise of one). Call and await
+them to load eagerly, or pass them uncalled wherever a token source is
+accepted (e.g. `tokenSource: loadUserToken`) — the SDK invokes and awaits them
+internally on first use, in the same style as AWS SDK credential providers.
+
 #### `loadDefaults()`
 
 Automatically detects and loads the appropriate token based on context:
@@ -136,6 +141,75 @@ const expired = isTokenExpired(claims);
 const tenantId = getTenantId(token);
 ```
 
+## Devboxes
+
+The Devbox client exposes product-level resources for devboxes, blueprints, and images. A created or fetched devbox is an operational handle: starting it, establishing authenticated connections, and reusing those connections happen automatically.
+
+```typescript
+import { createDevboxClient } from "@namespacelabs/sdk";
+// Also available from the subpath: "@namespacelabs/sdk/devbox".
+
+// With no options, authentication defaults to the workload token when
+// running in a Namespace workload, falling back to the local user token.
+const client = createDevboxClient();
+
+// Or pass an explicit token source (invoked and awaited internally
+// on first use):
+//   createDevboxClient({ tokenSource: loadUserToken })
+
+const blueprint = await client.blueprints.create("typescript", {
+	image: "node:22",
+	size: "m",
+	environment: { NODE_ENV: "development" },
+});
+
+const devbox = await client.devboxes.create({
+	name: "my-devbox",
+	blueprint: blueprint.name,
+});
+
+// Structured argv: arguments are passed literally and do not expand in a shell.
+const result = await devbox.exec(["node", "--version"]);
+
+// Shell syntax, without allocating a TTY.
+await devbox.shell("npm install && npm test", {
+	cwd: "/workspace",
+});
+
+// Commands run through the devbox agent, which retains each command and its
+// output for later inspection (`devbox logs`). Relative `cwd` paths resolve
+// against the devbox workspace directory. When `cwd` is omitted, commands run
+// in the devbox default directory; if the devbox checks out a repository, that
+// directory only exists once the checkout completes, so pass an explicit `cwd`
+// when running commands immediately after creation.
+
+await devbox.fs.upload("./package.json", "/workspace/package.json");
+await devbox.fs.download("/workspace/results.json", "./results.json");
+await devbox.fs.copy("/workspace/results.json", "/workspace/results-copy.json");
+
+// PTY sessions are explicit and separate from shell execution.
+const terminal = await devbox.terminal.open({ columns: 120, rows: 40 });
+terminal.onData((data) => process.stdout.write(data));
+terminal.write("pwd\n");
+
+terminal.close();
+client.close();
+```
+
+`upload()` and `download()` transfer one file. `copy()` operates inside the devbox and accepts `{ recursive: true }` for directories. All operations accept `AbortSignal` and timeout options.
+
+Images can be registered from an existing image reference, listed, inspected, optimized for a site, and deleted:
+
+```typescript
+const image = await client.images.register({
+	name: "node-22",
+	ref: "node:22",
+});
+
+// Image optimization defaults to iad when no site is specified.
+await client.images.optimize(image.name);
+```
+
 ## API Clients
 
 The SDK provides high-level client factories for each Namespace Cloud API:
@@ -148,6 +222,7 @@ The SDK provides high-level client factories for each Namespace Cloud API:
 - **Storage** (`@namespacelabs/sdk/api/storage`) - Artifact storage, regional
 - **Registry** (`@namespacelabs/sdk/api/registry`) - Container registry, global
 - **Vault** (`@namespacelabs/sdk/api/vault`) - Secrets management, regional
+- **Devboxes** (`@namespacelabs/sdk/devbox`) - Devboxes, blueprints, and images
 
 ### Using API Clients
 
@@ -264,9 +339,10 @@ typescript-sdk/
 
 The SDK provides multiple export paths:
 
-- `@namespacelabs/sdk` - Main entry point (re-exports auth and api)
+- `@namespacelabs/sdk` - Main entry point (re-exports auth, API clients, and Devboxes)
 - `@namespacelabs/sdk/auth` - Authentication module only
 - `@namespacelabs/sdk/api` - API client utilities only
+- `@namespacelabs/sdk/devbox` - Devbox product API
 
 Each export path supports both ESM and CommonJS:
 

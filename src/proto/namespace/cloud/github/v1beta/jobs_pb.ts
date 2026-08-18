@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file proto/namespace/cloud/github/v1beta/jobs.proto.
  */
 export const file_proto_namespace_cloud_github_v1beta_jobs: GenFile = /*@__PURE__*/
-  fileDesc("Ci5wcm90by9uYW1lc3BhY2UvY2xvdWQvZ2l0aHViL3YxYmV0YS9qb2JzLnByb3RvEh1uYW1lc3BhY2UuY2xvdWQuZ2l0aHViLnYxYmV0YSLLAgoPTGlzdEpvYnNSZXF1ZXN0EhkKEXBhZ2luYXRpb25fY3Vyc29yGAEgASgMEhMKC21heF9lbnRyaWVzGAIgASgDEjQKCnRpbWVfcmFuZ2UYAyABKAsyIC5uYW1lc3BhY2Uuc3RkbGliLlRpbWVzdGFtcFJhbmdlEjMKCmNvbmNsdXNpb24YBCABKAsyHy5uYW1lc3BhY2Uuc3RkbGliLlN0cmluZ01hdGNoZXISMwoKcmVwb3NpdG9yeRgFIAEoCzIfLm5hbWVzcGFjZS5zdGRsaWIuU3RyaW5nTWF0Y2hlchI1CgxzZW5kZXJfbG9naW4YBiABKAsyHy5uYW1lc3BhY2Uuc3RkbGliLlN0cmluZ01hdGNoZXISFwoPaGFzX25vdF9zdGFydGVkGAcgASgIEhgKEGhhc19ub3RfZmluaXNoZWQYCCABKAgiXwoQTGlzdEpvYnNSZXNwb25zZRIwCgRqb2JzGAEgAygLMiIubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuSm9iEhkKEXBhZ2luYXRpb25fY3Vyc29yGAIgASgMIvUDCgNKb2ISEQoJdGVuYW50X2lkGBAgASgJEg4KBmpvYl9pZBgBIAEoAxISCgpyZXBvc2l0b3J5GAIgASgJEg4KBnJ1bl9pZBgDIAEoAxIVCg13b3JrZmxvd19uYW1lGAQgASgJEhAKCGpvYl9uYW1lGAUgASgJEhIKCmNvbmNsdXNpb24YBiABKAkSDwoHam9iX3VybBgHIAEoCRIUCgxzZW5kZXJfbG9naW4YCCABKAkSCwoDcmVmGAkgASgJEi4KCmNyZWF0ZWRfYXQYCiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi0KCXF1ZXVlZF9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKc3RhcnRlZF9hdBgMIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMAoMY29tcGxldGVkX2F0GA0gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBI5CgZydW5uZXIYDiABKAsyKS5uYW1lc3BhY2UuY2xvdWQuZ2l0aHViLnYxYmV0YS5SdW5uZXJJbmZvEjoKB3Byb2ZpbGUYDyABKAsyKS5uYW1lc3BhY2UuY2xvdWQuZ2l0aHViLnYxYmV0YS5Qcm9maWxlUmVmImEKClJ1bm5lckluZm8SEQoJcnVubmVyX2lkGAEgASgDEhMKC3J1bm5lcl9uYW1lGAIgASgJEhMKC2luc3RhbmNlX2lkGAMgASgJEhYKDmNvbnRhaW5lcl9uYW1lGAQgASgJIhkKClByb2ZpbGVSZWYSCwoDdGFnGAEgASgJMnoKC0pvYnNTZXJ2aWNlEmsKCExpc3RKb2JzEi4ubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuTGlzdEpvYnNSZXF1ZXN0Gi8ubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuTGlzdEpvYnNSZXNwb25zZUJLWkluYW1lc3BhY2VsYWJzLmRldi9pbnRlcm5hbC9wdWJsaWMvZ2VuL3Byb3RvL25hbWVzcGFjZS9jbG91ZC9naXRodWIvdjFiZXRhYgZwcm90bzM", [file_google_protobuf_timestamp, file_proto_namespace_stdlib_matchers]);
+  fileDesc("Ci5wcm90by9uYW1lc3BhY2UvY2xvdWQvZ2l0aHViL3YxYmV0YS9qb2JzLnByb3RvEh1uYW1lc3BhY2UuY2xvdWQuZ2l0aHViLnYxYmV0YSLLAgoPTGlzdEpvYnNSZXF1ZXN0EhkKEXBhZ2luYXRpb25fY3Vyc29yGAEgASgMEhMKC21heF9lbnRyaWVzGAIgASgDEjQKCnRpbWVfcmFuZ2UYAyABKAsyIC5uYW1lc3BhY2Uuc3RkbGliLlRpbWVzdGFtcFJhbmdlEjMKCmNvbmNsdXNpb24YBCABKAsyHy5uYW1lc3BhY2Uuc3RkbGliLlN0cmluZ01hdGNoZXISMwoKcmVwb3NpdG9yeRgFIAEoCzIfLm5hbWVzcGFjZS5zdGRsaWIuU3RyaW5nTWF0Y2hlchI1CgxzZW5kZXJfbG9naW4YBiABKAsyHy5uYW1lc3BhY2Uuc3RkbGliLlN0cmluZ01hdGNoZXISFwoPaGFzX25vdF9zdGFydGVkGAcgASgIEhgKEGhhc19ub3RfZmluaXNoZWQYCCABKAgiXwoQTGlzdEpvYnNSZXNwb25zZRIwCgRqb2JzGAEgAygLMiIubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuSm9iEhkKEXBhZ2luYXRpb25fY3Vyc29yGAIgASgMIiQKEkRlc2NyaWJlSm9iUmVxdWVzdBIOCgZqb2JfaWQYASABKAMiRgoTRGVzY3JpYmVKb2JSZXNwb25zZRIvCgNqb2IYASABKAsyIi5uYW1lc3BhY2UuY2xvdWQuZ2l0aHViLnYxYmV0YS5Kb2Ii9QMKA0pvYhIRCgl0ZW5hbnRfaWQYECABKAkSDgoGam9iX2lkGAEgASgDEhIKCnJlcG9zaXRvcnkYAiABKAkSDgoGcnVuX2lkGAMgASgDEhUKDXdvcmtmbG93X25hbWUYBCABKAkSEAoIam9iX25hbWUYBSABKAkSEgoKY29uY2x1c2lvbhgGIAEoCRIPCgdqb2JfdXJsGAcgASgJEhQKDHNlbmRlcl9sb2dpbhgIIAEoCRILCgNyZWYYCSABKAkSLgoKY3JlYXRlZF9hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLQoJcXVldWVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpzdGFydGVkX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgxjb21wbGV0ZWRfYXQYDSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjkKBnJ1bm5lchgOIAEoCzIpLm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLlJ1bm5lckluZm8SOgoHcHJvZmlsZRgPIAEoCzIpLm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLlByb2ZpbGVSZWYiYQoKUnVubmVySW5mbxIRCglydW5uZXJfaWQYASABKAMSEwoLcnVubmVyX25hbWUYAiABKAkSEwoLaW5zdGFuY2VfaWQYAyABKAkSFgoOY29udGFpbmVyX25hbWUYBCABKAkiGQoKUHJvZmlsZVJlZhILCgN0YWcYASABKAky8AEKC0pvYnNTZXJ2aWNlEmsKCExpc3RKb2JzEi4ubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuTGlzdEpvYnNSZXF1ZXN0Gi8ubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuTGlzdEpvYnNSZXNwb25zZRJ0CgtEZXNjcmliZUpvYhIxLm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLkRlc2NyaWJlSm9iUmVxdWVzdBoyLm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLkRlc2NyaWJlSm9iUmVzcG9uc2VCWFpWbmFtZXNwYWNlbGFicy5kZXYvaW50ZXJuYWwvcHVibGljL2dlbi9wcm90by9uYW1lc3BhY2UvY2xvdWQvZ2l0aHViL3YxYmV0YTtnaXRodWJ2MWJldGFiBnByb3RvMw", [file_google_protobuf_timestamp, file_proto_namespace_stdlib_matchers]);
 
 /**
  * ListJobsRequest specifies filters for listing GitHub Actions jobs.
@@ -118,6 +118,49 @@ export type ListJobsResponse = Message<"namespace.cloud.github.v1beta.ListJobsRe
  */
 export const ListJobsResponseSchema: GenMessage<ListJobsResponse> = /*@__PURE__*/
   messageDesc(file_proto_namespace_cloud_github_v1beta_jobs, 1);
+
+/**
+ * DescribeJobRequest identifies a single GitHub Actions job to describe.
+ *
+ * @generated from message namespace.cloud.github.v1beta.DescribeJobRequest
+ */
+export type DescribeJobRequest = Message<"namespace.cloud.github.v1beta.DescribeJobRequest"> & {
+  /**
+   * The GitHub Actions job ID to describe. This is the numeric identifier
+   * visible in the GitHub job URL (e.g., ".../job/1234567890").
+   *
+   * @generated from field: int64 job_id = 1;
+   */
+  jobId: bigint;
+};
+
+/**
+ * Describes the message namespace.cloud.github.v1beta.DescribeJobRequest.
+ * Use `create(DescribeJobRequestSchema)` to create a new message.
+ */
+export const DescribeJobRequestSchema: GenMessage<DescribeJobRequest> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_github_v1beta_jobs, 2);
+
+/**
+ * DescribeJobResponse contains the described job.
+ *
+ * @generated from message namespace.cloud.github.v1beta.DescribeJobResponse
+ */
+export type DescribeJobResponse = Message<"namespace.cloud.github.v1beta.DescribeJobResponse"> & {
+  /**
+   * The described job, including runner and compute instance information.
+   *
+   * @generated from field: namespace.cloud.github.v1beta.Job job = 1;
+   */
+  job?: Job;
+};
+
+/**
+ * Describes the message namespace.cloud.github.v1beta.DescribeJobResponse.
+ * Use `create(DescribeJobResponseSchema)` to create a new message.
+ */
+export const DescribeJobResponseSchema: GenMessage<DescribeJobResponse> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_github_v1beta_jobs, 3);
 
 /**
  * Job represents a GitHub Actions workflow job.
@@ -244,7 +287,7 @@ export type Job = Message<"namespace.cloud.github.v1beta.Job"> & {
  * Use `create(JobSchema)` to create a new message.
  */
 export const JobSchema: GenMessage<Job> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_github_v1beta_jobs, 2);
+  messageDesc(file_proto_namespace_cloud_github_v1beta_jobs, 4);
 
 /**
  * RunnerInfo contains information about the runner executing the job.
@@ -286,7 +329,7 @@ export type RunnerInfo = Message<"namespace.cloud.github.v1beta.RunnerInfo"> & {
  * Use `create(RunnerInfoSchema)` to create a new message.
  */
 export const RunnerInfoSchema: GenMessage<RunnerInfo> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_github_v1beta_jobs, 3);
+  messageDesc(file_proto_namespace_cloud_github_v1beta_jobs, 5);
 
 /**
  * ProfileRef references a runner profile.
@@ -307,7 +350,7 @@ export type ProfileRef = Message<"namespace.cloud.github.v1beta.ProfileRef"> & {
  * Use `create(ProfileRefSchema)` to create a new message.
  */
 export const ProfileRefSchema: GenMessage<ProfileRef> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_github_v1beta_jobs, 4);
+  messageDesc(file_proto_namespace_cloud_github_v1beta_jobs, 6);
 
 /**
  * JobsService provides access to GitHub Actions job information.
@@ -337,6 +380,17 @@ export const JobsService: GenService<{
     methodKind: "unary";
     input: typeof ListJobsRequestSchema;
     output: typeof ListJobsResponseSchema;
+  },
+  /**
+   * Describes a single GitHub Actions job by its job ID, including the
+   * runner and compute instance it was assigned to.
+   *
+   * @generated from rpc namespace.cloud.github.v1beta.JobsService.DescribeJob
+   */
+  describeJob: {
+    methodKind: "unary";
+    input: typeof DescribeJobRequestSchema;
+    output: typeof DescribeJobResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_proto_namespace_cloud_github_v1beta_jobs, 0);

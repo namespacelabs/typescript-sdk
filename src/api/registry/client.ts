@@ -3,7 +3,7 @@
  */
 
 import { createClient, type Transport } from "@connectrpc/connect";
-import type { TokenSource } from "../../auth/types.js";
+import type { TokenSourceInput } from "../../auth/caching.js";
 import { createGlobalTransport } from "../clients.js";
 
 import { ContainerRegistryService } from "../../proto/namespace/cloud/registry/v1beta/registry_pb.js";
@@ -20,7 +20,7 @@ export interface RegistryClient {
  */
 export interface RegistryClientOpts {
 	/** Token source for authentication */
-	tokenSource: TokenSource;
+	tokenSource: TokenSourceInput;
 	/** Custom transport (if provided, tokenSource is ignored) */
 	transport?: Transport;
 }

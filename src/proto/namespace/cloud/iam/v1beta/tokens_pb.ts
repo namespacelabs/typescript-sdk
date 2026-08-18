@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file proto/namespace/cloud/iam/v1beta/tokens.proto.
  */
 export const file_proto_namespace_cloud_iam_v1beta_tokens: GenFile = /*@__PURE__*/
-  fileDesc("Ci1wcm90by9uYW1lc3BhY2UvY2xvdWQvaWFtL3YxYmV0YS90b2tlbnMucHJvdG8SGm5hbWVzcGFjZS5jbG91ZC5pYW0udjFiZXRhIicKE0lzc3VlSWRUb2tlblJlcXVlc3QSEAoIYXVkaWVuY2UYASABKAkiKAoUSXNzdWVJZFRva2VuUmVzcG9uc2USEAoIaWRfdG9rZW4YASABKAki0AEKF0lzc3VlVGVuYW50VG9rZW5SZXF1ZXN0EhEKCXRlbmFudF9pZBgBIAEoCRIQCghhY3Rvcl9pZBgCIAEoCRIVCg1kdXJhdGlvbl9zZWNzGAMgASgDEj8KCHBvbGljaWVzGAQgAygLMi0ubmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEuVGVuYW50VG9rZW5Qb2xpY3kSOAoGYWNjZXNzGAUgASgLMigubmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEuQWNjZXNzUG9saWN5IkYKDEFjY2Vzc1BvbGljeRI2CgZncmFudHMYASADKAsyJi5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5QZXJtaXNzaW9uIjAKGElzc3VlVGVuYW50VG9rZW5SZXNwb25zZRIUCgxiZWFyZXJfdG9rZW4YASABKAkiNwoRVGVuYW50VG9rZW5Qb2xpY3kSEwoLcG9saWN5X3R5cGUYASABKAkSDQoFdmFsdWUYAiABKAkirAIKG0NyZWF0ZVJldm9rYWJsZVRva2VuUmVxdWVzdBIMCgRuYW1lGAEgASgJEhMKC2Rlc2NyaXB0aW9uGAIgASgJEi4KCmV4cGlyZXNfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEj8KCHBvbGljaWVzGAQgAygLMi0ubmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEuVGVuYW50VG9rZW5Qb2xpY3kSOAoGYWNjZXNzGAUgASgLMigubmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEuQWNjZXNzUG9saWN5Ej8KBXNjb3BlGAYgASgOMjAubmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEuUmV2b2thYmxlVG9rZW4uU2NvcGUibwocQ3JlYXRlUmV2b2thYmxlVG9rZW5SZXNwb25zZRIUCgxiZWFyZXJfdG9rZW4YASABKAkSOQoFdG9rZW4YAiABKAsyKi5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5SZXZva2FibGVUb2tlbiJlChxSZWZyZXNoUmV2b2thYmxlVG9rZW5SZXF1ZXN0EhAKCHRva2VuX2lkGAEgASgJEjMKEG1pbmltdW1fZHVyYXRpb24YAiABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24iWgodUmVmcmVzaFJldm9rYWJsZVRva2VuUmVzcG9uc2USOQoFdG9rZW4YASABKAsyKi5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5SZXZva2FibGVUb2tlbiIvChtSZXZva2VSZXZva2FibGVUb2tlblJlcXVlc3QSEAoIdG9rZW5faWQYASABKAkiZQoaTGlzdFJldm9rYWJsZVRva2Vuc1JlcXVlc3QSGQoRcGFnaW5hdGlvbl9jdXJzb3IYASABKAwSEwoLbWF4X2VudHJpZXMYAiABKAMSFwoPaW5jbHVkZV9yZXZva2VkGAMgASgIInQKG0xpc3RSZXZva2FibGVUb2tlbnNSZXNwb25zZRI6CgZ0b2tlbnMYASADKAsyKi5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5SZXZva2FibGVUb2tlbhIZChFwYWdpbmF0aW9uX2N1cnNvchgCIAEoDCLrBAoOUmV2b2thYmxlVG9rZW4SEAoIdG9rZW5faWQYASABKAkSEQoJdGVuYW50X2lkGAIgASgJEgwKBG5hbWUYAyABKAkSEwoLZGVzY3JpcHRpb24YBCABKAkSLgoKY3JlYXRlZF9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKZXhwaXJlc19hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKcmV2b2tlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASGwoTcmV2b2tlZF9ieV9hY3Rvcl9pZBgIIAEoCRIYChBjcmVhdG9yX2FjdG9yX2lkGAkgASgJEj8KBXNjb3BlGAogASgOMjAubmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEuUmV2b2thYmxlVG9rZW4uU2NvcGUSOwoLcGVybWlzc2lvbnMYCyADKAsyJi5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5QZXJtaXNzaW9uEj8KBXN0YXRlGAwgASgOMjAubmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEuUmV2b2thYmxlVG9rZW4uU3RhdGUiSQoFU2NvcGUSEQoNU0NPUEVfVU5LTk9XThAAEhAKDFRFTkFOVF9TQ09QRRABEhsKF1RFTkFOVF9NRU1CRVJTSElQX1NDT1BFEAIiQAoFU3RhdGUSEQoNU1RBVEVfVU5LTk9XThAAEgoKBkFDVElWRRABEgsKB1JFVk9LRUQQAhILCgdFWFBJUkVEEAMirAEKIEJhdGNoUmV2b2tlUmV2b2thYmxlVG9rZW5SZXF1ZXN0EioKBmJlZm9yZRgBIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASGwoTY3JlYXRlZF9ieV9hY3Rvcl9pZBgCIAEoCRI/CgVzY29wZRgDIAEoDjIwLm5hbWVzcGFjZS5jbG91ZC5pYW0udjFiZXRhLlJldm9rYWJsZVRva2VuLlNjb3BlIj4KIUJhdGNoUmV2b2tlUmV2b2thYmxlVG9rZW5SZXNwb25zZRIZChFyZXZva2VkX3Rva2VuX2lkcxgBIAMoCTKoBwoMVG9rZW5TZXJ2aWNlEnEKDElzc3VlSWRUb2tlbhIvLm5hbWVzcGFjZS5jbG91ZC5pYW0udjFiZXRhLklzc3VlSWRUb2tlblJlcXVlc3QaMC5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5Jc3N1ZUlkVG9rZW5SZXNwb25zZRJ9ChBJc3N1ZVRlbmFudFRva2VuEjMubmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEuSXNzdWVUZW5hbnRUb2tlblJlcXVlc3QaNC5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5Jc3N1ZVRlbmFudFRva2VuUmVzcG9uc2USiQEKFENyZWF0ZVJldm9rYWJsZVRva2VuEjcubmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEuQ3JlYXRlUmV2b2thYmxlVG9rZW5SZXF1ZXN0GjgubmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEuQ3JlYXRlUmV2b2thYmxlVG9rZW5SZXNwb25zZRKMAQoVUmVmcmVzaFJldm9rYWJsZVRva2VuEjgubmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEuUmVmcmVzaFJldm9rYWJsZVRva2VuUmVxdWVzdBo5Lm5hbWVzcGFjZS5jbG91ZC5pYW0udjFiZXRhLlJlZnJlc2hSZXZva2FibGVUb2tlblJlc3BvbnNlEmcKFFJldm9rZVJldm9rYWJsZVRva2VuEjcubmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEuUmV2b2tlUmV2b2thYmxlVG9rZW5SZXF1ZXN0GhYuZ29vZ2xlLnByb3RvYnVmLkVtcHR5EoYBChNMaXN0UmV2b2thYmxlVG9rZW5zEjYubmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEuTGlzdFJldm9rYWJsZVRva2Vuc1JlcXVlc3QaNy5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5MaXN0UmV2b2thYmxlVG9rZW5zUmVzcG9uc2USmAEKGUJhdGNoUmV2b2tlUmV2b2thYmxlVG9rZW4SPC5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5CYXRjaFJldm9rZVJldm9rYWJsZVRva2VuUmVxdWVzdBo9Lm5hbWVzcGFjZS5jbG91ZC5pYW0udjFiZXRhLkJhdGNoUmV2b2tlUmV2b2thYmxlVG9rZW5SZXNwb25zZWIGcHJvdG8z", [file_google_protobuf_duration, file_google_protobuf_empty, file_google_protobuf_timestamp, file_proto_namespace_cloud_iam_v1beta_authz]);
+  fileDesc("Ci1wcm90by9uYW1lc3BhY2UvY2xvdWQvaWFtL3YxYmV0YS90b2tlbnMucHJvdG8SGm5hbWVzcGFjZS5jbG91ZC5pYW0udjFiZXRhIicKE0lzc3VlSWRUb2tlblJlcXVlc3QSEAoIYXVkaWVuY2UYASABKAkiKAoUSXNzdWVJZFRva2VuUmVzcG9uc2USEAoIaWRfdG9rZW4YASABKAki0AEKF0lzc3VlVGVuYW50VG9rZW5SZXF1ZXN0EhEKCXRlbmFudF9pZBgBIAEoCRIQCghhY3Rvcl9pZBgCIAEoCRIVCg1kdXJhdGlvbl9zZWNzGAMgASgDEj8KCHBvbGljaWVzGAQgAygLMi0ubmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEuVGVuYW50VG9rZW5Qb2xpY3kSOAoGYWNjZXNzGAUgASgLMigubmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEuQWNjZXNzUG9saWN5IkYKDEFjY2Vzc1BvbGljeRI2CgZncmFudHMYASADKAsyJi5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5QZXJtaXNzaW9uIjAKGElzc3VlVGVuYW50VG9rZW5SZXNwb25zZRIUCgxiZWFyZXJfdG9rZW4YASABKAkidQofSXNzdWVUZW5hbnRUb2tlbldpdGhPSURDUmVxdWVzdBIRCgl0ZW5hbnRfaWQYASABKAkSEgoKb2lkY190b2tlbhgCIAEoCRIrCghkdXJhdGlvbhgDIAEoCzIZLmdvb2dsZS5wcm90b2J1Zi5EdXJhdGlvbiI3ChFUZW5hbnRUb2tlblBvbGljeRITCgtwb2xpY3lfdHlwZRgBIAEoCRINCgV2YWx1ZRgCIAEoCSKsAgobQ3JlYXRlUmV2b2thYmxlVG9rZW5SZXF1ZXN0EgwKBG5hbWUYASABKAkSEwoLZGVzY3JpcHRpb24YAiABKAkSLgoKZXhwaXJlc19hdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASPwoIcG9saWNpZXMYBCADKAsyLS5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5UZW5hbnRUb2tlblBvbGljeRI4CgZhY2Nlc3MYBSABKAsyKC5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5BY2Nlc3NQb2xpY3kSPwoFc2NvcGUYBiABKA4yMC5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5SZXZva2FibGVUb2tlbi5TY29wZSJvChxDcmVhdGVSZXZva2FibGVUb2tlblJlc3BvbnNlEhQKDGJlYXJlcl90b2tlbhgBIAEoCRI5CgV0b2tlbhgCIAEoCzIqLm5hbWVzcGFjZS5jbG91ZC5pYW0udjFiZXRhLlJldm9rYWJsZVRva2VuImUKHFJlZnJlc2hSZXZva2FibGVUb2tlblJlcXVlc3QSEAoIdG9rZW5faWQYASABKAkSMwoQbWluaW11bV9kdXJhdGlvbhgCIAEoCzIZLmdvb2dsZS5wcm90b2J1Zi5EdXJhdGlvbiJaCh1SZWZyZXNoUmV2b2thYmxlVG9rZW5SZXNwb25zZRI5CgV0b2tlbhgBIAEoCzIqLm5hbWVzcGFjZS5jbG91ZC5pYW0udjFiZXRhLlJldm9rYWJsZVRva2VuIi8KG1Jldm9rZVJldm9rYWJsZVRva2VuUmVxdWVzdBIQCgh0b2tlbl9pZBgBIAEoCSJlChpMaXN0UmV2b2thYmxlVG9rZW5zUmVxdWVzdBIZChFwYWdpbmF0aW9uX2N1cnNvchgBIAEoDBITCgttYXhfZW50cmllcxgCIAEoAxIXCg9pbmNsdWRlX3Jldm9rZWQYAyABKAgidAobTGlzdFJldm9rYWJsZVRva2Vuc1Jlc3BvbnNlEjoKBnRva2VucxgBIAMoCzIqLm5hbWVzcGFjZS5jbG91ZC5pYW0udjFiZXRhLlJldm9rYWJsZVRva2VuEhkKEXBhZ2luYXRpb25fY3Vyc29yGAIgASgMIusECg5SZXZva2FibGVUb2tlbhIQCgh0b2tlbl9pZBgBIAEoCRIRCgl0ZW5hbnRfaWQYAiABKAkSDAoEbmFtZRgDIAEoCRITCgtkZXNjcmlwdGlvbhgEIAEoCRIuCgpjcmVhdGVkX2F0GAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpleHBpcmVzX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpyZXZva2VkX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIbChNyZXZva2VkX2J5X2FjdG9yX2lkGAggASgJEhgKEGNyZWF0b3JfYWN0b3JfaWQYCSABKAkSPwoFc2NvcGUYCiABKA4yMC5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5SZXZva2FibGVUb2tlbi5TY29wZRI7CgtwZXJtaXNzaW9ucxgLIAMoCzImLm5hbWVzcGFjZS5jbG91ZC5pYW0udjFiZXRhLlBlcm1pc3Npb24SPwoFc3RhdGUYDCABKA4yMC5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5SZXZva2FibGVUb2tlbi5TdGF0ZSJJCgVTY29wZRIRCg1TQ09QRV9VTktOT1dOEAASEAoMVEVOQU5UX1NDT1BFEAESGwoXVEVOQU5UX01FTUJFUlNISVBfU0NPUEUQAiJACgVTdGF0ZRIRCg1TVEFURV9VTktOT1dOEAASCgoGQUNUSVZFEAESCwoHUkVWT0tFRBACEgsKB0VYUElSRUQQAyKsAQogQmF0Y2hSZXZva2VSZXZva2FibGVUb2tlblJlcXVlc3QSKgoGYmVmb3JlGAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIbChNjcmVhdGVkX2J5X2FjdG9yX2lkGAIgASgJEj8KBXNjb3BlGAMgASgOMjAubmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEuUmV2b2thYmxlVG9rZW4uU2NvcGUiPgohQmF0Y2hSZXZva2VSZXZva2FibGVUb2tlblJlc3BvbnNlEhkKEXJldm9rZWRfdG9rZW5faWRzGAEgAygJMrgICgxUb2tlblNlcnZpY2UScQoMSXNzdWVJZFRva2VuEi8ubmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEuSXNzdWVJZFRva2VuUmVxdWVzdBowLm5hbWVzcGFjZS5jbG91ZC5pYW0udjFiZXRhLklzc3VlSWRUb2tlblJlc3BvbnNlEn0KEElzc3VlVGVuYW50VG9rZW4SMy5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5Jc3N1ZVRlbmFudFRva2VuUmVxdWVzdBo0Lm5hbWVzcGFjZS5jbG91ZC5pYW0udjFiZXRhLklzc3VlVGVuYW50VG9rZW5SZXNwb25zZRKNAQoYSXNzdWVUZW5hbnRUb2tlbldpdGhPSURDEjsubmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEuSXNzdWVUZW5hbnRUb2tlbldpdGhPSURDUmVxdWVzdBo0Lm5hbWVzcGFjZS5jbG91ZC5pYW0udjFiZXRhLklzc3VlVGVuYW50VG9rZW5SZXNwb25zZRKJAQoUQ3JlYXRlUmV2b2thYmxlVG9rZW4SNy5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5DcmVhdGVSZXZva2FibGVUb2tlblJlcXVlc3QaOC5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5DcmVhdGVSZXZva2FibGVUb2tlblJlc3BvbnNlEowBChVSZWZyZXNoUmV2b2thYmxlVG9rZW4SOC5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5SZWZyZXNoUmV2b2thYmxlVG9rZW5SZXF1ZXN0GjkubmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEuUmVmcmVzaFJldm9rYWJsZVRva2VuUmVzcG9uc2USZwoUUmV2b2tlUmV2b2thYmxlVG9rZW4SNy5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5SZXZva2VSZXZva2FibGVUb2tlblJlcXVlc3QaFi5nb29nbGUucHJvdG9idWYuRW1wdHkShgEKE0xpc3RSZXZva2FibGVUb2tlbnMSNi5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5MaXN0UmV2b2thYmxlVG9rZW5zUmVxdWVzdBo3Lm5hbWVzcGFjZS5jbG91ZC5pYW0udjFiZXRhLkxpc3RSZXZva2FibGVUb2tlbnNSZXNwb25zZRKYAQoZQmF0Y2hSZXZva2VSZXZva2FibGVUb2tlbhI8Lm5hbWVzcGFjZS5jbG91ZC5pYW0udjFiZXRhLkJhdGNoUmV2b2tlUmV2b2thYmxlVG9rZW5SZXF1ZXN0Gj0ubmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEuQmF0Y2hSZXZva2VSZXZva2FibGVUb2tlblJlc3BvbnNlQlJaUG5hbWVzcGFjZWxhYnMuZGV2L2ludGVybmFsL3B1YmxpYy9nZW4vcHJvdG8vbmFtZXNwYWNlL2Nsb3VkL2lhbS92MWJldGE7aWFtdjFiZXRhYgZwcm90bzM", [file_google_protobuf_duration, file_google_protobuf_empty, file_google_protobuf_timestamp, file_proto_namespace_cloud_iam_v1beta_authz]);
 
 /**
  * @generated from message namespace.cloud.iam.v1beta.IssueIdTokenRequest
@@ -147,6 +147,39 @@ export const IssueTenantTokenResponseSchema: GenMessage<IssueTenantTokenResponse
   messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 4);
 
 /**
+ * @generated from message namespace.cloud.iam.v1beta.IssueTenantTokenWithOIDCRequest
+ */
+export type IssueTenantTokenWithOIDCRequest = Message<"namespace.cloud.iam.v1beta.IssueTenantTokenWithOIDCRequest"> & {
+  /**
+   * Which tenant credentials should be produced for.
+   *
+   * @generated from field: string tenant_id = 1;
+   */
+  tenantId: string;
+
+  /**
+   * The OIDC token from a trusted external issuer.
+   *
+   * @generated from field: string oidc_token = 2;
+   */
+  oidcToken: string;
+
+  /**
+   * For how long the resulting credentials should be valid.
+   *
+   * @generated from field: google.protobuf.Duration duration = 3;
+   */
+  duration?: Duration;
+};
+
+/**
+ * Describes the message namespace.cloud.iam.v1beta.IssueTenantTokenWithOIDCRequest.
+ * Use `create(IssueTenantTokenWithOIDCRequestSchema)` to create a new message.
+ */
+export const IssueTenantTokenWithOIDCRequestSchema: GenMessage<IssueTenantTokenWithOIDCRequest> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 5);
+
+/**
  * @generated from message namespace.cloud.iam.v1beta.TenantTokenPolicy
  */
 export type TenantTokenPolicy = Message<"namespace.cloud.iam.v1beta.TenantTokenPolicy"> & {
@@ -173,7 +206,7 @@ export type TenantTokenPolicy = Message<"namespace.cloud.iam.v1beta.TenantTokenP
  * Use `create(TenantTokenPolicySchema)` to create a new message.
  */
 export const TenantTokenPolicySchema: GenMessage<TenantTokenPolicy> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 5);
+  messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 6);
 
 /**
  * @generated from message namespace.cloud.iam.v1beta.CreateRevokableTokenRequest
@@ -195,6 +228,7 @@ export type CreateRevokableTokenRequest = Message<"namespace.cloud.iam.v1beta.Cr
 
   /**
    * When the token should expire. Maximum expiration is 1 year from creation.
+   * May be omitted for membership-scoped tokens to create a token with unlimited duration.
    *
    * @generated from field: google.protobuf.Timestamp expires_at = 3;
    */
@@ -227,7 +261,7 @@ export type CreateRevokableTokenRequest = Message<"namespace.cloud.iam.v1beta.Cr
  * Use `create(CreateRevokableTokenRequestSchema)` to create a new message.
  */
 export const CreateRevokableTokenRequestSchema: GenMessage<CreateRevokableTokenRequest> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 6);
+  messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 7);
 
 /**
  * @generated from message namespace.cloud.iam.v1beta.CreateRevokableTokenResponse
@@ -256,7 +290,7 @@ export type CreateRevokableTokenResponse = Message<"namespace.cloud.iam.v1beta.C
  * Use `create(CreateRevokableTokenResponseSchema)` to create a new message.
  */
 export const CreateRevokableTokenResponseSchema: GenMessage<CreateRevokableTokenResponse> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 7);
+  messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 8);
 
 /**
  * @generated from message namespace.cloud.iam.v1beta.RefreshRevokableTokenRequest
@@ -283,7 +317,7 @@ export type RefreshRevokableTokenRequest = Message<"namespace.cloud.iam.v1beta.R
  * Use `create(RefreshRevokableTokenRequestSchema)` to create a new message.
  */
 export const RefreshRevokableTokenRequestSchema: GenMessage<RefreshRevokableTokenRequest> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 8);
+  messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 9);
 
 /**
  * @generated from message namespace.cloud.iam.v1beta.RefreshRevokableTokenResponse
@@ -302,7 +336,7 @@ export type RefreshRevokableTokenResponse = Message<"namespace.cloud.iam.v1beta.
  * Use `create(RefreshRevokableTokenResponseSchema)` to create a new message.
  */
 export const RefreshRevokableTokenResponseSchema: GenMessage<RefreshRevokableTokenResponse> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 9);
+  messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 10);
 
 /**
  * @generated from message namespace.cloud.iam.v1beta.RevokeRevokableTokenRequest
@@ -321,7 +355,7 @@ export type RevokeRevokableTokenRequest = Message<"namespace.cloud.iam.v1beta.Re
  * Use `create(RevokeRevokableTokenRequestSchema)` to create a new message.
  */
 export const RevokeRevokableTokenRequestSchema: GenMessage<RevokeRevokableTokenRequest> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 10);
+  messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 11);
 
 /**
  * @generated from message namespace.cloud.iam.v1beta.ListRevokableTokensRequest
@@ -360,7 +394,7 @@ export type ListRevokableTokensRequest = Message<"namespace.cloud.iam.v1beta.Lis
  * Use `create(ListRevokableTokensRequestSchema)` to create a new message.
  */
 export const ListRevokableTokensRequestSchema: GenMessage<ListRevokableTokensRequest> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 11);
+  messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 12);
 
 /**
  * @generated from message namespace.cloud.iam.v1beta.ListRevokableTokensResponse
@@ -387,7 +421,7 @@ export type ListRevokableTokensResponse = Message<"namespace.cloud.iam.v1beta.Li
  * Use `create(ListRevokableTokensResponseSchema)` to create a new message.
  */
 export const ListRevokableTokensResponseSchema: GenMessage<ListRevokableTokensResponse> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 12);
+  messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 13);
 
 /**
  * @generated from message namespace.cloud.iam.v1beta.RevokableToken
@@ -430,6 +464,7 @@ export type RevokableToken = Message<"namespace.cloud.iam.v1beta.RevokableToken"
 
   /**
    * When the token expires. Tokens are implicitly invalid after this time.
+   * If omitted, the membership-scoped token has unlimited duration.
    *
    * @generated from field: google.protobuf.Timestamp expires_at = 6;
    */
@@ -483,7 +518,7 @@ export type RevokableToken = Message<"namespace.cloud.iam.v1beta.RevokableToken"
  * Use `create(RevokableTokenSchema)` to create a new message.
  */
 export const RevokableTokenSchema: GenMessage<RevokableToken> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 13);
+  messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 14);
 
 /**
  * @generated from enum namespace.cloud.iam.v1beta.RevokableToken.Scope
@@ -511,7 +546,7 @@ export enum RevokableToken_Scope {
  * Describes the enum namespace.cloud.iam.v1beta.RevokableToken.Scope.
  */
 export const RevokableToken_ScopeSchema: GenEnum<RevokableToken_Scope> = /*@__PURE__*/
-  enumDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 13, 0);
+  enumDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 14, 0);
 
 /**
  * @generated from enum namespace.cloud.iam.v1beta.RevokableToken.State
@@ -542,7 +577,7 @@ export enum RevokableToken_State {
  * Describes the enum namespace.cloud.iam.v1beta.RevokableToken.State.
  */
 export const RevokableToken_StateSchema: GenEnum<RevokableToken_State> = /*@__PURE__*/
-  enumDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 13, 1);
+  enumDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 14, 1);
 
 /**
  * @generated from message namespace.cloud.iam.v1beta.BatchRevokeRevokableTokenRequest
@@ -578,7 +613,7 @@ export type BatchRevokeRevokableTokenRequest = Message<"namespace.cloud.iam.v1be
  * Use `create(BatchRevokeRevokableTokenRequestSchema)` to create a new message.
  */
 export const BatchRevokeRevokableTokenRequestSchema: GenMessage<BatchRevokeRevokableTokenRequest> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 14);
+  messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 15);
 
 /**
  * @generated from message namespace.cloud.iam.v1beta.BatchRevokeRevokableTokenResponse
@@ -597,7 +632,7 @@ export type BatchRevokeRevokableTokenResponse = Message<"namespace.cloud.iam.v1b
  * Use `create(BatchRevokeRevokableTokenResponseSchema)` to create a new message.
  */
 export const BatchRevokeRevokableTokenResponseSchema: GenMessage<BatchRevokeRevokableTokenResponse> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 15);
+  messageDesc(file_proto_namespace_cloud_iam_v1beta_tokens, 16);
 
 /**
  * TokenService provides facilities to obtain "tokens" to authenticate access to
@@ -634,8 +669,8 @@ export const BatchRevokeRevokableTokenResponseSchema: GenMessage<BatchRevokeRevo
  *
  * ## Authentication
  *
- * Calls to the Token service require providing a JWT as a Bearer token, that
- * has been signed by the Namespace platform.
+ * Most calls to the Token service require providing a JWT as a Bearer token,
+ * signed by the Namespace platform.
  *
  * Tenant tokens issued by Tenant service can be used as such Bearer tokens. The
  * token can be used as to authenticate calls to Token API with Authorization
@@ -681,14 +716,29 @@ export const TokenService: GenService<{
     output: typeof IssueTenantTokenResponseSchema;
   },
   /**
+   * Produces credentials in the form of a Bearer token that grant access to
+   * the specified Tenant using an OIDC token from a trusted issuer.
+   *
+   * ### Authentication
+   * This call authenticates using the `oidc_token` provided in the request.
+   *
+   * @generated from rpc namespace.cloud.iam.v1beta.TokenService.IssueTenantTokenWithOIDC
+   */
+  issueTenantTokenWithOIDC: {
+    methodKind: "unary";
+    input: typeof IssueTenantTokenWithOIDCRequestSchema;
+    output: typeof IssueTenantTokenResponseSchema;
+  },
+  /**
    * Creates a revokable token that returns a bearer token (prefixed with "nsrt_") and metadata (with token_id prefixed with "tok_").
-   * Revokable tokens can be explicitly revoked and have a maximum expiration of 1 year.
+   * Revokable tokens can be explicitly revoked and have a maximum expiration of 1 year when an expiration is set.
+   * Membership-scoped tokens may have no expiration and remain valid until revoked or the user loses tenant membership.
    *
    * ### Authentication
    * Requires a tenant token with the {"token/revokable", "create"} action permission.
    *
    * ### Errors
-   * - If expiry is not provided or exceeds 1 year, an `InvalidArgument` status is returned.
+   * - If expiry is not provided for a tenant-scoped token or exceeds 1 year, an `InvalidArgument` status is returned.
    * - If no policies are defined, an `InvalidArgument` status is returned.
    *
    * @generated from rpc namespace.cloud.iam.v1beta.TokenService.CreateRevokableToken
