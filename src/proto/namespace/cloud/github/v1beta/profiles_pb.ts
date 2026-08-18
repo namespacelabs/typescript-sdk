@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file proto/namespace/cloud/github/v1beta/profiles.proto.
  */
 export const file_proto_namespace_cloud_github_v1beta_profiles: GenFile = /*@__PURE__*/
-  fileDesc("CjJwcm90by9uYW1lc3BhY2UvY2xvdWQvZ2l0aHViL3YxYmV0YS9wcm9maWxlcy5wcm90bxIdbmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEiZAoTUnVubmVyUHJvZmlsZVN0YXR1cxJNChNjdXN0b21fcnVubmVyX2ltYWdlGAEgAygLMjAubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuQ3VzdG9tUnVubmVySW1hZ2UiogIKF1J1bm5lclByb2ZpbGVXaXRoU3RhdHVzEhIKCnByb2ZpbGVfaWQYASABKAkSPgoEc3BlYxgCIAEoCzIwLm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLlJ1bm5lclByb2ZpbGVTcGVjEg8KB3ZlcnNpb24YAyABKAMSLgoKY3JlYXRlZF9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASQgoGc3RhdHVzGAYgASgLMjIubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuUnVubmVyUHJvZmlsZVN0YXR1cyKrAgoTQ2FjaGVWb2x1bWVTZXR0aW5ncxISCgp2b2x1bWVfdGFnGAEgASgJEhYKDnZvbHVtZV9zaXplX2diGAIgASgFEh8KF3ZvbHVtZV9yZXNlcnZlZF9zaXplX2diGAMgASgFEh8KF2J1bmRsZWRfY29udGFpbmVyX2NhY2hlGAQgASgIEh4KFmJ1bmRsZWRfYnVpbGRraXRfY2FjaGUYBSABKAgSGgoSYnVuZGxlZF9naXRfbWlycm9yGAYgASgIEiIKGmJ1bmRsZWRfcnVubmVyX3Rvb2xzX2NhY2hlGAcgASgIEiQKHGJ1bmRsZWRfcnVubmVyX2FjdGlvbnNfY2FjaGUYCCABKAgSIAoYYWxsb3dfY29tbWl0X2Zyb21fYnJhbmNoGAkgAygJIioKE1VidW50dUJhc2VJbWFnZVNwZWMSEwoLYXB0X3BhY2thZ2UYASADKAkiMQoTRG9ja2VyQmFzZUltYWdlU3BlYxIaChJkb2NrZXJmaWxlX2NvbnRlbnQYASABKAkiqQEKFUN1c3RvbVJ1bm5lckltYWdlU3BlYxJHCgt1YnVudHVfc3BlYxgBIAEoCzIyLm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLlVidW50dUJhc2VJbWFnZVNwZWMSRwoLZG9ja2VyX3NwZWMYAiABKAsyMi5uYW1lc3BhY2UuY2xvdWQuZ2l0aHViLnYxYmV0YS5Eb2NrZXJCYXNlSW1hZ2VTcGVjIoIDChdDdXN0b21SdW5uZXJJbWFnZVN0YXR1cxIRCglpbWFnZV9yZWYYASABKAkSTQoGc3RhdHVzGAIgASgOMj0ubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuQ3VzdG9tUnVubmVySW1hZ2VTdGF0dXMuU3RhdHVzEhgKEGxhc3RfYnVpbGRfZXJyb3IYAyABKAkSNAoQc3RhcnRlZF9idWlsZF9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLAoIYnVpbHRfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjEKDWxhc3RfZXJyb3JfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhEKCWJ1aWxkX3JlZhgHIAEoCSJBCgZTdGF0dXMSEgoOU1RBVFVTX1VOS05PV04QABIMCghCVUlMRElORxABEgoKBkZBSUxFRBACEgkKBVJFQURZEAMiqwEKEUN1c3RvbVJ1bm5lckltYWdlEkgKCmltYWdlX3NwZWMYASABKAsyNC5uYW1lc3BhY2UuY2xvdWQuZ2l0aHViLnYxYmV0YS5DdXN0b21SdW5uZXJJbWFnZVNwZWMSTAoMaW1hZ2Vfc3RhdHVzGAIgASgLMjYubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuQ3VzdG9tUnVubmVySW1hZ2VTdGF0dXMi6QMKEVJ1bm5lclByb2ZpbGVTcGVjEgsKA3RhZxgBIAEoCRITCgtkZXNjcmlwdGlvbhgCIAEoCRIKCgJvcxgDIAEoCRJFCg5pbnN0YW5jZV9zaGFwZRgEIAEoCzItLm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5JbnN0YW5jZVNoYXBlElEKFWNhY2hlX3ZvbHVtZV9zZXR0aW5ncxgFIAMoCzIyLm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLkNhY2hlVm9sdW1lU2V0dGluZ3MSQAoMYnVpbGRlcl9tb2RlGAYgASgOMioubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuQnVpbGRlck1vZGUSHQoVZXhwZXJpbWVudGFsX2ZlYXR1cmVzGAcgAygJEg0KBWVtb2ppGAggASgJElYKGGN1c3RvbV9ydW5uZXJfaW1hZ2Vfc3BlYxgJIAEoCzI0Lm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLkN1c3RvbVJ1bm5lckltYWdlU3BlYxJECg5uZXR3b3JrX3BvbGljeRgKIAEoCzIsLm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLk5ldHdvcmtQb2xpY3ki5AEKDU5ldHdvcmtQb2xpY3kSSQoGZWdyZXNzGAEgASgOMjkubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuTmV0d29ya1BvbGljeS5FZ3Jlc3NQb2xpY3kSIAoYZWdyZXNzX2RvbWFpbl9hbGxvd19saXN0GAIgAygJImYKDEVncmVzc1BvbGljeRIZChVFR1JFU1NfUE9MSUNZX1VOS05PV04QABIWChJFR1JFU1NfUE9MSUNZX05PTkUQARIjCh9FR1JFU1NfUE9MSUNZX0RPTUFJTl9BTExPV19MSVNUEAIiVgoUQ3JlYXRlUHJvZmlsZVJlcXVlc3QSPgoEc3BlYxgBIAEoCzIwLm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLlJ1bm5lclByb2ZpbGVTcGVjImAKFUNyZWF0ZVByb2ZpbGVSZXNwb25zZRJHCgdwcm9maWxlGAEgASgLMjYubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuUnVubmVyUHJvZmlsZVdpdGhTdGF0dXMiggEKFFVwZGF0ZVByb2ZpbGVSZXF1ZXN0EhIKCnByb2ZpbGVfaWQYASABKAkSPgoEc3BlYxgCIAEoCzIwLm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLlJ1bm5lclByb2ZpbGVTcGVjEhYKDnVwZGF0ZV92ZXJzaW9uGAMgASgDImAKFVVwZGF0ZVByb2ZpbGVSZXNwb25zZRJHCgdwcm9maWxlGAEgASgLMjYubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuUnVubmVyUHJvZmlsZVdpdGhTdGF0dXMiYAoUTGlzdFByb2ZpbGVzUmVzcG9uc2USSAoIcHJvZmlsZXMYASADKAsyNi5uYW1lc3BhY2UuY2xvdWQuZ2l0aHViLnYxYmV0YS5SdW5uZXJQcm9maWxlV2l0aFN0YXR1cyIqChREZWxldGVQcm9maWxlUmVxdWVzdBISCgpwcm9maWxlX2lkGAEgASgJKmgKC0J1aWxkZXJNb2RlEhwKGEJVSUxERVJfTU9ERV9VTlNQRUNJRklFRBAAEhYKElVTRV9SRU1PVEVfQlVJTERFUhABEhMKD1VTRV9MT0NBTF9DQUNIRRACEg4KCk5PX0NBQ0hJTkcQAzLDAwoOUHJvZmlsZVNlcnZpY2USegoNQ3JlYXRlUHJvZmlsZRIzLm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLkNyZWF0ZVByb2ZpbGVSZXF1ZXN0GjQubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuQ3JlYXRlUHJvZmlsZVJlc3BvbnNlEnoKDVVwZGF0ZVByb2ZpbGUSMy5uYW1lc3BhY2UuY2xvdWQuZ2l0aHViLnYxYmV0YS5VcGRhdGVQcm9maWxlUmVxdWVzdBo0Lm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLlVwZGF0ZVByb2ZpbGVSZXNwb25zZRJbCgxMaXN0UHJvZmlsZXMSFi5nb29nbGUucHJvdG9idWYuRW1wdHkaMy5uYW1lc3BhY2UuY2xvdWQuZ2l0aHViLnYxYmV0YS5MaXN0UHJvZmlsZXNSZXNwb25zZRJcCg1EZWxldGVQcm9maWxlEjMubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuRGVsZXRlUHJvZmlsZVJlcXVlc3QaFi5nb29nbGUucHJvdG9idWYuRW1wdHlCS1pJbmFtZXNwYWNlbGFicy5kZXYvaW50ZXJuYWwvcHVibGljL2dlbi9wcm90by9uYW1lc3BhY2UvY2xvdWQvZ2l0aHViL3YxYmV0YWIGcHJvdG8z", [file_google_protobuf_empty, file_google_protobuf_timestamp, file_proto_namespace_cloud_compute_v1beta_compute]);
+  fileDesc("CjJwcm90by9uYW1lc3BhY2UvY2xvdWQvZ2l0aHViL3YxYmV0YS9wcm9maWxlcy5wcm90bxIdbmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEiZAoTUnVubmVyUHJvZmlsZVN0YXR1cxJNChNjdXN0b21fcnVubmVyX2ltYWdlGAEgAygLMjAubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuQ3VzdG9tUnVubmVySW1hZ2UiogIKF1J1bm5lclByb2ZpbGVXaXRoU3RhdHVzEhIKCnByb2ZpbGVfaWQYASABKAkSPgoEc3BlYxgCIAEoCzIwLm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLlJ1bm5lclByb2ZpbGVTcGVjEg8KB3ZlcnNpb24YAyABKAMSLgoKY3JlYXRlZF9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASQgoGc3RhdHVzGAYgASgLMjIubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuUnVubmVyUHJvZmlsZVN0YXR1cyKrAgoTQ2FjaGVWb2x1bWVTZXR0aW5ncxISCgp2b2x1bWVfdGFnGAEgASgJEhYKDnZvbHVtZV9zaXplX2diGAIgASgFEh8KF3ZvbHVtZV9yZXNlcnZlZF9zaXplX2diGAMgASgFEh8KF2J1bmRsZWRfY29udGFpbmVyX2NhY2hlGAQgASgIEh4KFmJ1bmRsZWRfYnVpbGRraXRfY2FjaGUYBSABKAgSGgoSYnVuZGxlZF9naXRfbWlycm9yGAYgASgIEiIKGmJ1bmRsZWRfcnVubmVyX3Rvb2xzX2NhY2hlGAcgASgIEiQKHGJ1bmRsZWRfcnVubmVyX2FjdGlvbnNfY2FjaGUYCCABKAgSIAoYYWxsb3dfY29tbWl0X2Zyb21fYnJhbmNoGAkgAygJIioKE1VidW50dUJhc2VJbWFnZVNwZWMSEwoLYXB0X3BhY2thZ2UYASADKAkiMQoTRG9ja2VyQmFzZUltYWdlU3BlYxIaChJkb2NrZXJmaWxlX2NvbnRlbnQYASABKAkiqQEKFUN1c3RvbVJ1bm5lckltYWdlU3BlYxJHCgt1YnVudHVfc3BlYxgBIAEoCzIyLm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLlVidW50dUJhc2VJbWFnZVNwZWMSRwoLZG9ja2VyX3NwZWMYAiABKAsyMi5uYW1lc3BhY2UuY2xvdWQuZ2l0aHViLnYxYmV0YS5Eb2NrZXJCYXNlSW1hZ2VTcGVjIoIDChdDdXN0b21SdW5uZXJJbWFnZVN0YXR1cxIRCglpbWFnZV9yZWYYASABKAkSTQoGc3RhdHVzGAIgASgOMj0ubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuQ3VzdG9tUnVubmVySW1hZ2VTdGF0dXMuU3RhdHVzEhgKEGxhc3RfYnVpbGRfZXJyb3IYAyABKAkSNAoQc3RhcnRlZF9idWlsZF9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLAoIYnVpbHRfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjEKDWxhc3RfZXJyb3JfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhEKCWJ1aWxkX3JlZhgHIAEoCSJBCgZTdGF0dXMSEgoOU1RBVFVTX1VOS05PV04QABIMCghCVUlMRElORxABEgoKBkZBSUxFRBACEgkKBVJFQURZEAMiqwEKEUN1c3RvbVJ1bm5lckltYWdlEkgKCmltYWdlX3NwZWMYASABKAsyNC5uYW1lc3BhY2UuY2xvdWQuZ2l0aHViLnYxYmV0YS5DdXN0b21SdW5uZXJJbWFnZVNwZWMSTAoMaW1hZ2Vfc3RhdHVzGAIgASgLMjYubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuQ3VzdG9tUnVubmVySW1hZ2VTdGF0dXMiwQQKEVJ1bm5lclByb2ZpbGVTcGVjEgsKA3RhZxgBIAEoCRITCgtkZXNjcmlwdGlvbhgCIAEoCRIKCgJvcxgDIAEoCRJFCg5pbnN0YW5jZV9zaGFwZRgEIAEoCzItLm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5JbnN0YW5jZVNoYXBlElEKFWNhY2hlX3ZvbHVtZV9zZXR0aW5ncxgFIAMoCzIyLm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLkNhY2hlVm9sdW1lU2V0dGluZ3MSQAoMYnVpbGRlcl9tb2RlGAYgASgOMioubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuQnVpbGRlck1vZGUSHQoVZXhwZXJpbWVudGFsX2ZlYXR1cmVzGAcgAygJEg0KBWVtb2ppGAggASgJElYKGGN1c3RvbV9ydW5uZXJfaW1hZ2Vfc3BlYxgJIAEoCzI0Lm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLkN1c3RvbVJ1bm5lckltYWdlU3BlYxJECg5uZXR3b3JrX3BvbGljeRgKIAEoCzIsLm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLk5ldHdvcmtQb2xpY3kSQAoMYWNjZXNzX2xldmVsGAsgASgOMioubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuQWNjZXNzTGV2ZWwSFAoMc3dhcF9zaXplX21iGAwgASgFIqgCCg1OZXR3b3JrUG9saWN5EkkKBmVncmVzcxgBIAEoDjI5Lm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLk5ldHdvcmtQb2xpY3kuRWdyZXNzUG9saWN5EiAKGGVncmVzc19kb21haW5fYWxsb3dfbGlzdBgCIAMoCRIQCghhZHZpc29yeRgDIAEoCBIZChFlZ3Jlc3NfcG9saWN5X3RhZxgEIAEoCSJ9CgxFZ3Jlc3NQb2xpY3kSGQoVRUdSRVNTX1BPTElDWV9VTktOT1dOEAASFgoSRUdSRVNTX1BPTElDWV9OT05FEAESIwofRUdSRVNTX1BPTElDWV9ET01BSU5fQUxMT1dfTElTVBACEhUKEUVHUkVTU19QT0xJQ1lfVEFHEAMiVgoUQ3JlYXRlUHJvZmlsZVJlcXVlc3QSPgoEc3BlYxgBIAEoCzIwLm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLlJ1bm5lclByb2ZpbGVTcGVjImAKFUNyZWF0ZVByb2ZpbGVSZXNwb25zZRJHCgdwcm9maWxlGAEgASgLMjYubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuUnVubmVyUHJvZmlsZVdpdGhTdGF0dXMiggEKFFVwZGF0ZVByb2ZpbGVSZXF1ZXN0EhIKCnByb2ZpbGVfaWQYASABKAkSPgoEc3BlYxgCIAEoCzIwLm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLlJ1bm5lclByb2ZpbGVTcGVjEhYKDnVwZGF0ZV92ZXJzaW9uGAMgASgDImAKFVVwZGF0ZVByb2ZpbGVSZXNwb25zZRJHCgdwcm9maWxlGAEgASgLMjYubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuUnVubmVyUHJvZmlsZVdpdGhTdGF0dXMiYAoUTGlzdFByb2ZpbGVzUmVzcG9uc2USSAoIcHJvZmlsZXMYASADKAsyNi5uYW1lc3BhY2UuY2xvdWQuZ2l0aHViLnYxYmV0YS5SdW5uZXJQcm9maWxlV2l0aFN0YXR1cyIqChREZWxldGVQcm9maWxlUmVxdWVzdBISCgpwcm9maWxlX2lkGAEgASgJIjAKGlJlYnVpbGRQcm9maWxlSW1hZ2VSZXF1ZXN0EhIKCnByb2ZpbGVfaWQYASABKAkiYQobUmVidWlsZFByb2ZpbGVJbWFnZVJlc3BvbnNlEkIKBnN0YXR1cxgBIAEoCzIyLm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLlJ1bm5lclByb2ZpbGVTdGF0dXMqaAoLQnVpbGRlck1vZGUSHAoYQlVJTERFUl9NT0RFX1VOU1BFQ0lGSUVEEAASFgoSVVNFX1JFTU9URV9CVUlMREVSEAESEwoPVVNFX0xPQ0FMX0NBQ0hFEAISDgoKTk9fQ0FDSElORxADKn8KC0FjY2Vzc0xldmVsEhwKGEFDQ0VTU19MRVZFTF9VTlNQRUNJRklFRBAAEhsKF0FDQ0VTU19MRVZFTF9QRVJNSVNTSVZFEAESGAoUQUNDRVNTX0xFVkVMX0xJTUlURUQQAhIbChdBQ0NFU1NfTEVWRUxfUkVTVFJJQ1RFRBADMtIECg5Qcm9maWxlU2VydmljZRJ6Cg1DcmVhdGVQcm9maWxlEjMubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuQ3JlYXRlUHJvZmlsZVJlcXVlc3QaNC5uYW1lc3BhY2UuY2xvdWQuZ2l0aHViLnYxYmV0YS5DcmVhdGVQcm9maWxlUmVzcG9uc2USegoNVXBkYXRlUHJvZmlsZRIzLm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLlVwZGF0ZVByb2ZpbGVSZXF1ZXN0GjQubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuVXBkYXRlUHJvZmlsZVJlc3BvbnNlElsKDExpc3RQcm9maWxlcxIWLmdvb2dsZS5wcm90b2J1Zi5FbXB0eRozLm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLkxpc3RQcm9maWxlc1Jlc3BvbnNlElwKDURlbGV0ZVByb2ZpbGUSMy5uYW1lc3BhY2UuY2xvdWQuZ2l0aHViLnYxYmV0YS5EZWxldGVQcm9maWxlUmVxdWVzdBoWLmdvb2dsZS5wcm90b2J1Zi5FbXB0eRKMAQoTUmVidWlsZFByb2ZpbGVJbWFnZRI5Lm5hbWVzcGFjZS5jbG91ZC5naXRodWIudjFiZXRhLlJlYnVpbGRQcm9maWxlSW1hZ2VSZXF1ZXN0GjoubmFtZXNwYWNlLmNsb3VkLmdpdGh1Yi52MWJldGEuUmVidWlsZFByb2ZpbGVJbWFnZVJlc3BvbnNlQlhaVm5hbWVzcGFjZWxhYnMuZGV2L2ludGVybmFsL3B1YmxpYy9nZW4vcHJvdG8vbmFtZXNwYWNlL2Nsb3VkL2dpdGh1Yi92MWJldGE7Z2l0aHVidjFiZXRhYgZwcm90bzM", [file_google_protobuf_empty, file_google_protobuf_timestamp, file_proto_namespace_cloud_compute_v1beta_compute]);
 
 /**
  * RunnerProfileStatus contains runtime status information about a profile.
@@ -443,6 +443,20 @@ export type RunnerProfileSpec = Message<"namespace.cloud.github.v1beta.RunnerPro
    * @generated from field: namespace.cloud.github.v1beta.NetworkPolicy network_policy = 10;
    */
   networkPolicy?: NetworkPolicy;
+
+  /**
+   * Controls which Namespace features the runner workload can access.
+   *
+   * @generated from field: namespace.cloud.github.v1beta.AccessLevel access_level = 11;
+   */
+  accessLevel: AccessLevel;
+
+  /**
+   * Size of the swap file to provision on the runner, in megabytes.
+   *
+   * @generated from field: int32 swap_size_mb = 12;
+   */
+  swapSizeMb: number;
 };
 
 /**
@@ -472,6 +486,23 @@ export type NetworkPolicy = Message<"namespace.cloud.github.v1beta.NetworkPolicy
    * @generated from field: repeated string egress_domain_allow_list = 2;
    */
   egressDomainAllowList: string[];
+
+  /**
+   * When true, runs the egress domain allow list in advisory mode: traffic is
+   * not blocked, but egress decisions are still recorded.
+   * Must be false unless egress is DOMAIN_ALLOW_LIST.
+   *
+   * @generated from field: bool advisory = 3;
+   */
+  advisory: boolean;
+
+  /**
+   * Tag of the workspace egress policy to apply when policy is TAG.
+   * Must be empty unless egress is TAG.
+   *
+   * @generated from field: string egress_policy_tag = 4;
+   */
+  egressPolicyTag: string;
 };
 
 /**
@@ -508,6 +539,13 @@ export enum NetworkPolicy_EgressPolicy {
    * @generated from enum value: EGRESS_POLICY_DOMAIN_ALLOW_LIST = 2;
    */
   DOMAIN_ALLOW_LIST = 2,
+
+  /**
+   * Apply the workspace egress policy identified by egress_policy_tag.
+   *
+   * @generated from enum value: EGRESS_POLICY_TAG = 3;
+   */
+  TAG = 3,
 }
 
 /**
@@ -658,6 +696,44 @@ export const DeleteProfileRequestSchema: GenMessage<DeleteProfileRequest> = /*@_
   messageDesc(file_proto_namespace_cloud_github_v1beta_profiles, 15);
 
 /**
+ * RebuildProfileImageRequest triggers a rebuild of the custom base image for a profile.
+ *
+ * @generated from message namespace.cloud.github.v1beta.RebuildProfileImageRequest
+ */
+export type RebuildProfileImageRequest = Message<"namespace.cloud.github.v1beta.RebuildProfileImageRequest"> & {
+  /**
+   * @generated from field: string profile_id = 1;
+   */
+  profileId: string;
+};
+
+/**
+ * Describes the message namespace.cloud.github.v1beta.RebuildProfileImageRequest.
+ * Use `create(RebuildProfileImageRequestSchema)` to create a new message.
+ */
+export const RebuildProfileImageRequestSchema: GenMessage<RebuildProfileImageRequest> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_github_v1beta_profiles, 16);
+
+/**
+ * RebuildProfileImageResponse returns the status of the profile after the build has been triggered.
+ *
+ * @generated from message namespace.cloud.github.v1beta.RebuildProfileImageResponse
+ */
+export type RebuildProfileImageResponse = Message<"namespace.cloud.github.v1beta.RebuildProfileImageResponse"> & {
+  /**
+   * @generated from field: namespace.cloud.github.v1beta.RunnerProfileStatus status = 1;
+   */
+  status?: RunnerProfileStatus;
+};
+
+/**
+ * Describes the message namespace.cloud.github.v1beta.RebuildProfileImageResponse.
+ * Use `create(RebuildProfileImageResponseSchema)` to create a new message.
+ */
+export const RebuildProfileImageResponseSchema: GenMessage<RebuildProfileImageResponse> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_github_v1beta_profiles, 17);
+
+/**
  * BuilderMode controls how container builds are executed.
  *
  * @generated from enum namespace.cloud.github.v1beta.BuilderMode
@@ -697,6 +773,48 @@ export enum BuilderMode {
  */
 export const BuilderModeSchema: GenEnum<BuilderMode> = /*@__PURE__*/
   enumDesc(file_proto_namespace_cloud_github_v1beta_profiles, 0);
+
+/**
+ * AccessLevel controls which Namespace features the runner workload can use.
+ *
+ * @generated from enum namespace.cloud.github.v1beta.AccessLevel
+ */
+export enum AccessLevel {
+  /**
+   * Defaults to PERMISSIVE.
+   *
+   * @generated from enum value: ACCESS_LEVEL_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * Allows access to the tenant's default workload permissions.
+   *
+   * @generated from enum value: ACCESS_LEVEL_PERMISSIVE = 1;
+   */
+  PERMISSIVE = 1,
+
+  /**
+   * Restricts access to GitHub job related features such as builders, caches,
+   * and the container registry.
+   *
+   * @generated from enum value: ACCESS_LEVEL_LIMITED = 2;
+   */
+  LIMITED = 2,
+
+  /**
+   * Disables Namespace feature access for the workload.
+   *
+   * @generated from enum value: ACCESS_LEVEL_RESTRICTED = 3;
+   */
+  RESTRICTED = 3,
+}
+
+/**
+ * Describes the enum namespace.cloud.github.v1beta.AccessLevel.
+ */
+export const AccessLevelSchema: GenEnum<AccessLevel> = /*@__PURE__*/
+  enumDesc(file_proto_namespace_cloud_github_v1beta_profiles, 1);
 
 /**
  * ProfileService manages runner profiles for GitHub Actions.
@@ -762,6 +880,16 @@ export const ProfileService: GenService<{
     methodKind: "unary";
     input: typeof DeleteProfileRequestSchema;
     output: typeof EmptySchema;
+  },
+  /**
+   * Triggers the rebuild of the custom base image of a runner profile.
+   *
+   * @generated from rpc namespace.cloud.github.v1beta.ProfileService.RebuildProfileImage
+   */
+  rebuildProfileImage: {
+    methodKind: "unary";
+    input: typeof RebuildProfileImageRequestSchema;
+    output: typeof RebuildProfileImageResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_proto_namespace_cloud_github_v1beta_profiles, 0);

@@ -4,15 +4,18 @@
 
 import { createConnectTransport } from "@connectrpc/connect-node";
 import { createClient, type Transport } from "@connectrpc/connect";
-import type { TokenSource } from "../auth/types.js";
+import type { TokenSourceInput } from "../auth/caching.js";
 import { bearerAuthInterceptor } from "./interceptors.js";
 
 /**
  * Options for creating a regional transport
  */
 export interface CreateRegionTransportOpts {
-	/** Token source for dynamic token fetching */
-	tokenSource: TokenSource;
+	/**
+	 * Token source, or a provider function for one (e.g. `loadUserToken`) invoked and awaited
+	 * internally on first use.
+	 */
+	tokenSource: TokenSourceInput;
 	/** Custom base URL (overrides region) */
 	baseUrl?: string;
 }
@@ -21,8 +24,11 @@ export interface CreateRegionTransportOpts {
  * Options for creating individual service clients
  */
 export interface CreateClientOpts {
-	/** Token source for dynamic token fetching */
-	tokenSource: TokenSource;
+	/**
+	 * Token source, or a provider function for one (e.g. `loadUserToken`) invoked and awaited
+	 * internally on first use.
+	 */
+	tokenSource: TokenSourceInput;
 	/** Custom transport (if provided, tokenSource is ignored) */
 	transport?: Transport;
 }
@@ -48,7 +54,7 @@ export function createRegionTransport(
  * Create a Connect transport for global APIs (IAM, Registry, etc.)
  */
 export function createGlobalTransport(opts: {
-	tokenSource: TokenSource;
+	tokenSource: TokenSourceInput;
 	baseUrl?: string;
 }): Transport {
 	const baseUrl = opts.baseUrl || "https://global.namespaceapis.com";

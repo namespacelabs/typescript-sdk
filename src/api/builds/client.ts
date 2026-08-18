@@ -3,7 +3,7 @@
  */
 
 import { createClient, type Transport } from "@connectrpc/connect";
-import type { TokenSource } from "../../auth/types.js";
+import type { TokenSourceInput } from "../../auth/caching.js";
 import { createRegionTransport } from "../clients.js";
 
 import { BuilderService } from "../../proto/namespace/cloud/builder/v1beta/builder_pb.js";
@@ -20,7 +20,7 @@ export interface BuildsClient {
  */
 export interface BuildsClientOpts {
 	/** Token source for authentication */
-	tokenSource: TokenSource;
+	tokenSource: TokenSourceInput;
 	/** Region (defaults to 'us') */
 	region?: string;
 	/** Custom transport (if provided, region and tokenSource are ignored) */

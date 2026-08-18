@@ -4,11 +4,11 @@
 
 import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
 import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
-import type { EmptySchema, Timestamp } from "@bufbuild/protobuf/wkt";
-import { file_google_protobuf_empty, file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
+import type { Duration, EmptySchema, Timestamp } from "@bufbuild/protobuf/wkt";
+import { file_google_protobuf_duration, file_google_protobuf_empty, file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import type { Label, LabelFilterEntry } from "../../../stdlib/labels_pb.js";
 import { file_proto_namespace_stdlib_labels } from "../../../stdlib/labels_pb.js";
-import type { Int64Range } from "../../../stdlib/matchers_pb.js";
+import type { Int64Range, StringMatcher } from "../../../stdlib/matchers_pb.js";
 import { file_proto_namespace_stdlib_matchers } from "../../../stdlib/matchers_pb.js";
 import type { Message } from "@bufbuild/protobuf";
 
@@ -16,7 +16,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file proto/namespace/cloud/storage/v1beta/artifact.proto.
  */
 export const file_proto_namespace_cloud_storage_v1beta_artifact: GenFile = /*@__PURE__*/
-  fileDesc("CjNwcm90by9uYW1lc3BhY2UvY2xvdWQvc3RvcmFnZS92MWJldGEvYXJ0aWZhY3QucHJvdG8SHm5hbWVzcGFjZS5jbG91ZC5zdG9yYWdlLnYxYmV0YSLOAQoVQ3JlYXRlQXJ0aWZhY3RSZXF1ZXN0EgwKBHBhdGgYASABKAkSEQoJbmFtZXNwYWNlGAIgASgJEi4KCmV4cGlyZXNfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEicKBmxhYmVscxgFIAMoCzIXLm5hbWVzcGFjZS5zdGRsaWIuTGFiZWwSFQoJb3ZlcndyaXRlGAYgASgIQgIYARIkChxjcmVhdGVfbmV3X3ZlcnNpb25faWZfZXhpc3RzGAcgASgIInYKFkNyZWF0ZUFydGlmYWN0UmVzcG9uc2USGQoRc2lnbmVkX3VwbG9hZF91cmwYASABKAkSEQoJdXBsb2FkX2lkGAIgASgJEi4KCmV4cGlyZXNfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIoIBChdGaW5hbGl6ZUFydGlmYWN0UmVxdWVzdBIRCgl1cGxvYWRfaWQYAyABKAkSKwoKYWRkX2xhYmVscxgEIAMoCzIXLm5hbWVzcGFjZS5zdGRsaWIuTGFiZWwSEAoEcGF0aBgBIAEoCUICGAESFQoJbmFtZXNwYWNlGAIgASgJQgIYASJZChhGaW5hbGl6ZUFydGlmYWN0UmVzcG9uc2USPQoLZGVzY3JpcHRpb24YASABKAsyKC5uYW1lc3BhY2UuY2xvdWQuc3RvcmFnZS52MWJldGEuQXJ0aWZhY3QiaQoWUmVzb2x2ZUFydGlmYWN0UmVxdWVzdBIMCgRwYXRoGAEgASgJEhEKCW5hbWVzcGFjZRgCIAEoCRIVCg1tZXRhZGF0YV9vbmx5GAMgASgIEhcKD2luY2x1ZGVfZXhwaXJlZBgEIAEoCCKlAQoXUmVzb2x2ZUFydGlmYWN0UmVzcG9uc2USPQoLZGVzY3JpcHRpb24YAyABKAsyKC5uYW1lc3BhY2UuY2xvdWQuc3RvcmFnZS52MWJldGEuQXJ0aWZhY3QSGwoTc2lnbmVkX2Rvd25sb2FkX3VybBgBIAEoCRIuCgpleHBpcmVzX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCI4ChVFeHBpcmVBcnRpZmFjdFJlcXVlc3QSDAoEcGF0aBgBIAEoCRIRCgluYW1lc3BhY2UYAiABKAki4QIKFExpc3RBcnRpZmFjdHNSZXF1ZXN0EhIKCm5hbWVzcGFjZXMYASADKAkSOAoMbGFiZWxfZmlsdGVyGAIgAygLMiIubmFtZXNwYWNlLnN0ZGxpYi5MYWJlbEZpbHRlckVudHJ5EhMKC21heF9lbnRyaWVzGAMgASgFEhQKDHNraXBfZXhwaXJlZBgFIAEoCBIZChFwYWdpbmF0aW9uX2N1cnNvchgEIAEoDBJOCghvcmRlcl9ieRgGIAEoDjI8Lm5hbWVzcGFjZS5jbG91ZC5zdG9yYWdlLnYxYmV0YS5MaXN0QXJ0aWZhY3RzUmVxdWVzdC5PcmRlckJ5EjAKCnNpemVfcmFuZ2UYByABKAsyHC5uYW1lc3BhY2Uuc3RkbGliLkludDY0UmFuZ2UiMwoHT3JkZXJCeRIUChBPUkRFUl9CWV9VTktOT1dOEAASEgoOQ3JlYXRlZEF0X0Rlc2MQASJvChVMaXN0QXJ0aWZhY3RzUmVzcG9uc2USOwoJYXJ0aWZhY3RzGAEgAygLMigubmFtZXNwYWNlLmNsb3VkLnN0b3JhZ2UudjFiZXRhLkFydGlmYWN0EhkKEXBhZ2luYXRpb25fY3Vyc29yGAIgASgMItQCCghBcnRpZmFjdBIKCgJpZBgKIAEoCRIMCgRwYXRoGAEgASgJEhEKCW5hbWVzcGFjZRgCIAEoCRIuCgpjcmVhdGVkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpleHBpcmVzX2F0GAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBInCgZsYWJlbHMYBSADKAsyFy5uYW1lc3BhY2Uuc3RkbGliLkxhYmVsEgwKBHNpemUYByABKAMSDwoHd2ViX3VybBgIIAEoCRI/CgZzdGF0dXMYCSABKA4yLy5uYW1lc3BhY2UuY2xvdWQuc3RvcmFnZS52MWJldGEuQXJ0aWZhY3QuU3RhdHVzIjIKBlN0YXR1cxIRCg1TVEFURV9VTktOT1dOEAASCAoETElWRRABEgsKB0VYUElSRUQQAjL/BAoQQXJ0aWZhY3RzU2VydmljZRJ/Cg5DcmVhdGVBcnRpZmFjdBI1Lm5hbWVzcGFjZS5jbG91ZC5zdG9yYWdlLnYxYmV0YS5DcmVhdGVBcnRpZmFjdFJlcXVlc3QaNi5uYW1lc3BhY2UuY2xvdWQuc3RvcmFnZS52MWJldGEuQ3JlYXRlQXJ0aWZhY3RSZXNwb25zZRKFAQoQRmluYWxpemVBcnRpZmFjdBI3Lm5hbWVzcGFjZS5jbG91ZC5zdG9yYWdlLnYxYmV0YS5GaW5hbGl6ZUFydGlmYWN0UmVxdWVzdBo4Lm5hbWVzcGFjZS5jbG91ZC5zdG9yYWdlLnYxYmV0YS5GaW5hbGl6ZUFydGlmYWN0UmVzcG9uc2USggEKD1Jlc29sdmVBcnRpZmFjdBI2Lm5hbWVzcGFjZS5jbG91ZC5zdG9yYWdlLnYxYmV0YS5SZXNvbHZlQXJ0aWZhY3RSZXF1ZXN0GjcubmFtZXNwYWNlLmNsb3VkLnN0b3JhZ2UudjFiZXRhLlJlc29sdmVBcnRpZmFjdFJlc3BvbnNlEnwKDUxpc3RBcnRpZmFjdHMSNC5uYW1lc3BhY2UuY2xvdWQuc3RvcmFnZS52MWJldGEuTGlzdEFydGlmYWN0c1JlcXVlc3QaNS5uYW1lc3BhY2UuY2xvdWQuc3RvcmFnZS52MWJldGEuTGlzdEFydGlmYWN0c1Jlc3BvbnNlEl8KDkV4cGlyZUFydGlmYWN0EjUubmFtZXNwYWNlLmNsb3VkLnN0b3JhZ2UudjFiZXRhLkV4cGlyZUFydGlmYWN0UmVxdWVzdBoWLmdvb2dsZS5wcm90b2J1Zi5FbXB0eUJMWkpuYW1lc3BhY2VsYWJzLmRldi9pbnRlcm5hbC9wdWJsaWMvZ2VuL3Byb3RvL25hbWVzcGFjZS9jbG91ZC9zdG9yYWdlL3YxYmV0YWIGcHJvdG8z", [file_google_protobuf_empty, file_google_protobuf_timestamp, file_proto_namespace_stdlib_labels, file_proto_namespace_stdlib_matchers]);
+  fileDesc("CjNwcm90by9uYW1lc3BhY2UvY2xvdWQvc3RvcmFnZS92MWJldGEvYXJ0aWZhY3QucHJvdG8SHm5hbWVzcGFjZS5jbG91ZC5zdG9yYWdlLnYxYmV0YSLOAQoVQ3JlYXRlQXJ0aWZhY3RSZXF1ZXN0EgwKBHBhdGgYASABKAkSEQoJbmFtZXNwYWNlGAIgASgJEi4KCmV4cGlyZXNfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEicKBmxhYmVscxgFIAMoCzIXLm5hbWVzcGFjZS5zdGRsaWIuTGFiZWwSFQoJb3ZlcndyaXRlGAYgASgIQgIYARIkChxjcmVhdGVfbmV3X3ZlcnNpb25faWZfZXhpc3RzGAcgASgIInYKFkNyZWF0ZUFydGlmYWN0UmVzcG9uc2USGQoRc2lnbmVkX3VwbG9hZF91cmwYASABKAkSEQoJdXBsb2FkX2lkGAIgASgJEi4KCmV4cGlyZXNfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIoIBChdGaW5hbGl6ZUFydGlmYWN0UmVxdWVzdBIRCgl1cGxvYWRfaWQYAyABKAkSKwoKYWRkX2xhYmVscxgEIAMoCzIXLm5hbWVzcGFjZS5zdGRsaWIuTGFiZWwSEAoEcGF0aBgBIAEoCUICGAESFQoJbmFtZXNwYWNlGAIgASgJQgIYASJZChhGaW5hbGl6ZUFydGlmYWN0UmVzcG9uc2USPQoLZGVzY3JpcHRpb24YASABKAsyKC5uYW1lc3BhY2UuY2xvdWQuc3RvcmFnZS52MWJldGEuQXJ0aWZhY3QiaQoWUmVzb2x2ZUFydGlmYWN0UmVxdWVzdBIMCgRwYXRoGAEgASgJEhEKCW5hbWVzcGFjZRgCIAEoCRIVCg1tZXRhZGF0YV9vbmx5GAMgASgIEhcKD2luY2x1ZGVfZXhwaXJlZBgEIAEoCCKlAQoXUmVzb2x2ZUFydGlmYWN0UmVzcG9uc2USPQoLZGVzY3JpcHRpb24YAyABKAsyKC5uYW1lc3BhY2UuY2xvdWQuc3RvcmFnZS52MWJldGEuQXJ0aWZhY3QSGwoTc2lnbmVkX2Rvd25sb2FkX3VybBgBIAEoCRIuCgpleHBpcmVzX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCI4ChVFeHBpcmVBcnRpZmFjdFJlcXVlc3QSDAoEcGF0aBgBIAEoCRIRCgluYW1lc3BhY2UYAiABKAkimQEKFUV4dGVuZEFydGlmYWN0UmVxdWVzdBIMCgRwYXRoGAEgASgJEhEKCW5hbWVzcGFjZRgCIAEoCRIsCglleHRlbmRfYnkYAyABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24SMQoOZW5zdXJlX21pbmltdW0YBCABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24iSAoWRXh0ZW5kQXJ0aWZhY3RSZXNwb25zZRIuCgpleHBpcmVzX2F0GAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCKcAwoUTGlzdEFydGlmYWN0c1JlcXVlc3QSEgoKbmFtZXNwYWNlcxgBIAMoCRI4CgxsYWJlbF9maWx0ZXIYAiADKAsyIi5uYW1lc3BhY2Uuc3RkbGliLkxhYmVsRmlsdGVyRW50cnkSEwoLbWF4X2VudHJpZXMYAyABKAUSFAoMc2tpcF9leHBpcmVkGAUgASgIEhkKEXBhZ2luYXRpb25fY3Vyc29yGAQgASgMEk4KCG9yZGVyX2J5GAYgASgOMjwubmFtZXNwYWNlLmNsb3VkLnN0b3JhZ2UudjFiZXRhLkxpc3RBcnRpZmFjdHNSZXF1ZXN0Lk9yZGVyQnkSMAoKc2l6ZV9yYW5nZRgHIAEoCzIcLm5hbWVzcGFjZS5zdGRsaWIuSW50NjRSYW5nZRI5ChBtYXRjaF9wYXRoX3JlZ2V4GAggASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyIjMKB09yZGVyQnkSFAoQT1JERVJfQllfVU5LTk9XThAAEhIKDkNyZWF0ZWRBdF9EZXNjEAEiFwoVTGlzdE5hbWVzcGFjZXNSZXF1ZXN0IlcKFkxpc3ROYW1lc3BhY2VzUmVzcG9uc2USPQoKbmFtZXNwYWNlcxgBIAMoCzIpLm5hbWVzcGFjZS5jbG91ZC5zdG9yYWdlLnYxYmV0YS5OYW1lc3BhY2UiJwoJTmFtZXNwYWNlEgwKBG5hbWUYASABKAkSDAoEa2luZBgCIAEoCSJvChVMaXN0QXJ0aWZhY3RzUmVzcG9uc2USOwoJYXJ0aWZhY3RzGAEgAygLMigubmFtZXNwYWNlLmNsb3VkLnN0b3JhZ2UudjFiZXRhLkFydGlmYWN0EhkKEXBhZ2luYXRpb25fY3Vyc29yGAIgASgMItQCCghBcnRpZmFjdBIKCgJpZBgKIAEoCRIMCgRwYXRoGAEgASgJEhEKCW5hbWVzcGFjZRgCIAEoCRIuCgpjcmVhdGVkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpleHBpcmVzX2F0GAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBInCgZsYWJlbHMYBSADKAsyFy5uYW1lc3BhY2Uuc3RkbGliLkxhYmVsEgwKBHNpemUYByABKAMSDwoHd2ViX3VybBgIIAEoCRI/CgZzdGF0dXMYCSABKA4yLy5uYW1lc3BhY2UuY2xvdWQuc3RvcmFnZS52MWJldGEuQXJ0aWZhY3QuU3RhdHVzIjIKBlN0YXR1cxIRCg1TVEFURV9VTktOT1dOEAASCAoETElWRRABEgsKB0VYUElSRUQQAjKBBwoQQXJ0aWZhY3RzU2VydmljZRJ/Cg5DcmVhdGVBcnRpZmFjdBI1Lm5hbWVzcGFjZS5jbG91ZC5zdG9yYWdlLnYxYmV0YS5DcmVhdGVBcnRpZmFjdFJlcXVlc3QaNi5uYW1lc3BhY2UuY2xvdWQuc3RvcmFnZS52MWJldGEuQ3JlYXRlQXJ0aWZhY3RSZXNwb25zZRKFAQoQRmluYWxpemVBcnRpZmFjdBI3Lm5hbWVzcGFjZS5jbG91ZC5zdG9yYWdlLnYxYmV0YS5GaW5hbGl6ZUFydGlmYWN0UmVxdWVzdBo4Lm5hbWVzcGFjZS5jbG91ZC5zdG9yYWdlLnYxYmV0YS5GaW5hbGl6ZUFydGlmYWN0UmVzcG9uc2USggEKD1Jlc29sdmVBcnRpZmFjdBI2Lm5hbWVzcGFjZS5jbG91ZC5zdG9yYWdlLnYxYmV0YS5SZXNvbHZlQXJ0aWZhY3RSZXF1ZXN0GjcubmFtZXNwYWNlLmNsb3VkLnN0b3JhZ2UudjFiZXRhLlJlc29sdmVBcnRpZmFjdFJlc3BvbnNlEnwKDUxpc3RBcnRpZmFjdHMSNC5uYW1lc3BhY2UuY2xvdWQuc3RvcmFnZS52MWJldGEuTGlzdEFydGlmYWN0c1JlcXVlc3QaNS5uYW1lc3BhY2UuY2xvdWQuc3RvcmFnZS52MWJldGEuTGlzdEFydGlmYWN0c1Jlc3BvbnNlEn8KDkxpc3ROYW1lc3BhY2VzEjUubmFtZXNwYWNlLmNsb3VkLnN0b3JhZ2UudjFiZXRhLkxpc3ROYW1lc3BhY2VzUmVxdWVzdBo2Lm5hbWVzcGFjZS5jbG91ZC5zdG9yYWdlLnYxYmV0YS5MaXN0TmFtZXNwYWNlc1Jlc3BvbnNlEl8KDkV4cGlyZUFydGlmYWN0EjUubmFtZXNwYWNlLmNsb3VkLnN0b3JhZ2UudjFiZXRhLkV4cGlyZUFydGlmYWN0UmVxdWVzdBoWLmdvb2dsZS5wcm90b2J1Zi5FbXB0eRJ/Cg5FeHRlbmRBcnRpZmFjdBI1Lm5hbWVzcGFjZS5jbG91ZC5zdG9yYWdlLnYxYmV0YS5FeHRlbmRBcnRpZmFjdFJlcXVlc3QaNi5uYW1lc3BhY2UuY2xvdWQuc3RvcmFnZS52MWJldGEuRXh0ZW5kQXJ0aWZhY3RSZXNwb25zZUJaWlhuYW1lc3BhY2VsYWJzLmRldi9pbnRlcm5hbC9wdWJsaWMvZ2VuL3Byb3RvL25hbWVzcGFjZS9jbG91ZC9zdG9yYWdlL3YxYmV0YTtzdG9yYWdldjFiZXRhYgZwcm90bzM", [file_google_protobuf_duration, file_google_protobuf_empty, file_google_protobuf_timestamp, file_proto_namespace_stdlib_labels, file_proto_namespace_stdlib_matchers]);
 
 /**
  * @generated from message namespace.cloud.storage.v1beta.CreateArtifactRequest
@@ -272,6 +272,75 @@ export const ExpireArtifactRequestSchema: GenMessage<ExpireArtifactRequest> = /*
   messageDesc(file_proto_namespace_cloud_storage_v1beta_artifact, 6);
 
 /**
+ * @generated from message namespace.cloud.storage.v1beta.ExtendArtifactRequest
+ */
+export type ExtendArtifactRequest = Message<"namespace.cloud.storage.v1beta.ExtendArtifactRequest"> & {
+  /**
+   * The file path for the stored artifact.
+   *
+   * @generated from field: string path = 1;
+   */
+  path: string;
+
+  /**
+   * The namespace that the artifact belongs to.
+   *
+   * @generated from field: string namespace = 2;
+   */
+  namespace: string;
+
+  /**
+   * Extend the current expiration by this duration, relative to the artifact's
+   * current expiration.
+   *
+   * Note: In JSON format, the Duration type is encoded as a string ending in
+   * the suffix "s" (seconds), e.g. "3600s".
+   *
+   * @generated from field: google.protobuf.Duration extend_by = 3;
+   */
+  extendBy?: Duration;
+
+  /**
+   * Ensure the artifact expires no sooner than this duration from now. This is
+   * a lower bound, relative to the current time, and can be combined with
+   * `extend_by`.
+   *
+   * Note: In JSON format, the Duration type is encoded as a string ending in
+   * the suffix "s" (seconds), e.g. "3600s".
+   *
+   * @generated from field: google.protobuf.Duration ensure_minimum = 4;
+   */
+  ensureMinimum?: Duration;
+};
+
+/**
+ * Describes the message namespace.cloud.storage.v1beta.ExtendArtifactRequest.
+ * Use `create(ExtendArtifactRequestSchema)` to create a new message.
+ */
+export const ExtendArtifactRequestSchema: GenMessage<ExtendArtifactRequest> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_storage_v1beta_artifact, 7);
+
+/**
+ * @generated from message namespace.cloud.storage.v1beta.ExtendArtifactResponse
+ */
+export type ExtendArtifactResponse = Message<"namespace.cloud.storage.v1beta.ExtendArtifactResponse"> & {
+  /**
+   * The effective expiration of the artifact after this call. Unset if the
+   * artifact never expires.
+   *
+   * @generated from field: google.protobuf.Timestamp expires_at = 1;
+   */
+  expiresAt?: Timestamp;
+};
+
+/**
+ * Describes the message namespace.cloud.storage.v1beta.ExtendArtifactResponse.
+ * Use `create(ExtendArtifactResponseSchema)` to create a new message.
+ */
+export const ExtendArtifactResponseSchema: GenMessage<ExtendArtifactResponse> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_storage_v1beta_artifact, 8);
+
+/**
  * @generated from message namespace.cloud.storage.v1beta.ListArtifactsRequest
  */
 export type ListArtifactsRequest = Message<"namespace.cloud.storage.v1beta.ListArtifactsRequest"> & {
@@ -322,6 +391,14 @@ export type ListArtifactsRequest = Message<"namespace.cloud.storage.v1beta.ListA
    * @generated from field: namespace.stdlib.Int64Range size_range = 7;
    */
   sizeRange?: Int64Range;
+
+  /**
+   * Filter artifacts by path regular expressions. IS_ANY_OF matches any regex;
+   * IS_NOT excludes paths matching any regex.
+   *
+   * @generated from field: namespace.stdlib.StringMatcher match_path_regex = 8;
+   */
+  matchPathRegex?: StringMatcher;
 };
 
 /**
@@ -329,7 +406,7 @@ export type ListArtifactsRequest = Message<"namespace.cloud.storage.v1beta.ListA
  * Use `create(ListArtifactsRequestSchema)` to create a new message.
  */
 export const ListArtifactsRequestSchema: GenMessage<ListArtifactsRequest> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_storage_v1beta_artifact, 7);
+  messageDesc(file_proto_namespace_cloud_storage_v1beta_artifact, 9);
 
 /**
  * @generated from enum namespace.cloud.storage.v1beta.ListArtifactsRequest.OrderBy
@@ -350,7 +427,59 @@ export enum ListArtifactsRequest_OrderBy {
  * Describes the enum namespace.cloud.storage.v1beta.ListArtifactsRequest.OrderBy.
  */
 export const ListArtifactsRequest_OrderBySchema: GenEnum<ListArtifactsRequest_OrderBy> = /*@__PURE__*/
-  enumDesc(file_proto_namespace_cloud_storage_v1beta_artifact, 7, 0);
+  enumDesc(file_proto_namespace_cloud_storage_v1beta_artifact, 9, 0);
+
+/**
+ * @generated from message namespace.cloud.storage.v1beta.ListNamespacesRequest
+ */
+export type ListNamespacesRequest = Message<"namespace.cloud.storage.v1beta.ListNamespacesRequest"> & {
+};
+
+/**
+ * Describes the message namespace.cloud.storage.v1beta.ListNamespacesRequest.
+ * Use `create(ListNamespacesRequestSchema)` to create a new message.
+ */
+export const ListNamespacesRequestSchema: GenMessage<ListNamespacesRequest> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_storage_v1beta_artifact, 10);
+
+/**
+ * @generated from message namespace.cloud.storage.v1beta.ListNamespacesResponse
+ */
+export type ListNamespacesResponse = Message<"namespace.cloud.storage.v1beta.ListNamespacesResponse"> & {
+  /**
+   * @generated from field: repeated namespace.cloud.storage.v1beta.Namespace namespaces = 1;
+   */
+  namespaces: Namespace[];
+};
+
+/**
+ * Describes the message namespace.cloud.storage.v1beta.ListNamespacesResponse.
+ * Use `create(ListNamespacesResponseSchema)` to create a new message.
+ */
+export const ListNamespacesResponseSchema: GenMessage<ListNamespacesResponse> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_storage_v1beta_artifact, 11);
+
+/**
+ * @generated from message namespace.cloud.storage.v1beta.Namespace
+ */
+export type Namespace = Message<"namespace.cloud.storage.v1beta.Namespace"> & {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name: string;
+
+  /**
+   * @generated from field: string kind = 2;
+   */
+  kind: string;
+};
+
+/**
+ * Describes the message namespace.cloud.storage.v1beta.Namespace.
+ * Use `create(NamespaceSchema)` to create a new message.
+ */
+export const NamespaceSchema: GenMessage<Namespace> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_storage_v1beta_artifact, 12);
 
 /**
  * @generated from message namespace.cloud.storage.v1beta.ListArtifactsResponse
@@ -374,7 +503,7 @@ export type ListArtifactsResponse = Message<"namespace.cloud.storage.v1beta.List
  * Use `create(ListArtifactsResponseSchema)` to create a new message.
  */
 export const ListArtifactsResponseSchema: GenMessage<ListArtifactsResponse> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_storage_v1beta_artifact, 8);
+  messageDesc(file_proto_namespace_cloud_storage_v1beta_artifact, 13);
 
 /**
  * @generated from message namespace.cloud.storage.v1beta.Artifact
@@ -447,7 +576,7 @@ export type Artifact = Message<"namespace.cloud.storage.v1beta.Artifact"> & {
  * Use `create(ArtifactSchema)` to create a new message.
  */
 export const ArtifactSchema: GenMessage<Artifact> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_storage_v1beta_artifact, 9);
+  messageDesc(file_proto_namespace_cloud_storage_v1beta_artifact, 14);
 
 /**
  * @generated from enum namespace.cloud.storage.v1beta.Artifact.Status
@@ -473,7 +602,7 @@ export enum Artifact_Status {
  * Describes the enum namespace.cloud.storage.v1beta.Artifact.Status.
  */
 export const Artifact_StatusSchema: GenEnum<Artifact_Status> = /*@__PURE__*/
-  enumDesc(file_proto_namespace_cloud_storage_v1beta_artifact, 9, 0);
+  enumDesc(file_proto_namespace_cloud_storage_v1beta_artifact, 14, 0);
 
 /**
  * ArtifactsService allows the management of binary artifacts used by a
@@ -563,6 +692,16 @@ export const ArtifactsService: GenService<{
     output: typeof ListArtifactsResponseSchema;
   },
   /**
+   * List namespaces with finalized artifacts.
+   *
+   * @generated from rpc namespace.cloud.storage.v1beta.ArtifactsService.ListNamespaces
+   */
+  listNamespaces: {
+    methodKind: "unary";
+    input: typeof ListNamespacesRequestSchema;
+    output: typeof ListNamespacesResponseSchema;
+  },
+  /**
    * Mark an artifact as eligible for garbage-collection.
    *
    * @generated from rpc namespace.cloud.storage.v1beta.ArtifactsService.ExpireArtifact
@@ -571,6 +710,23 @@ export const ArtifactsService: GenService<{
     methodKind: "unary";
     input: typeof ExpireArtifactRequestSchema;
     output: typeof EmptySchema;
+  },
+  /**
+   * Extend the expiration of a finalized artifact.
+   *
+   * This enables dynamic, access-based retention: create artifacts with a
+   * short expiration and push it out whenever they are accessed.
+   *
+   * ### Errors
+   * - If the artifact does not exist or has already expired, a `NotFound`
+   *   status is returned.
+   *
+   * @generated from rpc namespace.cloud.storage.v1beta.ArtifactsService.ExtendArtifact
+   */
+  extendArtifact: {
+    methodKind: "unary";
+    input: typeof ExtendArtifactRequestSchema;
+    output: typeof ExtendArtifactResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_proto_namespace_cloud_storage_v1beta_artifact, 0);

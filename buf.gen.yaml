@@ -1,0 +1,36 @@
+# Regenerates src/proto from the namespacelabs/internal repository:
+#
+#   npm run generate                    # expects ../internal
+#   NS_INTERNAL=/path/to/internal npm run generate
+#
+# Options mirror internal/public/buf.gen.web.yaml: protobuf-es embeds file
+# descriptors, so the managed go_package options must stay aligned with the
+# Go generator to avoid rewriting otherwise unchanged output.
+version: v2
+managed:
+  enabled: true
+  disable:
+    - file_option: go_package
+      module: buf.build/googleapis/googleapis
+    # The checked-in baseline only carries go_package; suppress the other
+    # managed-mode defaults so descriptors don't churn.
+    - file_option: java_package
+    - file_option: java_outer_classname
+    - file_option: java_multiple_files
+    - file_option: java_string_check_utf8
+    - file_option: optimize_for
+    - file_option: cc_enable_arenas
+    - file_option: objc_class_prefix
+    - file_option: csharp_namespace
+    - file_option: php_namespace
+    - file_option: php_metadata_namespace
+    - file_option: ruby_package
+  override:
+    - file_option: go_package_prefix
+      value: namespacelabs.dev/internal/public/gen
+plugins:
+  - local: protoc-gen-es
+    out: src
+    opt:
+      - target=ts
+      - import_extension=js

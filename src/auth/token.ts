@@ -112,11 +112,15 @@ async function loadFromFile(tokenPath: string): Promise<LoadedToken> {
 }
 
 /**
- * Load default token based on environment and context
+ * Load a TokenSource from the environment and context.
  * Checks in order:
  * 1. NSC_TOKEN_FILE environment variable
  * 2. /var/run/nsc/token.json (workload token)
  * 3. User config directory token
+ *
+ * Call and await it to load eagerly, or pass it uncalled wherever a token
+ * source is accepted (e.g. `tokenSource: loadDefaults`); the SDK invokes and
+ * awaits it internally on first use.
  */
 export async function loadDefaults(): Promise<TokenSource> {
 	// Check environment variable first
@@ -138,7 +142,11 @@ export async function loadDefaults(): Promise<TokenSource> {
 }
 
 /**
- * Load user token from local configuration
+ * Load a TokenSource from the user's local configuration.
+ *
+ * Call and await it to load eagerly, or pass it uncalled wherever a token
+ * source is accepted (e.g. `tokenSource: loadUserToken`); the SDK invokes and
+ * awaits it internally on first use.
  */
 export async function loadUserToken(): Promise<TokenSource> {
 	const configDir = getUserConfigDir();
@@ -147,8 +155,12 @@ export async function loadUserToken(): Promise<TokenSource> {
 }
 
 /**
- * Load workload token from standard location
- * Workload tokens only use bearer tokens directly (no session token refresh)
+ * Load a TokenSource from the workload token at its standard location.
+ * Workload tokens only use bearer tokens directly (no session token refresh).
+ *
+ * Call and await it to load eagerly, or pass it uncalled wherever a token
+ * source is accepted (e.g. `tokenSource: loadWorkloadToken`); the SDK invokes
+ * and awaits it internally on first use.
  */
 export async function loadWorkloadToken(): Promise<TokenSource> {
 	const tokenPath =
@@ -161,7 +173,7 @@ export async function loadWorkloadToken(): Promise<TokenSource> {
 }
 
 /**
- * Create a token source from a bearer token string
+ * Create a TokenSource from a bearer token string.
  */
 export function fromBearerToken(token: string): TokenSource {
 	return new LoadedToken(token, undefined, undefined);

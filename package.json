@@ -1,6 +1,6 @@
 {
 	"name": "@namespacelabs/sdk",
-	"version": "0.3.0",
+	"version": "1.1.0",
 	"description": "TypeScript SDK for Namespace Cloud APIs",
 	"type": "module",
 	"sideEffects": false,
@@ -26,6 +26,16 @@
 			"require": {
 				"types": "./dist/types/auth/index.d.ts",
 				"default": "./dist/cjs/auth/index.js"
+			}
+		},
+		"./devbox": {
+			"import": {
+				"types": "./dist/types/devbox/index.d.ts",
+				"default": "./dist/esm/devbox/index.js"
+			},
+			"require": {
+				"types": "./dist/types/devbox/index.d.ts",
+				"default": "./dist/cjs/devbox/index.js"
 			}
 		},
 		"./api": {
@@ -127,13 +137,15 @@
 	],
 	"scripts": {
 		"clean": "rm -rf dist/",
+		"generate": "bash scripts/generate-protos.sh",
 		"build": "npm run build:cjs && npm run build:esm && npm run build:types",
 		"build:cjs": "tsc --project tsconfig.json --module commonjs --outDir ./dist/cjs && echo '{\"type\":\"commonjs\"}' > dist/cjs/package.json",
 		"build:esm": "tsc --project tsconfig.json --module es2020 --outDir ./dist/esm && echo '{\"type\":\"module\",\"sideEffects\":false}' > dist/esm/package.json",
 		"build:types": "tsc --project tsconfig.json --declaration --emitDeclarationOnly --outDir ./dist/types",
 		"test:typecheck": "tsc --project tsconfig.test.json",
+		"test:unit": "tsx --test test/*.unit.test.ts",
 		"test:create-instance": "tsx test/create-instance.ts",
-		"test": "npm run test:typecheck",
+		"test": "npm run test:typecheck && npm run test:unit",
 		"prepublishOnly": "npm run clean && npm run build"
 	},
 	"keywords": [
@@ -159,13 +171,19 @@
 		"@connectrpc/connect-node": "^2.0.0"
 	},
 	"devDependencies": {
-		"@bufbuild/buf": "^1.67.0",
+		"@bufbuild/buf": "^1.72.0",
 		"@bufbuild/protobuf": "^2.2.0",
 		"@bufbuild/protoc-gen-es": "^2.11.0",
 		"@connectrpc/connect": "^2.0.0",
 		"@connectrpc/connect-node": "^2.0.0",
 		"@types/node": "^20.17.10",
+		"@types/ssh2": "^1.15.5",
+		"@types/ws": "^8.18.1",
 		"tsx": "^4.20.6",
 		"typescript": "^5.7.2"
+	},
+	"dependencies": {
+		"ssh2": "^1.17.0",
+		"ws": "^8.21.1"
 	}
 }

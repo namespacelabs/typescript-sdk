@@ -2,21 +2,23 @@
 // @generated from file proto/namespace/cloud/compute/v1beta/usage.proto (package namespace.cloud.compute.v1beta, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
-import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
+import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
+import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 import type { StringMatcher } from "../../../stdlib/matchers_pb.js";
 import { file_proto_namespace_stdlib_matchers } from "../../../stdlib/matchers_pb.js";
 import type { Timestamp } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import type { TimeSeries } from "../../../stdlib/timeseries_pb.js";
 import { file_proto_namespace_stdlib_timeseries } from "../../../stdlib/timeseries_pb.js";
+import type { GetConcurrencyRequestSchema, GetConcurrencyResponseSchema } from "./concurrency_pb.js";
+import { file_proto_namespace_cloud_compute_v1beta_concurrency } from "./concurrency_pb.js";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file proto/namespace/cloud/compute/v1beta/usage.proto.
  */
 export const file_proto_namespace_cloud_compute_v1beta_usage: GenFile = /*@__PURE__*/
-  fileDesc("CjBwcm90by9uYW1lc3BhY2UvY2xvdWQvY29tcHV0ZS92MWJldGEvdXNhZ2UucHJvdG8SHm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YSLJAwoPR2V0VXNhZ2VSZXF1ZXN0EkoKDHBlcmlvZF9zdGFydBgBIAEoCzI0Lm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5HZXRVc2FnZVJlcXVlc3QuRGF0ZRJICgpwZXJpb2RfZW5kGAIgASgLMjQubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkdldFVzYWdlUmVxdWVzdC5EYXRlEjcKDm1hdGNoX3BsYXRmb3JtGAMgASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyEjQKC21hdGNoX3NoYXBlGAQgASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyEj0KFG1hdGNoX2dpdGh1Yl9wcm9maWxlGAUgASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyEkAKF21hdGNoX2dpdGh1Yl9yZXBvc2l0b3J5GAYgASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyGjAKBERhdGUSDAoEeWVhchgBIAEoBRINCgVtb250aBgCIAEoBRILCgNkYXkYAyABKAUikgEKEEdldFVzYWdlUmVzcG9uc2USQAoFdG90YWwYASABKAsyMS5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuVXNhZ2VSZWNvcmQuVXNhZ2USPAoHcGVyX2RheRgCIAMoCzIrLm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5Vc2FnZVJlY29yZCKCAwoLVXNhZ2VSZWNvcmQSDAoEeWVhchgBIAEoBRINCgVtb250aBgCIAEoBRILCgNkYXkYAyABKAUSQAoFdG90YWwYBCABKAsyMS5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuVXNhZ2VSZWNvcmQuVXNhZ2UamgEKBVVzYWdlEk0KEGluc3RhbmNlX21pbnV0ZXMYASABKAsyMy5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuVXNhZ2VSZWNvcmQuTWludXRlcxJCCgZidWlsZHMYAiABKAsyMi5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuVXNhZ2VSZWNvcmQuQnVpbGRzGiUKB01pbnV0ZXMSDAoEdW5pdBgBIAEoAxIMCgR3YWxsGAIgASgDGkMKBkJ1aWxkcxINCgVjb3VudBgBIAEoAxIUCgx1bml0X21pbnV0ZXMYAiABKAMSFAoMd2FsbF9taW51dGVzGAMgASgDIvgEChlHZXRVc2FnZVRpbWVTZXJpZXNSZXF1ZXN0Ei4KCnN0YXJ0X3RpbWUYASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiwKCGVuZF90aW1lGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBJVCgZmaWx0ZXIYAyABKAsyRS5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuR2V0VXNhZ2VUaW1lU2VyaWVzUmVxdWVzdC5Vc2FnZUZpbHRlchIUCgxicmVha2Rvd25fYnkYBCADKAkajwMKC1VzYWdlRmlsdGVyEjEKCHBsYXRmb3JtGAEgASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyEi4KBXNoYXBlGAIgASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyEjAKB3B1cnBvc2UYAyABKAsyHy5uYW1lc3BhY2Uuc3RkbGliLlN0cmluZ01hdGNoZXISOgoRZ2l0aHViX3JlcG9zaXRvcnkYBCABKAsyHy5uYW1lc3BhY2Uuc3RkbGliLlN0cmluZ01hdGNoZXISNgoNZ2l0aHViX2JyYW5jaBgFIAEoCzIfLm5hbWVzcGFjZS5zdGRsaWIuU3RyaW5nTWF0Y2hlchI9ChRnaXRodWJfd29ya2Zsb3dfbmFtZRgGIAEoCzIfLm5hbWVzcGFjZS5zdGRsaWIuU3RyaW5nTWF0Y2hlchI4Cg9naXRodWJfam9iX25hbWUYByABKAsyHy5uYW1lc3BhY2Uuc3RkbGliLlN0cmluZ01hdGNoZXIiTwoaR2V0VXNhZ2VUaW1lU2VyaWVzUmVzcG9uc2USMQoLdGltZV9zZXJpZXMYASABKAsyHC5uYW1lc3BhY2Uuc3RkbGliLlRpbWVTZXJpZXMyiwIKDFVzYWdlU2VydmljZRJtCghHZXRVc2FnZRIvLm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5HZXRVc2FnZVJlcXVlc3QaMC5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuR2V0VXNhZ2VSZXNwb25zZRKLAQoSR2V0VXNhZ2VUaW1lU2VyaWVzEjkubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkdldFVzYWdlVGltZVNlcmllc1JlcXVlc3QaOi5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuR2V0VXNhZ2VUaW1lU2VyaWVzUmVzcG9uc2ViBnByb3RvMw", [file_proto_namespace_stdlib_matchers, file_google_protobuf_timestamp, file_proto_namespace_stdlib_timeseries]);
+  fileDesc("CjBwcm90by9uYW1lc3BhY2UvY2xvdWQvY29tcHV0ZS92MWJldGEvdXNhZ2UucHJvdG8SHm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YSLJAwoPR2V0VXNhZ2VSZXF1ZXN0EkoKDHBlcmlvZF9zdGFydBgBIAEoCzI0Lm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5HZXRVc2FnZVJlcXVlc3QuRGF0ZRJICgpwZXJpb2RfZW5kGAIgASgLMjQubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkdldFVzYWdlUmVxdWVzdC5EYXRlEjcKDm1hdGNoX3BsYXRmb3JtGAMgASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyEjQKC21hdGNoX3NoYXBlGAQgASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyEj0KFG1hdGNoX2dpdGh1Yl9wcm9maWxlGAUgASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyEkAKF21hdGNoX2dpdGh1Yl9yZXBvc2l0b3J5GAYgASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyGjAKBERhdGUSDAoEeWVhchgBIAEoBRINCgVtb250aBgCIAEoBRILCgNkYXkYAyABKAUikgEKEEdldFVzYWdlUmVzcG9uc2USQAoFdG90YWwYASABKAsyMS5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuVXNhZ2VSZWNvcmQuVXNhZ2USPAoHcGVyX2RheRgCIAMoCzIrLm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5Vc2FnZVJlY29yZCKCAwoLVXNhZ2VSZWNvcmQSDAoEeWVhchgBIAEoBRINCgVtb250aBgCIAEoBRILCgNkYXkYAyABKAUSQAoFdG90YWwYBCABKAsyMS5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuVXNhZ2VSZWNvcmQuVXNhZ2UamgEKBVVzYWdlEk0KEGluc3RhbmNlX21pbnV0ZXMYASABKAsyMy5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuVXNhZ2VSZWNvcmQuTWludXRlcxJCCgZidWlsZHMYAiABKAsyMi5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuVXNhZ2VSZWNvcmQuQnVpbGRzGiUKB01pbnV0ZXMSDAoEdW5pdBgBIAEoAxIMCgR3YWxsGAIgASgDGkMKBkJ1aWxkcxINCgVjb3VudBgBIAEoAxIUCgx1bml0X21pbnV0ZXMYAiABKAMSFAoMd2FsbF9taW51dGVzGAMgASgDIq0BChVHZXRWb2x1bWVVc2FnZVJlcXVlc3QSSgoMcGVyaW9kX3N0YXJ0GAEgASgLMjQubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkdldFVzYWdlUmVxdWVzdC5EYXRlEkgKCnBlcmlvZF9lbmQYAiABKAsyNC5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuR2V0VXNhZ2VSZXF1ZXN0LkRhdGUi7gEKFkdldFZvbHVtZVVzYWdlUmVzcG9uc2USUQoFdG90YWwYASABKAsyQi5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuR2V0Vm9sdW1lVXNhZ2VSZXNwb25zZS5Wb2x1bWVVc2FnZRqAAQoLVm9sdW1lVXNhZ2USIQoZY2FjaGVfc25hcHNob3RfZ2JfbWludXRlcxgBIAEoAxIgChhjYWNoZV9zdG9yYWdlX21iX21pbnV0ZXMYAiABKAMSLAokcGVyc2lzdGVudF92b2x1bWVfc3RvcmFnZV9nYl9taW51dGVzGAMgASgDIvIBChdHZXRBcnRpZmFjdFVzYWdlUmVxdWVzdBJKCgxwZXJpb2Rfc3RhcnQYASABKAsyNC5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuR2V0VXNhZ2VSZXF1ZXN0LkRhdGUSSAoKcGVyaW9kX2VuZBgCIAEoCzI0Lm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5HZXRVc2FnZVJlcXVlc3QuRGF0ZRJBCghwcm9kdWN0cxgDIAMoDjIvLm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5BcnRpZmFjdFByb2R1Y3Qi9wEKGEdldEFydGlmYWN0VXNhZ2VSZXNwb25zZRJXCghwcm9kdWN0cxgBIAMoCzJFLm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5HZXRBcnRpZmFjdFVzYWdlUmVzcG9uc2UuUHJvZHVjdFVzYWdlGoEBCgxQcm9kdWN0VXNhZ2USQAoHcHJvZHVjdBgBIAEoDjIvLm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5BcnRpZmFjdFByb2R1Y3QSGgoSc3RvcmFnZV9nYl9taW51dGVzGAIgASgDEhMKC3JlYWRzX2J5dGVzGAMgASgDIqMJChlHZXRVc2FnZVRpbWVTZXJpZXNSZXF1ZXN0Ei4KCnN0YXJ0X3RpbWUYASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiwKCGVuZF90aW1lGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBJVCgZmaWx0ZXIYAyABKAsyRS5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuR2V0VXNhZ2VUaW1lU2VyaWVzUmVxdWVzdC5Vc2FnZUZpbHRlchIUCgxicmVha2Rvd25fYnkYBCADKAkaugcKC1VzYWdlRmlsdGVyEjEKCHBsYXRmb3JtGAEgASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyEi4KBXNoYXBlGAIgASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyEjAKB3B1cnBvc2UYAyABKAsyHy5uYW1lc3BhY2Uuc3RkbGliLlN0cmluZ01hdGNoZXISOgoRZ2l0aHViX3JlcG9zaXRvcnkYBCABKAsyHy5uYW1lc3BhY2Uuc3RkbGliLlN0cmluZ01hdGNoZXISNgoNZ2l0aHViX2JyYW5jaBgFIAEoCzIfLm5hbWVzcGFjZS5zdGRsaWIuU3RyaW5nTWF0Y2hlchI9ChRnaXRodWJfd29ya2Zsb3dfbmFtZRgGIAEoCzIfLm5hbWVzcGFjZS5zdGRsaWIuU3RyaW5nTWF0Y2hlchI4Cg9naXRodWJfam9iX25hbWUYByABKAsyHy5uYW1lc3BhY2Uuc3RkbGliLlN0cmluZ01hdGNoZXISNwoOZ2l0aHViX3Byb2ZpbGUYCCABKAsyHy5uYW1lc3BhY2Uuc3RkbGliLlN0cmluZ01hdGNoZXISPgoVZ2l0aHViX2pvYl9jb25jbHVzaW9uGAkgASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyEjkKEGJ1aWxka2l0ZV9vcmdfaWQYCiABKAsyHy5uYW1lc3BhY2Uuc3RkbGliLlN0cmluZ01hdGNoZXISPgoVYnVpbGRraXRlX3BpcGVsaW5lX2lkGAsgASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyEkAKF2J1aWxka2l0ZV9waXBlbGluZV9zbHVnGAwgASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyEj0KFGJ1aWxka2l0ZV9yZXBvc2l0b3J5GA0gASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyEjkKEGJ1aWxka2l0ZV9icmFuY2gYDiABKAsyHy5uYW1lc3BhY2Uuc3RkbGliLlN0cmluZ01hdGNoZXISOwoSYnVpbGRraXRlX2pvYl9uYW1lGA8gASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyEjwKE2J1aWxka2l0ZV9qb2Jfc3RhdGUYECABKAsyHy5uYW1lc3BhY2Uuc3RkbGliLlN0cmluZ01hdGNoZXIiTwoaR2V0VXNhZ2VUaW1lU2VyaWVzUmVzcG9uc2USMQoLdGltZV9zZXJpZXMYASABKAsyHC5uYW1lc3BhY2Uuc3RkbGliLlRpbWVTZXJpZXMizAEKFUdlbmVyYXRlUmVwb3J0UmVxdWVzdBIuCgpzdGFydF90aW1lGAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIsCghlbmRfdGltZRgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASVQoGZmlsdGVyGAMgASgLMkUubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkdldFVzYWdlVGltZVNlcmllc1JlcXVlc3QuVXNhZ2VGaWx0ZXIiXgoWR2VuZXJhdGVSZXBvcnRSZXNwb25zZRJECgdlbnRyaWVzGAEgAygLMjMubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkluc3RhbmNlUmVwb3J0RW50cnkinwsKE0luc3RhbmNlUmVwb3J0RW50cnkSEwoLaW5zdGFuY2VfaWQYASABKAkSLgoKY3JlYXRlZF9hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKc3RhcnRlZF9hdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMAoMZGVzdHJveWVkX2F0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIVCg1yZXNvdXJjZXNfY3B1GAUgASgCEhgKEHJlc291cmNlc19yYW1fZ2IYBiABKAISIAoYcmVzb3VyY2VzX2NwdV9hY3R1YWxfbWF4GAcgASgCEisKI3Jlc291cmNlc19yYW1fZ2JfYWN0dWFsX21heF9wZXJjZW50GAggASgCElEKCmdpdGh1Yl9qb2IYCSABKAsyPS5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuSW5zdGFuY2VSZXBvcnRFbnRyeS5HaXRIdWJKb2ISSwoHdm9sdW1lcxgKIAMoCzI6Lm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5JbnN0YW5jZVJlcG9ydEVudHJ5LlZvbHVtZRJXCg1idWlsZGtpdGVfam9iGAsgASgLMkAubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkluc3RhbmNlUmVwb3J0RW50cnkuQnVpbGRraXRlSm9iGuYCCglHaXRIdWJKb2ISDgoGam9iX2lkGAEgASgDEhAKCGpvYl9uYW1lGAIgASgJEhUKDXdvcmtmbG93X25hbWUYAyABKAkSDgoGcnVuX2lkGAQgASgDEhMKC3J1bl9hdHRlbXB0GAUgASgDEjIKDmpvYl9jcmVhdGVkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIyCg5qb2Jfc3RhcnRlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASNAoQam9iX2NvbXBsZXRlZF9hdBgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDwoHcHJvZmlsZRgJIAEoCRISCgpyZXBvc2l0b3J5GAogASgJEg4KBmJyYW5jaBgLIAEoCRISCgpjb25jbHVzaW9uGAwgASgJEhQKDHNlbmRlcl9sb2dpbhgNIAEoCRpfCgZWb2x1bWUSCwoDdGFnGAEgASgJEhMKC21vdW50X3BvaW50GAIgASgJEg8KB3NpemVfbWIYAyABKAMSDwoHdXNlZF9tYhgEIAEoAxIRCgljYWNoZV9oaXQYBSABKAganQMKDEJ1aWxka2l0ZUpvYhIOCgZqb2JfaWQYASABKAkSEAoIam9iX25hbWUYAiABKAkSFQoNcGlwZWxpbmVfc2x1ZxgDIAEoCRITCgtwaXBlbGluZV9pZBgEIAEoCRIQCghidWlsZF9pZBgFIAEoCRIUCgxidWlsZF9udW1iZXIYBiABKAMSMgoOam9iX2NyZWF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjMKD2pvYl9ydW5uYWJsZV9hdBgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMgoOam9iX3N0YXJ0ZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjMKD2pvYl9maW5pc2hlZF9hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDgoGb3JnX2lkGAsgASgJEhIKCnJlcG9zaXRvcnkYDCABKAkSDgoGYnJhbmNoGA0gASgJEhEKCWpvYl9zdGF0ZRgOIAEoCSrSAQoPQXJ0aWZhY3RQcm9kdWN0EiAKHEFSVElGQUNUX1BST0RVQ1RfVU5TUEVDSUZJRUQQABIdChlBUlRJRkFDVF9QUk9EVUNUX1JFR0lTVFJZEAESHgoaQVJUSUZBQ1RfUFJPRFVDVF9UVVJCT1JFUE8QAhIlCiFBUlRJRkFDVF9QUk9EVUNUX0dJVEhVQl9BUlRJRkFDVFMQAxIaChZBUlRJRkFDVF9QUk9EVUNUX0JBWkVMEAQSGwoXQVJUSUZBQ1RfUFJPRFVDVF9HUkFETEUQBTKZBgoMVXNhZ2VTZXJ2aWNlEm0KCEdldFVzYWdlEi8ubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkdldFVzYWdlUmVxdWVzdBowLm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5HZXRVc2FnZVJlc3BvbnNlEn8KDkdldFZvbHVtZVVzYWdlEjUubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkdldFZvbHVtZVVzYWdlUmVxdWVzdBo2Lm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5HZXRWb2x1bWVVc2FnZVJlc3BvbnNlEoUBChBHZXRBcnRpZmFjdFVzYWdlEjcubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkdldEFydGlmYWN0VXNhZ2VSZXF1ZXN0GjgubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkdldEFydGlmYWN0VXNhZ2VSZXNwb25zZRKLAQoSR2V0VXNhZ2VUaW1lU2VyaWVzEjkubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkdldFVzYWdlVGltZVNlcmllc1JlcXVlc3QaOi5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuR2V0VXNhZ2VUaW1lU2VyaWVzUmVzcG9uc2USgQEKDkdlbmVyYXRlUmVwb3J0EjUubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkdlbmVyYXRlUmVwb3J0UmVxdWVzdBo2Lm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5HZW5lcmF0ZVJlcG9ydFJlc3BvbnNlMAESfwoOR2V0Q29uY3VycmVuY3kSNS5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuR2V0Q29uY3VycmVuY3lSZXF1ZXN0GjYubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkdldENvbmN1cnJlbmN5UmVzcG9uc2VCWlpYbmFtZXNwYWNlbGFicy5kZXYvaW50ZXJuYWwvcHVibGljL2dlbi9wcm90by9uYW1lc3BhY2UvY2xvdWQvY29tcHV0ZS92MWJldGE7Y29tcHV0ZXYxYmV0YWIGcHJvdG8z", [file_proto_namespace_stdlib_matchers, file_google_protobuf_timestamp, file_proto_namespace_stdlib_timeseries, file_proto_namespace_cloud_compute_v1beta_concurrency]);
 
 /**
  * @generated from message namespace.cloud.compute.v1beta.GetUsageRequest
@@ -260,6 +262,178 @@ export const UsageRecord_BuildsSchema: GenMessage<UsageRecord_Builds> = /*@__PUR
   messageDesc(file_proto_namespace_cloud_compute_v1beta_usage, 2, 2);
 
 /**
+ * @generated from message namespace.cloud.compute.v1beta.GetVolumeUsageRequest
+ */
+export type GetVolumeUsageRequest = Message<"namespace.cloud.compute.v1beta.GetVolumeUsageRequest"> & {
+  /**
+   * Optional: If no start date is provided, then return usage starting from the first day of
+   * the current month. Period start is inclusive.
+   *
+   * @generated from field: namespace.cloud.compute.v1beta.GetUsageRequest.Date period_start = 1;
+   */
+  periodStart?: GetUsageRequest_Date;
+
+  /**
+   * Optional: Limits the time range of the returned results. Period end is inclusive.
+   * Period end has to be in the same month as period start.
+   *
+   * @generated from field: namespace.cloud.compute.v1beta.GetUsageRequest.Date period_end = 2;
+   */
+  periodEnd?: GetUsageRequest_Date;
+};
+
+/**
+ * Describes the message namespace.cloud.compute.v1beta.GetVolumeUsageRequest.
+ * Use `create(GetVolumeUsageRequestSchema)` to create a new message.
+ */
+export const GetVolumeUsageRequestSchema: GenMessage<GetVolumeUsageRequest> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_usage, 3);
+
+/**
+ * @generated from message namespace.cloud.compute.v1beta.GetVolumeUsageResponse
+ */
+export type GetVolumeUsageResponse = Message<"namespace.cloud.compute.v1beta.GetVolumeUsageResponse"> & {
+  /**
+   * Cumulated volume usage for the requested period.
+   *
+   * @generated from field: namespace.cloud.compute.v1beta.GetVolumeUsageResponse.VolumeUsage total = 1;
+   */
+  total?: GetVolumeUsageResponse_VolumeUsage;
+};
+
+/**
+ * Describes the message namespace.cloud.compute.v1beta.GetVolumeUsageResponse.
+ * Use `create(GetVolumeUsageResponseSchema)` to create a new message.
+ */
+export const GetVolumeUsageResponseSchema: GenMessage<GetVolumeUsageResponse> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_usage, 4);
+
+/**
+ * @generated from message namespace.cloud.compute.v1beta.GetVolumeUsageResponse.VolumeUsage
+ */
+export type GetVolumeUsageResponse_VolumeUsage = Message<"namespace.cloud.compute.v1beta.GetVolumeUsageResponse.VolumeUsage"> & {
+  /**
+   * Active cache volume snapshot usage, in GB-minutes.
+   * Divide by 60 for GB-hours.
+   *
+   * @generated from field: int64 cache_snapshot_gb_minutes = 1;
+   */
+  cacheSnapshotGbMinutes: bigint;
+
+  /**
+   * At-rest cache volume storage, in MB-minutes.
+   * Divide by (1024 * 60 * 24) for GB-days.
+   *
+   * @generated from field: int64 cache_storage_mb_minutes = 2;
+   */
+  cacheStorageMbMinutes: bigint;
+
+  /**
+   * At-rest persistent (block) volume storage, in GB-minutes.
+   * Divide by (60 * 24) for GB-days.
+   *
+   * @generated from field: int64 persistent_volume_storage_gb_minutes = 3;
+   */
+  persistentVolumeStorageGbMinutes: bigint;
+};
+
+/**
+ * Describes the message namespace.cloud.compute.v1beta.GetVolumeUsageResponse.VolumeUsage.
+ * Use `create(GetVolumeUsageResponse_VolumeUsageSchema)` to create a new message.
+ */
+export const GetVolumeUsageResponse_VolumeUsageSchema: GenMessage<GetVolumeUsageResponse_VolumeUsage> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_usage, 4, 0);
+
+/**
+ * @generated from message namespace.cloud.compute.v1beta.GetArtifactUsageRequest
+ */
+export type GetArtifactUsageRequest = Message<"namespace.cloud.compute.v1beta.GetArtifactUsageRequest"> & {
+  /**
+   * Optional: If no start date is provided, then return usage starting from the first day of
+   * the current month. Period start is inclusive.
+   *
+   * @generated from field: namespace.cloud.compute.v1beta.GetUsageRequest.Date period_start = 1;
+   */
+  periodStart?: GetUsageRequest_Date;
+
+  /**
+   * Optional: Limits the time range of the returned results. Period end is inclusive.
+   * Period end has to be in the same month as period start.
+   *
+   * @generated from field: namespace.cloud.compute.v1beta.GetUsageRequest.Date period_end = 2;
+   */
+  periodEnd?: GetUsageRequest_Date;
+
+  /**
+   * Optional: Restricts the results to the given products. If empty, usage for all known object
+   * storage products is returned. ARTIFACT_PRODUCT_UNSPECIFIED is not a valid entry.
+   *
+   * @generated from field: repeated namespace.cloud.compute.v1beta.ArtifactProduct products = 3;
+   */
+  products: ArtifactProduct[];
+};
+
+/**
+ * Describes the message namespace.cloud.compute.v1beta.GetArtifactUsageRequest.
+ * Use `create(GetArtifactUsageRequestSchema)` to create a new message.
+ */
+export const GetArtifactUsageRequestSchema: GenMessage<GetArtifactUsageRequest> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_usage, 5);
+
+/**
+ * @generated from message namespace.cloud.compute.v1beta.GetArtifactUsageResponse
+ */
+export type GetArtifactUsageResponse = Message<"namespace.cloud.compute.v1beta.GetArtifactUsageResponse"> & {
+  /**
+   * Per-product object storage usage for the requested period.
+   *
+   * @generated from field: repeated namespace.cloud.compute.v1beta.GetArtifactUsageResponse.ProductUsage products = 1;
+   */
+  products: GetArtifactUsageResponse_ProductUsage[];
+};
+
+/**
+ * Describes the message namespace.cloud.compute.v1beta.GetArtifactUsageResponse.
+ * Use `create(GetArtifactUsageResponseSchema)` to create a new message.
+ */
+export const GetArtifactUsageResponseSchema: GenMessage<GetArtifactUsageResponse> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_usage, 6);
+
+/**
+ * @generated from message namespace.cloud.compute.v1beta.GetArtifactUsageResponse.ProductUsage
+ */
+export type GetArtifactUsageResponse_ProductUsage = Message<"namespace.cloud.compute.v1beta.GetArtifactUsageResponse.ProductUsage"> & {
+  /**
+   * The object storage product.
+   *
+   * @generated from field: namespace.cloud.compute.v1beta.ArtifactProduct product = 1;
+   */
+  product: ArtifactProduct;
+
+  /**
+   * At-rest storage, in GB-minutes.
+   * Divide by (60 * 24 * 30) for GB-months.
+   *
+   * @generated from field: int64 storage_gb_minutes = 2;
+   */
+  storageGbMinutes: bigint;
+
+  /**
+   * Reads (bytes sent), in bytes.
+   *
+   * @generated from field: int64 reads_bytes = 3;
+   */
+  readsBytes: bigint;
+};
+
+/**
+ * Describes the message namespace.cloud.compute.v1beta.GetArtifactUsageResponse.ProductUsage.
+ * Use `create(GetArtifactUsageResponse_ProductUsageSchema)` to create a new message.
+ */
+export const GetArtifactUsageResponse_ProductUsageSchema: GenMessage<GetArtifactUsageResponse_ProductUsage> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_usage, 6, 0);
+
+/**
  * @generated from message namespace.cloud.compute.v1beta.GetUsageTimeSeriesRequest
  */
 export type GetUsageTimeSeriesRequest = Message<"namespace.cloud.compute.v1beta.GetUsageTimeSeriesRequest"> & {
@@ -288,7 +462,9 @@ export type GetUsageTimeSeriesRequest = Message<"namespace.cloud.compute.v1beta.
    * Optional: Break down results by the given dimension names.
    * When set, the response will contain a separate time series per unique
    * combination of breakdown values.
-   * Valid values: "platform", "shape", "purpose", "github_repository", "github_branch", "github_workflow_name", "github_job_name".
+   * Valid values: "platform", "shape", "purpose", "github_repository", "github_branch", "github_workflow_name", "github_job_name",
+   * "buildkite_org_id", "buildkite_pipeline_id", "buildkite_pipeline_slug", "buildkite_repository", "buildkite_branch",
+   * "buildkite_job_name", "buildkite_job_state".
    *
    * @generated from field: repeated string breakdown_by = 4;
    */
@@ -300,7 +476,7 @@ export type GetUsageTimeSeriesRequest = Message<"namespace.cloud.compute.v1beta.
  * Use `create(GetUsageTimeSeriesRequestSchema)` to create a new message.
  */
 export const GetUsageTimeSeriesRequestSchema: GenMessage<GetUsageTimeSeriesRequest> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_compute_v1beta_usage, 3);
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_usage, 7);
 
 /**
  * @generated from message namespace.cloud.compute.v1beta.GetUsageTimeSeriesRequest.UsageFilter
@@ -340,6 +516,51 @@ export type GetUsageTimeSeriesRequest_UsageFilter = Message<"namespace.cloud.com
    * @generated from field: namespace.stdlib.StringMatcher github_job_name = 7;
    */
   githubJobName?: StringMatcher;
+
+  /**
+   * @generated from field: namespace.stdlib.StringMatcher github_profile = 8;
+   */
+  githubProfile?: StringMatcher;
+
+  /**
+   * @generated from field: namespace.stdlib.StringMatcher github_job_conclusion = 9;
+   */
+  githubJobConclusion?: StringMatcher;
+
+  /**
+   * @generated from field: namespace.stdlib.StringMatcher buildkite_org_id = 10;
+   */
+  buildkiteOrgId?: StringMatcher;
+
+  /**
+   * @generated from field: namespace.stdlib.StringMatcher buildkite_pipeline_id = 11;
+   */
+  buildkitePipelineId?: StringMatcher;
+
+  /**
+   * @generated from field: namespace.stdlib.StringMatcher buildkite_pipeline_slug = 12;
+   */
+  buildkitePipelineSlug?: StringMatcher;
+
+  /**
+   * @generated from field: namespace.stdlib.StringMatcher buildkite_repository = 13;
+   */
+  buildkiteRepository?: StringMatcher;
+
+  /**
+   * @generated from field: namespace.stdlib.StringMatcher buildkite_branch = 14;
+   */
+  buildkiteBranch?: StringMatcher;
+
+  /**
+   * @generated from field: namespace.stdlib.StringMatcher buildkite_job_name = 15;
+   */
+  buildkiteJobName?: StringMatcher;
+
+  /**
+   * @generated from field: namespace.stdlib.StringMatcher buildkite_job_state = 16;
+   */
+  buildkiteJobState?: StringMatcher;
 };
 
 /**
@@ -347,7 +568,7 @@ export type GetUsageTimeSeriesRequest_UsageFilter = Message<"namespace.cloud.com
  * Use `create(GetUsageTimeSeriesRequest_UsageFilterSchema)` to create a new message.
  */
 export const GetUsageTimeSeriesRequest_UsageFilterSchema: GenMessage<GetUsageTimeSeriesRequest_UsageFilter> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_compute_v1beta_usage, 3, 0);
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_usage, 7, 0);
 
 /**
  * @generated from message namespace.cloud.compute.v1beta.GetUsageTimeSeriesResponse
@@ -364,7 +585,383 @@ export type GetUsageTimeSeriesResponse = Message<"namespace.cloud.compute.v1beta
  * Use `create(GetUsageTimeSeriesResponseSchema)` to create a new message.
  */
 export const GetUsageTimeSeriesResponseSchema: GenMessage<GetUsageTimeSeriesResponse> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_compute_v1beta_usage, 4);
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_usage, 8);
+
+/**
+ * @generated from message namespace.cloud.compute.v1beta.GenerateReportRequest
+ */
+export type GenerateReportRequest = Message<"namespace.cloud.compute.v1beta.GenerateReportRequest"> & {
+  /**
+   * Required: Start of the time range (inclusive). Only instances created
+   * within [start_time, end_time) will be included in the report.
+   *
+   * @generated from field: google.protobuf.Timestamp start_time = 1;
+   */
+  startTime?: Timestamp;
+
+  /**
+   * Required: End of the time range (exclusive).
+   *
+   * @generated from field: google.protobuf.Timestamp end_time = 2;
+   */
+  endTime?: Timestamp;
+
+  /**
+   * Optional: Filter the report.
+   *
+   * @generated from field: namespace.cloud.compute.v1beta.GetUsageTimeSeriesRequest.UsageFilter filter = 3;
+   */
+  filter?: GetUsageTimeSeriesRequest_UsageFilter;
+};
+
+/**
+ * Describes the message namespace.cloud.compute.v1beta.GenerateReportRequest.
+ * Use `create(GenerateReportRequestSchema)` to create a new message.
+ */
+export const GenerateReportRequestSchema: GenMessage<GenerateReportRequest> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_usage, 9);
+
+/**
+ * @generated from message namespace.cloud.compute.v1beta.GenerateReportResponse
+ */
+export type GenerateReportResponse = Message<"namespace.cloud.compute.v1beta.GenerateReportResponse"> & {
+  /**
+   * A batch of report entries. The server may emit any number of entries per
+   * streamed message; clients should concatenate entries across messages.
+   *
+   * @generated from field: repeated namespace.cloud.compute.v1beta.InstanceReportEntry entries = 1;
+   */
+  entries: InstanceReportEntry[];
+};
+
+/**
+ * Describes the message namespace.cloud.compute.v1beta.GenerateReportResponse.
+ * Use `create(GenerateReportResponseSchema)` to create a new message.
+ */
+export const GenerateReportResponseSchema: GenMessage<GenerateReportResponse> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_usage, 10);
+
+/**
+ * @generated from message namespace.cloud.compute.v1beta.InstanceReportEntry
+ */
+export type InstanceReportEntry = Message<"namespace.cloud.compute.v1beta.InstanceReportEntry"> & {
+  /**
+   * @generated from field: string instance_id = 1;
+   */
+  instanceId: string;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp created_at = 2;
+   */
+  createdAt?: Timestamp;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp started_at = 3;
+   */
+  startedAt?: Timestamp;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp destroyed_at = 4;
+   */
+  destroyedAt?: Timestamp;
+
+  /**
+   * @generated from field: float resources_cpu = 5;
+   */
+  resourcesCpu: number;
+
+  /**
+   * @generated from field: float resources_ram_gb = 6;
+   */
+  resourcesRamGb: number;
+
+  /**
+   * Maximum observed CPU utilization, expressed as a ratio in [0.0, 1.0] of a
+   * single vCPU (e.g. 1.0 means at least one vCPU was fully utilized).
+   *
+   * @generated from field: float resources_cpu_actual_max = 7;
+   */
+  resourcesCpuActualMax: number;
+
+  /**
+   * Maximum observed RAM utilization, expressed as a ratio in [0.0, 1.0] of
+   * the instance's allocated memory.
+   *
+   * @generated from field: float resources_ram_gb_actual_max_percent = 8;
+   */
+  resourcesRamGbActualMaxPercent: number;
+
+  /**
+   * Set when the instance backed a GitHub Actions job.
+   *
+   * @generated from field: namespace.cloud.compute.v1beta.InstanceReportEntry.GitHubJob github_job = 9;
+   */
+  githubJob?: InstanceReportEntry_GitHubJob;
+
+  /**
+   * Metadata about all volumes attached to this instance.
+   *
+   * @generated from field: repeated namespace.cloud.compute.v1beta.InstanceReportEntry.Volume volumes = 10;
+   */
+  volumes: InstanceReportEntry_Volume[];
+
+  /**
+   * Set when the instance backed a Buildkite job.
+   *
+   * @generated from field: namespace.cloud.compute.v1beta.InstanceReportEntry.BuildkiteJob buildkite_job = 11;
+   */
+  buildkiteJob?: InstanceReportEntry_BuildkiteJob;
+};
+
+/**
+ * Describes the message namespace.cloud.compute.v1beta.InstanceReportEntry.
+ * Use `create(InstanceReportEntrySchema)` to create a new message.
+ */
+export const InstanceReportEntrySchema: GenMessage<InstanceReportEntry> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_usage, 11);
+
+/**
+ * @generated from message namespace.cloud.compute.v1beta.InstanceReportEntry.GitHubJob
+ */
+export type InstanceReportEntry_GitHubJob = Message<"namespace.cloud.compute.v1beta.InstanceReportEntry.GitHubJob"> & {
+  /**
+   * @generated from field: int64 job_id = 1;
+   */
+  jobId: bigint;
+
+  /**
+   * @generated from field: string job_name = 2;
+   */
+  jobName: string;
+
+  /**
+   * @generated from field: string workflow_name = 3;
+   */
+  workflowName: string;
+
+  /**
+   * @generated from field: int64 run_id = 4;
+   */
+  runId: bigint;
+
+  /**
+   * @generated from field: int64 run_attempt = 5;
+   */
+  runAttempt: bigint;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp job_created_at = 6;
+   */
+  jobCreatedAt?: Timestamp;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp job_started_at = 7;
+   */
+  jobStartedAt?: Timestamp;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp job_completed_at = 8;
+   */
+  jobCompletedAt?: Timestamp;
+
+  /**
+   * @generated from field: string profile = 9;
+   */
+  profile: string;
+
+  /**
+   * @generated from field: string repository = 10;
+   */
+  repository: string;
+
+  /**
+   * @generated from field: string branch = 11;
+   */
+  branch: string;
+
+  /**
+   * e.g. "success", "failure", "cancelled", "skipped".
+   *
+   * @generated from field: string conclusion = 12;
+   */
+  conclusion: string;
+
+  /**
+   * @generated from field: string sender_login = 13;
+   */
+  senderLogin: string;
+};
+
+/**
+ * Describes the message namespace.cloud.compute.v1beta.InstanceReportEntry.GitHubJob.
+ * Use `create(InstanceReportEntry_GitHubJobSchema)` to create a new message.
+ */
+export const InstanceReportEntry_GitHubJobSchema: GenMessage<InstanceReportEntry_GitHubJob> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_usage, 11, 0);
+
+/**
+ * @generated from message namespace.cloud.compute.v1beta.InstanceReportEntry.Volume
+ */
+export type InstanceReportEntry_Volume = Message<"namespace.cloud.compute.v1beta.InstanceReportEntry.Volume"> & {
+  /**
+   * @generated from field: string tag = 1;
+   */
+  tag: string;
+
+  /**
+   * @generated from field: string mount_point = 2;
+   */
+  mountPoint: string;
+
+  /**
+   * @generated from field: int64 size_mb = 3;
+   */
+  sizeMb: bigint;
+
+  /**
+   * @generated from field: int64 used_mb = 4;
+   */
+  usedMb: bigint;
+
+  /**
+   * @generated from field: bool cache_hit = 5;
+   */
+  cacheHit: boolean;
+};
+
+/**
+ * Describes the message namespace.cloud.compute.v1beta.InstanceReportEntry.Volume.
+ * Use `create(InstanceReportEntry_VolumeSchema)` to create a new message.
+ */
+export const InstanceReportEntry_VolumeSchema: GenMessage<InstanceReportEntry_Volume> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_usage, 11, 1);
+
+/**
+ * @generated from message namespace.cloud.compute.v1beta.InstanceReportEntry.BuildkiteJob
+ */
+export type InstanceReportEntry_BuildkiteJob = Message<"namespace.cloud.compute.v1beta.InstanceReportEntry.BuildkiteJob"> & {
+  /**
+   * @generated from field: string job_id = 1;
+   */
+  jobId: string;
+
+  /**
+   * @generated from field: string job_name = 2;
+   */
+  jobName: string;
+
+  /**
+   * @generated from field: string pipeline_slug = 3;
+   */
+  pipelineSlug: string;
+
+  /**
+   * @generated from field: string pipeline_id = 4;
+   */
+  pipelineId: string;
+
+  /**
+   * @generated from field: string build_id = 5;
+   */
+  buildId: string;
+
+  /**
+   * @generated from field: int64 build_number = 6;
+   */
+  buildNumber: bigint;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp job_created_at = 7;
+   */
+  jobCreatedAt?: Timestamp;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp job_runnable_at = 8;
+   */
+  jobRunnableAt?: Timestamp;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp job_started_at = 9;
+   */
+  jobStartedAt?: Timestamp;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp job_finished_at = 10;
+   */
+  jobFinishedAt?: Timestamp;
+
+  /**
+   * @generated from field: string org_id = 11;
+   */
+  orgId: string;
+
+  /**
+   * @generated from field: string repository = 12;
+   */
+  repository: string;
+
+  /**
+   * @generated from field: string branch = 13;
+   */
+  branch: string;
+
+  /**
+   * e.g. "passed", "failed", "canceled", "timed_out", "skipped", "broken"
+   *
+   * @generated from field: string job_state = 14;
+   */
+  jobState: string;
+};
+
+/**
+ * Describes the message namespace.cloud.compute.v1beta.InstanceReportEntry.BuildkiteJob.
+ * Use `create(InstanceReportEntry_BuildkiteJobSchema)` to create a new message.
+ */
+export const InstanceReportEntry_BuildkiteJobSchema: GenMessage<InstanceReportEntry_BuildkiteJob> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_usage, 11, 2);
+
+/**
+ * ArtifactProduct enumerates the object storage products reported by GetArtifactUsage.
+ *
+ * @generated from enum namespace.cloud.compute.v1beta.ArtifactProduct
+ */
+export enum ArtifactProduct {
+  /**
+   * @generated from enum value: ARTIFACT_PRODUCT_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: ARTIFACT_PRODUCT_REGISTRY = 1;
+   */
+  REGISTRY = 1,
+
+  /**
+   * @generated from enum value: ARTIFACT_PRODUCT_TURBOREPO = 2;
+   */
+  TURBOREPO = 2,
+
+  /**
+   * @generated from enum value: ARTIFACT_PRODUCT_GITHUB_ARTIFACTS = 3;
+   */
+  GITHUB_ARTIFACTS = 3,
+
+  /**
+   * @generated from enum value: ARTIFACT_PRODUCT_BAZEL = 4;
+   */
+  BAZEL = 4,
+
+  /**
+   * @generated from enum value: ARTIFACT_PRODUCT_GRADLE = 5;
+   */
+  GRADLE = 5,
+}
+
+/**
+ * Describes the enum namespace.cloud.compute.v1beta.ArtifactProduct.
+ */
+export const ArtifactProductSchema: GenEnum<ArtifactProduct> = /*@__PURE__*/
+  enumDesc(file_proto_namespace_cloud_compute_v1beta_usage, 0);
 
 /**
  * UsageService allows querying the compute instance usage of a tenant.
@@ -410,6 +1007,31 @@ export const UsageService: GenService<{
     output: typeof GetUsageResponseSchema;
   },
   /**
+   * Returns volume usage of a tenant starting from the provided start date. This covers both
+   * cache volumes (active snapshot and at-rest storage) and persistent (block) volumes (at-rest
+   * storage). If no start date is provided, then it returns usage starting from the first day of
+   * the current month.
+   *
+   * @generated from rpc namespace.cloud.compute.v1beta.UsageService.GetVolumeUsage
+   */
+  getVolumeUsage: {
+    methodKind: "unary";
+    input: typeof GetVolumeUsageRequestSchema;
+    output: typeof GetVolumeUsageResponseSchema;
+  },
+  /**
+   * Returns object storage usage per product (at-rest storage and reads) of a tenant starting
+   * from the provided start date. If no start date is provided, then it returns usage starting
+   * from the first day of the current month.
+   *
+   * @generated from rpc namespace.cloud.compute.v1beta.UsageService.GetArtifactUsage
+   */
+  getArtifactUsage: {
+    methodKind: "unary";
+    input: typeof GetArtifactUsageRequestSchema;
+    output: typeof GetArtifactUsageResponseSchema;
+  },
+  /**
    * Returns compute usage as a time series for the specified time range.
    * Supports filtering and breaking down results by various dimensions.
    *
@@ -419,6 +1041,28 @@ export const UsageService: GenService<{
     methodKind: "unary";
     input: typeof GetUsageTimeSeriesRequestSchema;
     output: typeof GetUsageTimeSeriesResponseSchema;
+  },
+  /**
+   * Generates a detailed report listing every compute instance created within
+   * the specified time period. Results are streamed in batches for efficiency.
+   *
+   * Execution is constrained to 30 seconds, but supports downloading any
+   * number of records within that window.
+   *
+   * @generated from rpc namespace.cloud.compute.v1beta.UsageService.GenerateReport
+   */
+  generateReport: {
+    methodKind: "server_streaming";
+    input: typeof GenerateReportRequestSchema;
+    output: typeof GenerateReportResponseSchema;
+  },
+  /**
+   * @generated from rpc namespace.cloud.compute.v1beta.UsageService.GetConcurrency
+   */
+  getConcurrency: {
+    methodKind: "unary";
+    input: typeof GetConcurrencyRequestSchema;
+    output: typeof GetConcurrencyResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_proto_namespace_cloud_compute_v1beta_usage, 0);

@@ -3,7 +3,7 @@
  */
 
 import { createClient, type Transport } from "@connectrpc/connect";
-import type { TokenSource } from "../../auth/types.js";
+import type { TokenSourceInput } from "../../auth/caching.js";
 import { createGlobalTransport } from "../clients.js";
 
 import { TenantService } from "../../proto/namespace/cloud/iam/v1beta/tenants_pb.js";
@@ -22,7 +22,7 @@ export interface IAMClient {
  */
 export interface IAMClientOpts {
 	/** Token source for authentication */
-	tokenSource: TokenSource;
+	tokenSource: TokenSourceInput;
 	/** Custom transport (if provided, tokenSource is ignored) */
 	transport?: Transport;
 }
