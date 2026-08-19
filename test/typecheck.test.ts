@@ -184,6 +184,12 @@ async function testDevboxClient() {
 	removeDataListener();
 	terminal.close();
 
+	const screenshot = await devbox.display.screenshot({ timeoutMs: 30_000 });
+	const png: Uint8Array = screenshot.png;
+	const dimensions: number = screenshot.width * screenshot.height;
+	await devbox.display.click(100, 200);
+	await devbox.display.click(100, 200, { button: "right" });
+
 	await devbox.fs.upload("./package.json", "/workspace/package.json");
 	await devbox.fs.download("/workspace/result.json", "./result.json");
 	await devbox.fs.copy("/workspace/result.json", "/workspace/result-copy.json");
