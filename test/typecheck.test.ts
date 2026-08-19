@@ -189,6 +189,8 @@ async function testDevboxClient() {
 	const dimensions: number = screenshot.width * screenshot.height;
 	await devbox.display.click(100, 200);
 	await devbox.display.click(100, 200, { button: "right" });
+	await devbox.display.type("uname -a\n");
+	await devbox.display.type("hello", { timeoutMs: 5_000 });
 
 	await devbox.fs.upload("./package.json", "/workspace/package.json");
 	await devbox.fs.download("/workspace/result.json", "./result.json");
@@ -235,6 +237,7 @@ async function testVncLibrary() {
 	const dimensions: number = screenshot.width * screenshot.height;
 	const name: string = client.desktopName;
 	await client.click(10, 20, { button: "middle" });
+	await client.type("echo hello\n", { timeoutMs: 5_000 });
 	client.close();
 
 	// Errors form a hierarchy rooted at VncError.

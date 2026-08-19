@@ -182,6 +182,33 @@ export function buttonMask(button: "left" | "middle" | "right"): number {
 	return button === "left" ? 1 : button === "middle" ? 2 : 4;
 }
 
+export function keyEvent(down: boolean, keysym: number): Buffer {
+	const message = Buffer.alloc(8);
+	message.writeUInt8(4, 0);
+	message.writeUInt8(down ? 1 : 0, 1);
+	message.writeUInt32BE(keysym, 4);
+	return message;
+}
+
+/**
+ * Map a character to its X11 keysym: printable ASCII maps directly, control
+ * characters map to their dedicated keysyms, and other Unicode code points
+ * use the `0x01000000 | codepoint` form from the keysym encoding.
+ */
+export function keysymForChar(char: string): number {
+	const codePoint = char.codePointAt(0);
+	if (codePoint === undefined) throw new RangeError("empty character");
+	if (codePoint === 0x0a || codePoint === 0x0d) return 0xff0d; // Return
+	if (codePoint === 0x09) return 0xff09; // Tab
+	if (codePoint === 0x08) return 0xff08; // BackSpace
+	if (codePoint === 0x1b) return 0xff1b; // Escape
+	if (codePoint === 0x7f) return 0xffff; // Delete
+	if (codePoint >= 0x20 && codePoint <= 0x7e) return codePoint;
+	if (codePoint >= 0xa0 && codePoint <= 0xff) return codePoint;
+	if (codePoint < 0x20) throw new RangeError(`unsupported control character U+${codePoint.toString(16).padStart(4, "0")}`);
+	return 0x01000000 | codePoint;
+}
+
 export async function readFramebufferUpdate(
 	reader: BufferedReader,
 	rgba: Buffer,

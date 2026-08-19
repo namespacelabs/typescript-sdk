@@ -138,6 +138,15 @@ export class DisplayConnection {
 			throw translateVncError(error);
 		}
 	}
+
+	/** Type text: a key press and release per character. */
+	async type(text: string, options: OperationOptions = {}): Promise<void> {
+		try {
+			await this.client.type(text, options);
+		} catch (error) {
+			throw translateVncError(error);
+		}
+	}
 }
 
 /** Map generic VNC errors to their devbox equivalents. */

@@ -200,6 +200,13 @@ export interface DevboxDisplay {
 	 * `RangeError` when the position is outside the screen.
 	 */
 	click(x: number, y: number, options?: ClickOptions): Promise<void>;
+	/**
+	 * Type text into the focused element: a key press and release per
+	 * character. Newlines send Return; tabs, backspaces, and escapes send
+	 * their dedicated keys. Other control characters reject with
+	 * `RangeError`.
+	 */
+	type(text: string, options?: OperationOptions): Promise<void>;
 }
 
 export interface TransferOptions extends OperationOptions {

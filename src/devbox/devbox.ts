@@ -53,6 +53,7 @@ export class DevboxHandle implements DevboxModel {
 		this.display = {
 			screenshot: (options) => this.screenshot(options),
 			click: (x, y, options) => this.click(x, y, options),
+			type: (text, options) => this.type(text, options),
 		};
 	}
 
@@ -132,6 +133,13 @@ export class DevboxHandle implements DevboxModel {
 		const connection = await this.connections.getDisplay(this.id, withDeadline(options, deadline));
 		this.markRunning(connection.instanceId);
 		return connection.click(x, y, withDeadline(options, deadline));
+	}
+
+	private async type(text: string, options: OperationOptions = {}): Promise<void> {
+		const deadline = operationDeadline(options);
+		const connection = await this.connections.getDisplay(this.id, withDeadline(options, deadline));
+		this.markRunning(connection.instanceId);
+		return connection.type(text, withDeadline(options, deadline));
 	}
 
 	private markRunning(instanceId: string): void {

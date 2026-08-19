@@ -10,6 +10,8 @@ import {
 	buttonMask,
 	framebufferUpdateRequest,
 	handshake,
+	keyEvent,
+	keysymForChar,
 	pointerEvent,
 	readFramebufferUpdate,
 	skipColorMap,
@@ -150,6 +152,21 @@ export class VncClient {
 			await this.write(pointerEvent(0, x, y));
 			await this.write(pointerEvent(mask, x, y));
 			await this.write(pointerEvent(0, x, y));
+		});
+	}
+
+	/**
+	 * Type text by sending a key press and release per character. Newlines
+	 * send Return; tabs, backspaces, and escapes send their dedicated keys.
+	 * Other control characters reject with `RangeError`.
+	 */
+	async type(text: string, options: OperationOptions = {}): Promise<void> {
+		const keysyms = [...text].map(keysymForChar);
+		return this.run(options, async () => {
+			for (const keysym of keysyms) {
+				await this.write(keyEvent(true, keysym));
+				await this.write(keyEvent(false, keysym));
+			}
 		});
 	}
 

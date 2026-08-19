@@ -126,6 +126,10 @@ async function main() {
 		await devbox.display.click(Math.floor(screenshot.width / 2), Math.floor(screenshot.height / 2));
 		console.log("clicked screen center");
 
+		// Keystrokes go to the focused element; newlines send Return.
+		await devbox.display.type("hello from the tour\n");
+		console.log("typed into the display");
+
 		// ── Lifecycle ───────────────────────────────────────────────────
 
 		await devbox.stop();

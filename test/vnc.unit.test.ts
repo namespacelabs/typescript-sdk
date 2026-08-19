@@ -39,6 +39,25 @@ test("clicks send the pointer press and release sequence", async (t) => {
 	await assert.rejects(client.click(0.5, 0), RangeError);
 });
 
+test("typing sends a key press and release per character", async (t) => {
+	const { client, server } = await connectFakeVnc(t);
+	await client.type("Hi!\n");
+	// Serialize against the server's event log by taking a screenshot.
+	await client.screenshot();
+	assert.deepEqual(server.state.keyEvents, [
+		{ down: true, keysym: 0x48 }, // H
+		{ down: false, keysym: 0x48 },
+		{ down: true, keysym: 0x69 }, // i
+		{ down: false, keysym: 0x69 },
+		{ down: true, keysym: 0x21 }, // !
+		{ down: false, keysym: 0x21 },
+		{ down: true, keysym: 0xff0d }, // Return
+		{ down: false, keysym: 0xff0d },
+	]);
+
+	await assert.rejects(client.type("\u0001"), RangeError);
+});
+
 test("in-stream protocol errors close the session", async (t) => {
 	const { client, server } = await connectFakeVnc(t);
 	// Inject a server message the client does not understand; the failing

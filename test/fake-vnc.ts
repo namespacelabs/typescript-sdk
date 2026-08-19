@@ -14,6 +14,7 @@ import { createWebSocketStream, WebSocketServer } from "ws";
 export interface FakeVncState {
 	headers: IncomingHttpHeaders;
 	pointerEvents: Array<{ buttons: number; x: number; y: number }>;
+	keyEvents: Array<{ down: boolean; keysym: number }>;
 }
 
 export interface FakeVncServer {
@@ -27,7 +28,7 @@ export interface FakeVncServer {
 export async function startFakeVncServer(): Promise<FakeVncServer> {
 	const server = new WebSocketServer({ host: "127.0.0.1", port: 0 });
 	await once(server, "listening");
-	const state: FakeVncState = { headers: {}, pointerEvents: [] };
+	const state: FakeVncState = { headers: {}, pointerEvents: [], keyEvents: [] };
 	let connection: Duplex | undefined;
 	server.on("connection", (socket, request) => {
 		state.headers = request.headers;
@@ -90,6 +91,12 @@ async function serveFakeVnc(socket: Duplex, state: FakeVncState): Promise<void> 
 		if (messageType === 3) {
 			await reader.read(9);
 			socket.write(framebufferUpdate());
+		} else if (messageType === 4) {
+			const event = await reader.read(7);
+			state.keyEvents.push({
+				down: event[0] === 1,
+				keysym: event.readUInt32BE(3),
+			});
 		} else if (messageType === 5) {
 			const event = await reader.read(5);
 			state.pointerEvents.push({

@@ -217,6 +217,9 @@ try {
 	// Click at framebuffer coordinates (origin top-left).
 	await macos.display.click(100, 200);
 	await macos.display.click(100, 200, { button: "right" });
+
+	// Type into the focused element; newlines send Return.
+	await macos.display.type("uname -a\n");
 } catch (error) {
 	if (error instanceof DevboxDisplayUnavailableError) {
 		// This devbox has no display.
