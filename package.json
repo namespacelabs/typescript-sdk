@@ -38,6 +38,16 @@
 				"default": "./dist/cjs/devbox/index.js"
 			}
 		},
+		"./vnc": {
+			"import": {
+				"types": "./dist/types/vnc/index.d.ts",
+				"default": "./dist/esm/vnc/index.js"
+			},
+			"require": {
+				"types": "./dist/types/vnc/index.d.ts",
+				"default": "./dist/cjs/vnc/index.js"
+			}
+		},
 		"./api": {
 			"import": {
 				"types": "./dist/types/api/index.d.ts",
