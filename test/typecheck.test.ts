@@ -218,6 +218,30 @@ async function testDevboxClient() {
 	client.close();
 }
 
+// Test: Standalone VNC library
+async function testVncLibrary() {
+	const { openVnc, VncClient, VncError, VncTimeoutError, VncEndpointError } = await import("../src/vnc/index.js");
+
+	const vnc = await openVnc({
+		endpoint: "wss://vnc.example.com",
+		username: "user",
+		password: "secret",
+		headers: { Authorization: "Bearer token" },
+		timeoutMs: 30_000,
+	});
+	const client: InstanceType<typeof VncClient> = vnc;
+	const screenshot = await client.screenshot({ timeoutMs: 10_000 });
+	const png: Uint8Array = screenshot.png;
+	const dimensions: number = screenshot.width * screenshot.height;
+	const name: string = client.desktopName;
+	await client.click(10, 20, { button: "middle" });
+	client.close();
+
+	// Errors form a hierarchy rooted at VncError.
+	const timeout: InstanceType<typeof VncError> = new VncTimeoutError("timed out", 1000);
+	const endpoint: InstanceType<typeof VncError> = new VncEndpointError(502);
+}
+
 // Test: Transport creation
 async function testTransports() {
 	const tokenSource = fromBearerToken("test");
@@ -265,6 +289,7 @@ export {
 	testStorageClient,
 	testVaultClient,
 	testDevboxClient,
+	testVncLibrary,
 	testTransports,
 	testProtoImports,
 };

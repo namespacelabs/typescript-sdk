@@ -227,6 +227,8 @@ try {
 
 Like other connection-backed operations, using `devbox.display` on a stopped devbox activates it first, and the underlying VNC session is cached and reused across calls.
 
+The VNC client behind `devbox.display` is also available standalone as `@namespacelabs/sdk/vnc` (`openVnc`): a minimal RFB 3.8 client over websockets with Apple Remote Desktop authentication, raw encoding, and PNG screenshots — no native dependencies and no Namespace-specific behavior.
+
 Images can be registered from an existing image reference, listed, inspected, optimized for a site, and deleted:
 
 ```typescript

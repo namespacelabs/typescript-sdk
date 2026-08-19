@@ -1,3 +1,5 @@
+import type { PointerButton, Screenshot as VncScreenshot } from "../vnc/index.js";
+
 export interface OperationOptions {
 	signal?: AbortSignal;
 	timeoutMs?: number;
@@ -171,23 +173,15 @@ export interface TerminalSession {
 	wait(): Promise<{ exitCode: number | null; signal: string | null }>;
 }
 
-export type MouseButton = "left" | "middle" | "right";
+export type MouseButton = PointerButton;
 
 export interface ClickOptions extends OperationOptions {
 	/** Mouse button to click. Defaults to `"left"`. */
 	button?: MouseButton;
 }
 
-export interface Screenshot {
-	/** PNG-encoded image data. */
-	png: Uint8Array;
-	/** Framebuffer width in pixels. */
-	width: number;
-	/** Framebuffer height in pixels. */
-	height: number;
-	/** Desktop name reported by the VNC server. */
-	desktopName: string;
-}
+/** A captured screen image; see `Screenshot` in `@namespacelabs/sdk/vnc`. */
+export type Screenshot = VncScreenshot;
 
 /**
  * Screen access to a devbox display, backed by VNC.
