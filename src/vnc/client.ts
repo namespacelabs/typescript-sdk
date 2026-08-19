@@ -188,14 +188,13 @@ export class VncClient {
 			return operation();
 		});
 		this.queue = perform.then(() => {}, () => {});
-		let finished = false;
-		void perform.finally(() => { finished = true; }).catch(() => {});
 		try {
 			return await waitFor(perform, options);
 		} catch (error) {
-			// A timed-out or aborted operation may still be mid-message;
-			// the stream position is unknown, so the session is unusable.
-			if (!finished) this.close();
+			// A failed operation may have stopped mid-message (timeout,
+			// abort, or an in-stream protocol error); the stream position
+			// is unknown, so the session is unusable.
+			this.close();
 			throw error;
 		}
 	}

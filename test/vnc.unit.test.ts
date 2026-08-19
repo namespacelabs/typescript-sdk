@@ -39,6 +39,16 @@ test("clicks send the pointer press and release sequence", async (t) => {
 	await assert.rejects(client.click(0.5, 0), RangeError);
 });
 
+test("in-stream protocol errors close the session", async (t) => {
+	const { client, server } = await connectFakeVnc(t);
+	// Inject a server message the client does not understand; the failing
+	// operation must poison the session so follow-ups reject instead of
+	// waiting forever on a stream at an unknown position.
+	server.sendRaw(Buffer.from([200]));
+	await assert.rejects(client.screenshot(), /unsupported RFB server message type 200/);
+	await assert.rejects(client.screenshot(), /VNC connection is closed/);
+});
+
 test("VNC handshakes time out", async (t) => {
 	// A server that never speaks RFB stalls the handshake.
 	const server = new WebSocketServer({ host: "127.0.0.1", port: 0 });
