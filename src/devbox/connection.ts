@@ -17,10 +17,10 @@ import {
 	computeApiBaseUrl,
 	createComputeClient,
 	fetchVncConfig,
-	openDisplay,
+	openDesktop,
 	type ComputeClient,
-	type DisplayConnection,
-} from "./display.js";
+	type DesktopConnection,
+} from "./desktop.js";
 import { DevboxGatewayError, DevboxTimeoutError, IncompleteResponseError } from "./errors.js";
 import type {
 	ExecOptions,
@@ -358,7 +358,7 @@ interface ConnectionRecord<T extends ManagedConnection> {
 export class ConnectionManager {
 	private readonly sshRecords = new Map<string, ConnectionRecord<SshConnection>>();
 	private readonly agentRecords = new Map<string, ConnectionRecord<AgentConnection>>();
-	private readonly displayRecords = new Map<string, ConnectionRecord<DisplayConnection>>();
+	private readonly desktopRecords = new Map<string, ConnectionRecord<DesktopConnection>>();
 	private readonly computeClients = new Map<string, ComputeClient>();
 	private closed = false;
 
@@ -376,20 +376,20 @@ export class ConnectionManager {
 		return this.acquire(this.agentRecords, ref, (signal) => this.connectAgent(ref, signal), options);
 	}
 
-	async getDisplay(ref: string, options: OperationOptions = {}): Promise<DisplayConnection> {
-		return this.acquire(this.displayRecords, ref, (signal) => this.connectDisplay(ref, signal), options);
+	async getDesktop(ref: string, options: OperationOptions = {}): Promise<DesktopConnection> {
+		return this.acquire(this.desktopRecords, ref, (signal) => this.connectDesktop(ref, signal), options);
 	}
 
 	invalidate(ref: string): void {
 		invalidateRecord(this.sshRecords, ref);
 		invalidateRecord(this.agentRecords, ref);
-		invalidateRecord(this.displayRecords, ref);
+		invalidateRecord(this.desktopRecords, ref);
 	}
 
 	close(): void {
 		if (this.closed) return;
 		this.closed = true;
-		for (const records of [this.sshRecords, this.agentRecords, this.displayRecords] as const) {
+		for (const records of [this.sshRecords, this.agentRecords, this.desktopRecords] as const) {
 			for (const record of records.values()) {
 				record.controller.abort();
 				record.connection?.close();
@@ -474,7 +474,7 @@ export class ConnectionManager {
 		});
 	}
 
-	private async connectDisplay(ref: string, signal: AbortSignal): Promise<DisplayConnection> {
+	private async connectDesktop(ref: string, signal: AbortSignal): Promise<DesktopConnection> {
 		const deadline = operationDeadline({ timeoutMs: this.connectTimeoutMs });
 		const activation = await this.rpc.activate({
 			idOrName: ref,
@@ -487,15 +487,15 @@ export class ConnectionManager {
 		}
 
 		// The VNC endpoint and credentials come from the regional Compute
-		// API; this rejects with DevboxDisplayUnavailableError when the
-		// instance has no display.
+		// API; this rejects with DevboxDesktopUnavailableError when the
+		// instance has no desktop.
 		const compute = this.computeClient(computeApiBaseUrl(ingressDomain));
 		const config = await fetchVncConfig(compute, instanceId, withDeadline({ signal, timeoutMs: this.connectTimeoutMs }, deadline));
 		const token = await this.issueGatewayToken(signal, deadline);
 		return connectWithRetry({
 			signal,
 			timeoutMs: withDeadline({ timeoutMs: this.connectTimeoutMs }, deadline).timeoutMs!,
-		}, (remainingMs) => openDisplay({
+		}, (remainingMs) => openDesktop({
 			instanceId,
 			endpoint: config.endpoint,
 			username: config.username,

@@ -198,11 +198,11 @@ client.close();
 
 `upload()` and `download()` transfer one file. `copy()` operates inside the devbox and accepts `{ recursive: true }` for directories. All operations accept `AbortSignal` and timeout options.
 
-Devboxes with a graphical display — macOS devboxes — expose screen access through `devbox.display`, backed by VNC. Methods reject with `DevboxDisplayUnavailableError` when the devbox has no display (for example, Linux devboxes):
+Devboxes with a graphical desktop — macOS devboxes — expose screen access through `devbox.desktop`, backed by VNC. Methods reject with `DevboxDesktopUnavailableError` when the devbox has no desktop (for example, Linux devboxes):
 
 ```typescript
 import { writeFile } from "node:fs/promises";
-import { DevboxDisplayUnavailableError } from "@namespacelabs/sdk";
+import { DevboxDesktopUnavailableError } from "@namespacelabs/sdk";
 
 const macos = await client.devboxes.create({
 	name: "my-mac",
@@ -211,26 +211,26 @@ const macos = await client.devboxes.create({
 });
 
 try {
-	const screenshot = await macos.display.screenshot();
+	const screenshot = await macos.desktop.screenshot();
 	await writeFile("screen.png", screenshot.png);
 
 	// Click at framebuffer coordinates (origin top-left).
-	await macos.display.click(100, 200);
-	await macos.display.click(100, 200, { button: "right" });
+	await macos.desktop.click(100, 200);
+	await macos.desktop.click(100, 200, { button: "right" });
 
 	// Type into the focused element; newlines send Return.
-	await macos.display.type("uname -a\n");
+	await macos.desktop.type("uname -a\n");
 } catch (error) {
-	if (error instanceof DevboxDisplayUnavailableError) {
-		// This devbox has no display.
+	if (error instanceof DevboxDesktopUnavailableError) {
+		// This devbox has no desktop.
 	}
 	throw error;
 }
 ```
 
-Like other connection-backed operations, using `devbox.display` on a stopped devbox activates it first, and the underlying VNC session is cached and reused across calls.
+Like other connection-backed operations, using `devbox.desktop` on a stopped devbox activates it first, and the underlying VNC session is cached and reused across calls.
 
-The VNC client behind `devbox.display` is also available standalone as `@namespacelabs/sdk/vnc` (`openVnc`): a minimal RFB 3.8 client over websockets with Apple Remote Desktop authentication, raw encoding, and PNG screenshots — no native dependencies and no Namespace-specific behavior.
+The VNC client behind `devbox.desktop` is also available standalone as `@namespacelabs/sdk/vnc` (`openVnc`): a minimal RFB 3.8 client over websockets with Apple Remote Desktop authentication, raw encoding, and PNG screenshots — no native dependencies and no Namespace-specific behavior.
 
 Images can be registered from an existing image reference, listed, inspected, optimized for a site, and deleted:
 

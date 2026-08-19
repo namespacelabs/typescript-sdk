@@ -184,14 +184,14 @@ export interface ClickOptions extends OperationOptions {
 export type Screenshot = VncScreenshot;
 
 /**
- * Screen access to a devbox display, backed by VNC.
+ * Desktop access to a devbox, backed by VNC.
  *
- * Only devboxes with a graphical display — macOS devboxes — expose one;
- * methods reject with `DevboxDisplayUnavailableError` for devboxes without a
- * display. All methods are connection-backed: calling them on a stopped
+ * Only devboxes with a graphical desktop — macOS devboxes — expose one;
+ * methods reject with `DevboxDesktopUnavailableError` for devboxes without a
+ * desktop. All methods are connection-backed: calling them on a stopped
  * devbox activates it first.
  */
-export interface DevboxDisplay {
+export interface DevboxDesktop {
 	/** Capture the full screen as a PNG. */
 	screenshot(options?: OperationOptions): Promise<Screenshot>;
 	/**
@@ -284,12 +284,12 @@ export interface Devbox {
 		open(options?: TerminalOpenOptions): Promise<TerminalSession>;
 	};
 	/**
-	 * Screen access (screenshots and clicks) for devboxes with a display,
+	 * Screen access (screenshots, clicks, and typing) for devboxes with a desktop,
 	 * such as macOS devboxes. Methods reject with
-	 * `DevboxDisplayUnavailableError` when the devbox has no display.
+	 * `DevboxDesktopUnavailableError` when the devbox has no desktop.
 	 * Connection-backed: using it on a stopped devbox activates it first.
 	 */
-	readonly display: DevboxDisplay;
+	readonly desktop: DevboxDesktop;
 	/**
 	 * Run a command on the devbox and collect its output.
 	 *

@@ -110,11 +110,11 @@ async function main() {
 			"- saw echo:", Buffer.concat(output).toString().includes("terminal-says-hi"),
 		);
 
-		// ── Display ─────────────────────────────────────────────────────
+		// ── Desktop ─────────────────────────────────────────────────────
 
-		// macOS devboxes expose a graphical display over VNC. Devboxes
-		// without one (Linux) reject with DevboxDisplayUnavailableError.
-		const screenshot = await devbox.display.screenshot();
+		// macOS devboxes expose a graphical desktop over VNC. Devboxes
+		// without one (Linux) reject with DevboxDesktopUnavailableError.
+		const screenshot = await devbox.desktop.screenshot();
 		const screenshotFile = join(localDir, "screen.png");
 		await writeFile(screenshotFile, screenshot.png);
 		console.log(
@@ -123,12 +123,12 @@ async function main() {
 			"->", screenshotFile,
 		);
 
-		await devbox.display.click(Math.floor(screenshot.width / 2), Math.floor(screenshot.height / 2));
+		await devbox.desktop.click(Math.floor(screenshot.width / 2), Math.floor(screenshot.height / 2));
 		console.log("clicked screen center");
 
 		// Keystrokes go to the focused element; newlines send Return.
-		await devbox.display.type("hello from the tour\n");
-		console.log("typed into the display");
+		await devbox.desktop.type("hello from the tour\n");
+		console.log("typed into the desktop");
 
 		// ── Lifecycle ───────────────────────────────────────────────────
 

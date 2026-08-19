@@ -1,8 +1,8 @@
 /**
- * Devbox display access, built on the generic VNC client in
+ * Devbox desktop access, built on the generic VNC client in
  * `@namespacelabs/sdk/vnc`.
  *
- * Devboxes with a display (macOS devboxes) expose a VNC service through the
+ * Devboxes with a desktop (macOS devboxes) expose a VNC service through the
  * instance ingress. This module resolves the VNC endpoint and credentials
  * from the regional Compute API, authenticates the gateway websocket, and
  * translates VNC errors into their devbox equivalents.
@@ -16,7 +16,7 @@ import {
 	type GetVNCConfigResponse,
 } from "../proto/namespace/cloud/compute/v1beta/compute_pb.js";
 import { openVnc, VncEndpointError, VncTimeoutError, type VncClient } from "../vnc/index.js";
-import { DevboxDisplayUnavailableError, DevboxGatewayError, DevboxTimeoutError } from "./errors.js";
+import { DevboxDesktopUnavailableError, DevboxGatewayError, DevboxTimeoutError } from "./errors.js";
 import type { ClickOptions, OperationOptions, Screenshot } from "./models.js";
 
 export type ComputeClient = RpcClient<typeof ComputeService>;
@@ -42,7 +42,7 @@ export function createComputeClient(tokenSource: TokenSource, baseUrl: string): 
 /**
  * Fetch the VNC endpoint and credentials for an instance. The server answers
  * `FailedPrecondition` when the instance has no VNC service; translate that
- * into the typed `DevboxDisplayUnavailableError`.
+ * into the typed `DevboxDesktopUnavailableError`.
  */
 export async function fetchVncConfig(
 	client: ComputeClient,
@@ -56,13 +56,13 @@ export async function fetchVncConfig(
 		});
 	} catch (error) {
 		if (error instanceof ConnectError && error.code === Code.FailedPrecondition) {
-			throw new DevboxDisplayUnavailableError(`devbox does not expose a display: ${error.rawMessage}`);
+			throw new DevboxDesktopUnavailableError(`devbox does not expose a desktop: ${error.rawMessage}`);
 		}
 		throw error;
 	}
 }
 
-export interface OpenDisplayOptions {
+export interface OpenDesktopOptions {
 	instanceId: string;
 	/** VNC websocket endpoint from `GetVNCConfig`. */
 	endpoint: string;
@@ -74,8 +74,8 @@ export interface OpenDisplayOptions {
 	timeoutMs: number;
 }
 
-/** Open a VNC session to an instance display through the devbox gateway. */
-export async function openDisplay(options: OpenDisplayOptions): Promise<DisplayConnection> {
+/** Open a VNC session to an instance desktop through the devbox gateway. */
+export async function openDesktop(options: OpenDesktopOptions): Promise<DesktopConnection> {
 	try {
 		const client = await openVnc({
 			endpoint: options.endpoint,
@@ -85,17 +85,17 @@ export async function openDisplay(options: OpenDisplayOptions): Promise<DisplayC
 			signal: options.signal,
 			timeoutMs: options.timeoutMs,
 		});
-		return new DisplayConnection(options.instanceId, client);
+		return new DesktopConnection(options.instanceId, client);
 	} catch (error) {
 		throw translateVncError(error);
 	}
 }
 
 /**
- * An established VNC session to a devbox display: a `VncClient` that reports
+ * An established VNC session to a devbox desktop: a `VncClient` that reports
  * devbox error types.
  */
-export class DisplayConnection {
+export class DesktopConnection {
 	constructor(
 		readonly instanceId: string,
 		private readonly client: VncClient,

@@ -6,7 +6,7 @@
  * Desktop authentication (security type 30) or no security, raw encoding
  * only, and client-side PNG encoding — no native dependencies.
  *
- * This module has no Namespace-specific behavior; `devbox.display` builds on
+ * This module has no Namespace-specific behavior; `devbox.desktop` builds on
  * it. Import as `@namespacelabs/sdk/vnc`.
  */
 export {

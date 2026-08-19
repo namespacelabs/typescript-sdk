@@ -184,13 +184,13 @@ async function testDevboxClient() {
 	removeDataListener();
 	terminal.close();
 
-	const screenshot = await devbox.display.screenshot({ timeoutMs: 30_000 });
+	const screenshot = await devbox.desktop.screenshot({ timeoutMs: 30_000 });
 	const png: Uint8Array = screenshot.png;
 	const dimensions: number = screenshot.width * screenshot.height;
-	await devbox.display.click(100, 200);
-	await devbox.display.click(100, 200, { button: "right" });
-	await devbox.display.type("uname -a\n");
-	await devbox.display.type("hello", { timeoutMs: 5_000 });
+	await devbox.desktop.click(100, 200);
+	await devbox.desktop.click(100, 200, { button: "right" });
+	await devbox.desktop.type("uname -a\n");
+	await devbox.desktop.type("hello", { timeoutMs: 5_000 });
 
 	await devbox.fs.upload("./package.json", "/workspace/package.json");
 	await devbox.fs.download("/workspace/result.json", "./result.json");
