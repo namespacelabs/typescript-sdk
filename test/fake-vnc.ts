@@ -19,6 +19,8 @@ export interface FakeVncState {
 export interface FakeVncServer {
 	url: string;
 	state: FakeVncState;
+	/** Write raw bytes to the connected client, bypassing the RFB protocol. */
+	sendRaw(data: Buffer): void;
 	close(): void;
 }
 
@@ -26,15 +28,21 @@ export async function startFakeVncServer(): Promise<FakeVncServer> {
 	const server = new WebSocketServer({ host: "127.0.0.1", port: 0 });
 	await once(server, "listening");
 	const state: FakeVncState = { headers: {}, pointerEvents: [] };
+	let connection: Duplex | undefined;
 	server.on("connection", (socket, request) => {
 		state.headers = request.headers;
-		void serveFakeVnc(createWebSocketStream(socket), state);
+		connection = createWebSocketStream(socket);
+		void serveFakeVnc(connection, state);
 	});
 	const address = server.address();
 	assert(address && typeof address !== "string");
 	return {
 		url: `ws://127.0.0.1:${address.port}/i-123/5900`,
 		state,
+		sendRaw: (data) => {
+			assert(connection, "no client connected");
+			connection.write(data);
+		},
 		close: () => server.close(),
 	};
 }
