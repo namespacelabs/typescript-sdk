@@ -28,6 +28,14 @@ export class DevboxGatewayError extends DevboxError {
 	}
 }
 
+/**
+ * The devbox does not expose a display (VNC service).
+ *
+ * Only devboxes with a graphical display — macOS devboxes — support
+ * `devbox.display`.
+ */
+export class DevboxDisplayUnavailableError extends DevboxError {}
+
 /** A response from the service was missing required fields. */
 export class IncompleteResponseError extends DevboxError {
 	constructor(context: string) {

@@ -110,6 +110,22 @@ async function main() {
 			"- saw echo:", Buffer.concat(output).toString().includes("terminal-says-hi"),
 		);
 
+		// ── Display ─────────────────────────────────────────────────────
+
+		// macOS devboxes expose a graphical display over VNC. Devboxes
+		// without one (Linux) reject with DevboxDisplayUnavailableError.
+		const screenshot = await devbox.display.screenshot();
+		const screenshotFile = join(localDir, "screen.png");
+		await writeFile(screenshotFile, screenshot.png);
+		console.log(
+			"screenshot:", `${screenshot.width}x${screenshot.height}`,
+			"desktop:", screenshot.desktopName,
+			"->", screenshotFile,
+		);
+
+		await devbox.display.click(Math.floor(screenshot.width / 2), Math.floor(screenshot.height / 2));
+		console.log("clicked screen center");
+
 		// ── Lifecycle ───────────────────────────────────────────────────
 
 		await devbox.stop();

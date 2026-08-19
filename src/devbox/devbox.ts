@@ -5,8 +5,10 @@ import type { FileEntryWithStats, SFTPWrapper, Stats } from "ssh2";
 import { ConnectionManager, operationDeadline, withDeadline } from "./connection.js";
 import { DevboxTimeoutError } from "./errors.js";
 import type {
+	ClickOptions,
 	CopyOptions,
 	Devbox as DevboxModel,
+	DevboxDisplay,
 	DevboxFileSystem,
 	DevboxInfo,
 	DirEntry,
@@ -15,6 +17,7 @@ import type {
 	MkdirOptions,
 	OperationOptions,
 	RemoveOptions,
+	Screenshot,
 	ShellOptions,
 	TerminalOpenOptions,
 	TerminalSession,
@@ -38,6 +41,7 @@ export class DevboxHandle implements DevboxModel {
 	readonly terminal: {
 		open: (options?: TerminalOpenOptions) => Promise<TerminalSession>;
 	};
+	readonly display: DevboxDisplay;
 
 	constructor(
 		private currentInfo: DevboxInfo,
@@ -46,6 +50,10 @@ export class DevboxHandle implements DevboxModel {
 	) {
 		this.fs = new RemoteFileSystem(this);
 		this.terminal = { open: (options) => this.openTerminal(options) };
+		this.display = {
+			screenshot: (options) => this.screenshot(options),
+			click: (x, y, options) => this.click(x, y, options),
+		};
 	}
 
 	get id(): string {
@@ -110,6 +118,20 @@ export class DevboxHandle implements DevboxModel {
 		const connection = await this.connection(withDeadline(options, deadline));
 		this.markRunning(connection.instanceId);
 		return connection.openTerminal(withDeadline(options, deadline));
+	}
+
+	private async screenshot(options: OperationOptions = {}): Promise<Screenshot> {
+		const deadline = operationDeadline(options);
+		const connection = await this.connections.getDisplay(this.id, withDeadline(options, deadline));
+		this.markRunning(connection.instanceId);
+		return connection.screenshot(withDeadline(options, deadline));
+	}
+
+	private async click(x: number, y: number, options: ClickOptions = {}): Promise<void> {
+		const deadline = operationDeadline(options);
+		const connection = await this.connections.getDisplay(this.id, withDeadline(options, deadline));
+		this.markRunning(connection.instanceId);
+		return connection.click(x, y, withDeadline(options, deadline));
 	}
 
 	private markRunning(instanceId: string): void {

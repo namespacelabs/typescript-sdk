@@ -171,6 +171,43 @@ export interface TerminalSession {
 	wait(): Promise<{ exitCode: number | null; signal: string | null }>;
 }
 
+export type MouseButton = "left" | "middle" | "right";
+
+export interface ClickOptions extends OperationOptions {
+	/** Mouse button to click. Defaults to `"left"`. */
+	button?: MouseButton;
+}
+
+export interface Screenshot {
+	/** PNG-encoded image data. */
+	png: Uint8Array;
+	/** Framebuffer width in pixels. */
+	width: number;
+	/** Framebuffer height in pixels. */
+	height: number;
+	/** Desktop name reported by the VNC server. */
+	desktopName: string;
+}
+
+/**
+ * Screen access to a devbox display, backed by VNC.
+ *
+ * Only devboxes with a graphical display — macOS devboxes — expose one;
+ * methods reject with `DevboxDisplayUnavailableError` for devboxes without a
+ * display. All methods are connection-backed: calling them on a stopped
+ * devbox activates it first.
+ */
+export interface DevboxDisplay {
+	/** Capture the full screen as a PNG. */
+	screenshot(options?: OperationOptions): Promise<Screenshot>;
+	/**
+	 * Click at screen coordinates (origin top-left, in framebuffer pixels):
+	 * the pointer moves to `(x, y)`, presses, and releases. Rejects with
+	 * `RangeError` when the position is outside the screen.
+	 */
+	click(x: number, y: number, options?: ClickOptions): Promise<void>;
+}
+
 export interface TransferOptions extends OperationOptions {
 	onProgress?: (transferredBytes: number, totalBytes: number) => void;
 }
@@ -245,6 +282,13 @@ export interface Devbox {
 		/** Open an interactive terminal session on the devbox. */
 		open(options?: TerminalOpenOptions): Promise<TerminalSession>;
 	};
+	/**
+	 * Screen access (screenshots and clicks) for devboxes with a display,
+	 * such as macOS devboxes. Methods reject with
+	 * `DevboxDisplayUnavailableError` when the devbox has no display.
+	 * Connection-backed: using it on a stopped devbox activates it first.
+	 */
+	readonly display: DevboxDisplay;
 	/**
 	 * Run a command on the devbox and collect its output.
 	 *

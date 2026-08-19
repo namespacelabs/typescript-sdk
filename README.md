@@ -198,6 +198,35 @@ client.close();
 
 `upload()` and `download()` transfer one file. `copy()` operates inside the devbox and accepts `{ recursive: true }` for directories. All operations accept `AbortSignal` and timeout options.
 
+Devboxes with a graphical display — macOS devboxes — expose screen access through `devbox.display`, backed by VNC. Methods reject with `DevboxDisplayUnavailableError` when the devbox has no display (for example, Linux devboxes):
+
+```typescript
+import { writeFile } from "node:fs/promises";
+import { DevboxDisplayUnavailableError } from "@namespacelabs/sdk";
+
+const macos = await client.devboxes.create({
+	name: "my-mac",
+	os: "macos",
+	size: "m",
+});
+
+try {
+	const screenshot = await macos.display.screenshot();
+	await writeFile("screen.png", screenshot.png);
+
+	// Click at framebuffer coordinates (origin top-left).
+	await macos.display.click(100, 200);
+	await macos.display.click(100, 200, { button: "right" });
+} catch (error) {
+	if (error instanceof DevboxDisplayUnavailableError) {
+		// This devbox has no display.
+	}
+	throw error;
+}
+```
+
+Like other connection-backed operations, using `devbox.display` on a stopped devbox activates it first, and the underlying VNC session is cached and reused across calls.
+
 Images can be registered from an existing image reference, listed, inspected, optimized for a site, and deleted:
 
 ```typescript
