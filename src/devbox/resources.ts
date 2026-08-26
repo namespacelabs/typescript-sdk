@@ -18,6 +18,7 @@ import {
 	image,
 	imageMetadata,
 	imageSelector,
+	macosImageSelectors,
 	optionalDuration,
 	positiveBigInt,
 	toProtoAccessMode,
@@ -69,6 +70,12 @@ class DevboxResources implements DevboxController, DevboxResource {
 		if (input.os === "macos" && input.imageName !== undefined) {
 			throw new TypeError('create option "imageName" cannot be used with os "macos"');
 		}
+		if (input.os !== "macos" && input.macosVersion !== undefined) {
+			throw new TypeError('create option "macosVersion" requires os "macos"');
+		}
+		if (input.os !== "macos" && input.xcodeVersion !== undefined) {
+			throw new TypeError('create option "xcodeVersion" requires os "macos"');
+		}
 		const shouldStart = input.start ?? true;
 		const response = input.blueprint
 			? await this.createFromBlueprint(input, shouldStart, options)
@@ -80,7 +87,11 @@ class DevboxResources implements DevboxController, DevboxResource {
 				// Linux sizes resolve server-side; macOS has no server-side
 				// named-size resolution, so the shape is resolved client-side.
 				...(input.os === "macos"
-					? { instanceShape: toProtoShape(input.size ?? "m", "macos") }
+					? { instanceShape: toProtoShape(
+						input.size ?? "m",
+						"macos",
+						macosImageSelectors(input.macosVersion, input.xcodeVersion),
+					) }
 					: { machineSize: toProtoMachineSize(input.size) }),
 				site: input.site ?? DEFAULT_SITE,
 				volumeSizeGb: positiveBigInt(input.volumeSizeGB, "volumeSizeGB"),
@@ -377,6 +388,8 @@ function validateBlueprintCreateInput(input: CreateDevboxInput): void {
 	const unsupported = [
 		["image", input.image],
 		["imageName", input.imageName],
+		["macosVersion", input.macosVersion],
+		["xcodeVersion", input.xcodeVersion],
 		["size", input.size],
 		["volumeSizeGB", input.volumeSizeGB],
 		["repository", input.repository],

@@ -170,6 +170,13 @@ async function testDevboxClient() {
 	await client.devboxes.create({
 		name: "named-image-sdk-test",
 		imageName: "builtin:agents",
+		repository: "https://github.com/namespacelabs/typescript-sdk",
+	});
+	await client.devboxes.create({
+		name: "macos-sdk-test",
+		os: "macos",
+		macosVersion: "26.x",
+		xcodeVersion: "26",
 	});
 	const devbox: Devbox = await client.devboxes.create({
 		name: "sdk-test",
@@ -212,6 +219,8 @@ async function testDevboxClient() {
 	client.devboxes.create({ name: "invalid", blueprint: "typescript", imageName: "builtin:agents" });
 	// @ts-expect-error image and imageName are mutually exclusive.
 	client.devboxes.create({ name: "invalid", image: "node:22", imageName: "builtin:agents" });
+	// @ts-expect-error macOS image selectors require os macos.
+	client.devboxes.create({ name: "invalid", macosVersion: "26.x" });
 	// @ts-expect-error Blueprint creation does not accept inline size overrides.
 	client.devboxes.create({ name: "invalid", blueprint: "typescript", size: "s" });
 	// Machine sizes are open strings so the backend can add names; unknown

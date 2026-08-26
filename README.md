@@ -208,6 +208,9 @@ const macos = await client.devboxes.create({
 	name: "my-mac",
 	os: "macos",
 	size: "m",
+	macosVersion: "26.x",
+	xcodeVersion: "26",
+	repository: "https://github.com/namespacelabs/typescript-sdk",
 });
 
 try {

@@ -12,6 +12,7 @@ import {
 	cursorFromBytes,
 	cursorToBytes,
 	imageSelector,
+	macosImageSelectors,
 	positiveBigInt,
 	toProtoMachineSize,
 	toProtoShape,
@@ -81,11 +82,15 @@ test("shape resolution rejects sizes unknown to this SDK version", () => {
 });
 
 test("macOS sizes resolve client-side to Apple Silicon shapes", () => {
-	assert.deepEqual(toProtoShape("m", "macos"), {
+	assert.deepEqual(toProtoShape("m", "macos", macosImageSelectors("26.x", "beta")), {
 		virtualCpu: 6,
 		memoryMegabytes: 14 * 1024,
 		machineArch: "arm64",
 		os: "macos",
+		selectors: [
+			{ name: "macos.version", value: "26.x" },
+			{ name: "image.with", value: "xcode-beta" },
+		],
 	});
 	assert.deepEqual(toProtoShape("l", "macos"), {
 		virtualCpu: 12,
@@ -122,10 +127,15 @@ test("image selectors accept names and returned repository digest refs", () => {
 	assert.deepEqual(imageSelector("registry.example.com/node@sha256:abc"), { digest: "sha256:abc" });
 });
 
-test("devbox creation forwards explicit image names", async () => {
-	const requests: Array<{ imageRef?: string; imageName?: string }> = [];
+test("devbox creation forwards image and repository options", async () => {
+	const requests: Array<{
+		imageRef?: string;
+		imageName?: string;
+		instanceShape?: { selectors?: Array<{ name: string; value: string }> };
+		repository?: string;
+	}> = [];
 	const rpc = {
-		create: async (request: { imageRef?: string; imageName?: string }) => {
+		create: async (request: typeof requests[number]) => {
 			requests.push(request);
 			return { devbox: create(DevBoxSchema, { id: "devbox_123", name: "test" }) };
 		},
@@ -135,6 +145,14 @@ test("devbox creation forwards explicit image names", async () => {
 	await devboxes.create({ name: "named", imageName: "builtin:agents", start: false });
 	await devboxes.create({ name: "ref", image: "node:22", start: false });
 	await devboxes.create({ name: "legacy-name", image: "node-22", start: false });
+	await devboxes.create({
+		name: "macos",
+		os: "macos",
+		macosVersion: "26.x",
+		xcodeVersion: "26",
+		repository: "https://github.com/namespacelabs/typescript-sdk",
+		start: false,
+	});
 
 	assert.equal(requests[0]?.imageName, "builtin:agents");
 	assert.equal(requests[0]?.imageRef, undefined);
@@ -142,6 +160,11 @@ test("devbox creation forwards explicit image names", async () => {
 	assert.equal(requests[1]?.imageName, undefined);
 	assert.equal(requests[2]?.imageName, "node-22");
 	assert.equal(requests[2]?.imageRef, undefined);
+	assert.deepEqual(requests[3]?.instanceShape?.selectors, [
+		{ name: "macos.version", value: "26.x" },
+		{ name: "image.with", value: "xcode-26" },
+	]);
+	assert.equal(requests[3]?.repository, "https://github.com/namespacelabs/typescript-sdk");
 });
 
 test("devbox creation rejects incompatible image name options", async () => {
@@ -158,6 +181,10 @@ test("devbox creation rejects incompatible image name options", async () => {
 	await assert.rejects(
 		devboxes.create({ name: "invalid", os: "macos", imageName: "builtin:agents" } as never),
 		/"imageName" cannot be used with os "macos"/,
+	);
+	await assert.rejects(
+		devboxes.create({ name: "invalid", macosVersion: "26.x" } as never),
+		/"macosVersion" requires os "macos"/,
 	);
 });
 

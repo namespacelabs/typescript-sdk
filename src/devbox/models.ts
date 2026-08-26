@@ -70,11 +70,32 @@ interface CreateDevboxInputBase {
 	start?: boolean;
 }
 
+type CreateDevboxPlatformInput = ({
+	/** Operating system for the devbox. Defaults to `"linux"`. */
+	os?: "linux";
+	macosVersion?: never;
+	xcodeVersion?: never;
+} & (
+	| { image?: string; imageName?: never }
+	| { image?: never; imageName: string }
+)) | {
+	/** macOS devboxes run on Apple Silicon (arm64). */
+	os: "macos";
+	image?: never;
+	imageName?: never;
+	/** macOS base version selector, such as `"14.x"`, `"15.x"`, or `"26.x"`. */
+	macosVersion?: string;
+	/** Xcode selector, such as `"26"` or `"beta"`. */
+	xcodeVersion?: string;
+};
+
 export type CreateDevboxInput = CreateDevboxInputBase & ({
 	blueprint: string;
 	os?: never;
 	image?: never;
 	imageName?: never;
+	macosVersion?: never;
+	xcodeVersion?: never;
 	size?: never;
 	volumeSizeGB?: never;
 	repository?: never;
@@ -85,16 +106,6 @@ export type CreateDevboxInput = CreateDevboxInputBase & ({
 	networkPolicy?: never;
 } | {
 	blueprint?: never;
-	/**
-	 * Operating system for the devbox. Defaults to `"linux"`.
-	 *
-	 * macOS devboxes run on Apple Silicon (arm64) and boot a Namespace-managed
-	 * macOS base image; `image` and `imageName` cannot be combined with
-	 * `os: "macos"`. Sizes
-	 * `"m"` (6 vCPUs, 14 GB) and `"l"` (12 vCPUs, 28 GB) are supported, and the
-	 * size defaults to `"m"` when unset.
-	 */
-	os?: "linux" | "macos";
 	size?: MachineSize;
 	volumeSizeGB?: number;
 	repository?: string;
@@ -103,10 +114,7 @@ export type CreateDevboxInput = CreateDevboxInputBase & ({
 	privileged?: boolean;
 	features?: string[];
 	networkPolicy?: NetworkPolicy;
-} & (
-	| { image?: string; imageName?: never }
-	| { image?: never; imageName: string }
-));
+} & CreateDevboxPlatformInput);
 
 export interface UpdateDevboxInput {
 	size?: MachineSize;

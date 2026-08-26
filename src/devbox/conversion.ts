@@ -91,7 +91,21 @@ export function toProtoMachineSize(size?: MachineSize): string {
 	return size ?? "";
 }
 
-export function toProtoShape(size?: MachineSize, os?: string): MessageInitShape<typeof InstanceShapeSchema> | undefined {
+export function macosImageSelectors(macosVersion?: string, xcodeVersion?: string) {
+	const selectors: Array<{ name: string; value: string }> = [];
+	if (macosVersion) selectors.push({ name: "macos.version", value: macosVersion });
+	if (xcodeVersion) selectors.push({
+		name: "image.with",
+		value: xcodeVersion.startsWith("xcode-") ? xcodeVersion : `xcode-${xcodeVersion}`,
+	});
+	return selectors;
+}
+
+export function toProtoShape(
+	size?: MachineSize,
+	os?: string,
+	selectors: Array<{ name: string; value: string }> = [],
+): MessageInitShape<typeof InstanceShapeSchema> | undefined {
 	if (!size) return undefined;
 	const table: Record<string, InstanceShape | undefined> = os === "macos" ? macosMachineShapes : machineShapes;
 	const shape = table[size];
@@ -106,6 +120,7 @@ export function toProtoShape(size?: MachineSize, os?: string): MessageInitShape<
 		memoryMegabytes: shape.memoryMB,
 		machineArch: shape.architecture ?? "",
 		os: shape.os ?? "",
+		...(selectors.length > 0 ? { selectors } : {}),
 	};
 }
 
