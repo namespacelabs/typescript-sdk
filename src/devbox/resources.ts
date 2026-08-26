@@ -60,15 +60,23 @@ class DevboxResources implements DevboxController, DevboxResource {
 
 	async create(input: CreateDevboxInput, options: OperationOptions = {}): Promise<Devbox> {
 		if (input.blueprint) validateBlueprintCreateInput(input);
+		if (input.image !== undefined && input.imageName !== undefined) {
+			throw new TypeError('create options "image" and "imageName" cannot be used together');
+		}
 		if (input.os === "macos" && input.image !== undefined) {
 			throw new TypeError('create option "image" cannot be used with os "macos"');
+		}
+		if (input.os === "macos" && input.imageName !== undefined) {
+			throw new TypeError('create option "imageName" cannot be used with os "macos"');
 		}
 		const shouldStart = input.start ?? true;
 		const response = input.blueprint
 			? await this.createFromBlueprint(input, shouldStart, options)
 			: await this.rpc.create({
 				name: input.name,
-				...imageFields(input.image),
+				...(input.imageName !== undefined
+					? { imageName: input.imageName }
+					: imageFields(input.image)),
 				// Linux sizes resolve server-side; macOS has no server-side
 				// named-size resolution, so the shape is resolved client-side.
 				...(input.os === "macos"
@@ -368,6 +376,7 @@ function imageFields(ref?: string): { imageRef?: string; imageName?: string } {
 function validateBlueprintCreateInput(input: CreateDevboxInput): void {
 	const unsupported = [
 		["image", input.image],
+		["imageName", input.imageName],
 		["size", input.size],
 		["volumeSizeGB", input.volumeSizeGB],
 		["repository", input.repository],

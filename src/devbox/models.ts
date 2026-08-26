@@ -74,6 +74,7 @@ export type CreateDevboxInput = CreateDevboxInputBase & ({
 	blueprint: string;
 	os?: never;
 	image?: never;
+	imageName?: never;
 	size?: never;
 	volumeSizeGB?: never;
 	repository?: never;
@@ -88,12 +89,12 @@ export type CreateDevboxInput = CreateDevboxInputBase & ({
 	 * Operating system for the devbox. Defaults to `"linux"`.
 	 *
 	 * macOS devboxes run on Apple Silicon (arm64) and boot a Namespace-managed
-	 * macOS base image; `image` cannot be combined with `os: "macos"`. Sizes
+	 * macOS base image; `image` and `imageName` cannot be combined with
+	 * `os: "macos"`. Sizes
 	 * `"m"` (6 vCPUs, 14 GB) and `"l"` (12 vCPUs, 28 GB) are supported, and the
 	 * size defaults to `"m"` when unset.
 	 */
 	os?: "linux" | "macos";
-	image?: string;
 	size?: MachineSize;
 	volumeSizeGB?: number;
 	repository?: string;
@@ -102,7 +103,10 @@ export type CreateDevboxInput = CreateDevboxInputBase & ({
 	privileged?: boolean;
 	features?: string[];
 	networkPolicy?: NetworkPolicy;
-});
+} & (
+	| { image?: string; imageName?: never }
+	| { image?: never; imageName: string }
+));
 
 export interface UpdateDevboxInput {
 	size?: MachineSize;

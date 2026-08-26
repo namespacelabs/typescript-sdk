@@ -167,6 +167,10 @@ async function testDevboxClient() {
 		image: "node:22",
 		size: "s",
 	});
+	await client.devboxes.create({
+		name: "named-image-sdk-test",
+		imageName: "builtin:agents",
+	});
 	const devbox: Devbox = await client.devboxes.create({
 		name: "sdk-test",
 		blueprint: blueprint.name,
@@ -204,6 +208,10 @@ async function testDevboxClient() {
 
 	// @ts-expect-error Blueprint creation does not accept inline image overrides.
 	client.devboxes.create({ name: "invalid", blueprint: "typescript", image: "node:22" });
+	// @ts-expect-error Blueprint creation does not accept named image overrides.
+	client.devboxes.create({ name: "invalid", blueprint: "typescript", imageName: "builtin:agents" });
+	// @ts-expect-error image and imageName are mutually exclusive.
+	client.devboxes.create({ name: "invalid", image: "node:22", imageName: "builtin:agents" });
 	// @ts-expect-error Blueprint creation does not accept inline size overrides.
 	client.devboxes.create({ name: "invalid", blueprint: "typescript", size: "s" });
 	// Machine sizes are open strings so the backend can add names; unknown
