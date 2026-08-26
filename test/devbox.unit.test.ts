@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { create } from "@bufbuild/protobuf";
 import {
+	DevBoxSchema,
 	DevboxTemplateSchema,
 } from "../src/proto/namespace/private/devbox/devbox_pb.js";
 import {
@@ -15,6 +16,7 @@ import {
 	toProtoMachineSize,
 	toProtoShape,
 } from "../src/devbox/conversion.js";
+import { createResources } from "../src/devbox/resources.js";
 import { EventEmitter } from "node:events";
 import {
 	buildExecRequest,
@@ -118,6 +120,45 @@ test("numeric inputs reject unsafe protobuf integer values", () => {
 test("image selectors accept names and returned repository digest refs", () => {
 	assert.deepEqual(imageSelector("node-22"), { name: "node-22" });
 	assert.deepEqual(imageSelector("registry.example.com/node@sha256:abc"), { digest: "sha256:abc" });
+});
+
+test("devbox creation forwards explicit image names", async () => {
+	const requests: Array<{ imageRef?: string; imageName?: string }> = [];
+	const rpc = {
+		create: async (request: { imageRef?: string; imageName?: string }) => {
+			requests.push(request);
+			return { devbox: create(DevBoxSchema, { id: "devbox_123", name: "test" }) };
+		},
+	} as never;
+	const { devboxes } = createResources(rpc, {} as ConnectionManager);
+
+	await devboxes.create({ name: "named", imageName: "builtin:agents", start: false });
+	await devboxes.create({ name: "ref", image: "node:22", start: false });
+	await devboxes.create({ name: "legacy-name", image: "node-22", start: false });
+
+	assert.equal(requests[0]?.imageName, "builtin:agents");
+	assert.equal(requests[0]?.imageRef, undefined);
+	assert.equal(requests[1]?.imageRef, "node:22");
+	assert.equal(requests[1]?.imageName, undefined);
+	assert.equal(requests[2]?.imageName, "node-22");
+	assert.equal(requests[2]?.imageRef, undefined);
+});
+
+test("devbox creation rejects incompatible image name options", async () => {
+	const { devboxes } = createResources({} as never, {} as ConnectionManager);
+
+	await assert.rejects(
+		devboxes.create({ name: "invalid", image: "node:22", imageName: "builtin:agents" } as never),
+		/cannot be used together/,
+	);
+	await assert.rejects(
+		devboxes.create({ name: "invalid", blueprint: "typescript", imageName: "builtin:agents" } as never),
+		/"imageName" cannot be used with a blueprint/,
+	);
+	await assert.rejects(
+		devboxes.create({ name: "invalid", os: "macos", imageName: "builtin:agents" } as never),
+		/"imageName" cannot be used with os "macos"/,
+	);
 });
 
 test("operation deadlines preserve one timeout budget across phases", () => {
