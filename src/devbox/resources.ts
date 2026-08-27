@@ -1,4 +1,4 @@
-import type { Client as RpcClient } from "@connectrpc/connect";
+import { Code, ConnectError, type Client as RpcClient } from "@connectrpc/connect";
 import {
 	DevBoxService,
 	OptimizeImageResponseChunk_Status,
@@ -109,6 +109,16 @@ class DevboxResources implements DevboxController, DevboxResource {
 			response.instanceId,
 			response.instanceId ? "running" : "stopped",
 		));
+	}
+
+	async exists(ref: string, options: OperationOptions = {}): Promise<boolean> {
+		try {
+			await this.get(ref, options);
+			return true;
+		} catch (error) {
+			if (error instanceof ConnectError && error.code === Code.NotFound) return false;
+			throw error;
+		}
 	}
 
 	async list(options: ListDevboxesOptions = {}): Promise<Page<Devbox>> {

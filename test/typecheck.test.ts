@@ -175,6 +175,7 @@ async function testDevboxClient() {
 		name: "sdk-test",
 		blueprint: blueprint.name,
 	});
+	const devboxExists: boolean = await client.devboxes.exists("sdk-test", { timeoutMs: 30_000 });
 
 	const execResult = await devbox.exec(["node", "--version"], {
 		cwd: "/workspace",

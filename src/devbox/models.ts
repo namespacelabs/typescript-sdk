@@ -331,6 +331,8 @@ export interface DevboxResource {
 	create(input: CreateDevboxInput, options?: OperationOptions): Promise<Devbox>;
 	/** Fetch a devbox by id or name, including its authoritative runtime state. */
 	get(ref: string, options?: OperationOptions): Promise<Devbox>;
+	/** Check whether a devbox exists by id or name. */
+	exists(ref: string, options?: OperationOptions): Promise<boolean>;
 	/**
 	 * List devboxes, one page at a time.
 	 *

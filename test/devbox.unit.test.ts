@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { create } from "@bufbuild/protobuf";
+import { Code, ConnectError } from "@connectrpc/connect";
 import {
 	DevBoxSchema,
 	DevboxTemplateSchema,
@@ -159,6 +160,38 @@ test("devbox creation rejects incompatible image name options", async () => {
 		devboxes.create({ name: "invalid", os: "macos", imageName: "builtin:agents" } as never),
 		/"imageName" cannot be used with os "macos"/,
 	);
+});
+
+test("devbox existence checks by id or name", async () => {
+	const requests: Array<{ idOrName?: string; returnActivatedInstance?: boolean }> = [];
+	const callOptions: unknown[] = [];
+	const rpc = {
+		fetch: async (
+			request: { idOrName?: string; returnActivatedInstance?: boolean },
+			options: unknown,
+		) => {
+			requests.push(request);
+			callOptions.push(options);
+			if (request.idOrName === "missing") {
+				throw new ConnectError("devbox not found", Code.NotFound);
+			}
+			if (request.idOrName === "broken") {
+				throw new ConnectError("internal error", Code.Internal);
+			}
+			return { devbox: create(DevBoxSchema, { id: "devbox_123", name: "existing" }) };
+		},
+	} as never;
+	const { devboxes } = createResources(rpc, {} as ConnectionManager);
+	const options = { timeoutMs: 1_000 };
+
+	assert.equal(await devboxes.exists("devbox_123", options), true);
+	assert.equal(await devboxes.exists("missing"), false);
+	await assert.rejects(devboxes.exists("broken"), (error: unknown) => {
+		return error instanceof ConnectError && error.code === Code.Internal;
+	});
+	assert.deepEqual(requests.map((request) => request.idOrName), ["devbox_123", "missing", "broken"]);
+	assert.equal(requests[0]?.returnActivatedInstance, true);
+	assert.equal(callOptions[0], options);
 });
 
 test("operation deadlines preserve one timeout budget across phases", () => {

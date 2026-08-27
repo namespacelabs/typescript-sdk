@@ -168,6 +168,8 @@ const devbox = await client.devboxes.create({
 	blueprint: blueprint.name,
 });
 
+const exists = await client.devboxes.exists("my-devbox");
+
 // Structured argv: arguments are passed literally and do not expand in a shell.
 const result = await devbox.exec(["node", "--version"]);
 
