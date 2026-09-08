@@ -284,6 +284,23 @@ const iamClient = createIAMClient({ tokenSource });
 const tenants = await iamClient.tenants.listTenants({});
 ```
 
+### Creating a macOS Instance
+
+The [macOS instance example](examples/compute/create-macos-instance.ts) uses the Compute API to create a macOS Tahoe instance on Apple Silicon with 6 vCPUs and 14 GiB RAM, waits for it to be ready, and runs `uname -a` in the guest. It prints stdout and stderr and exits with the command's exit code.
+
+Run it from a checkout of this repository with Node.js 22:
+
+```bash
+npm ci
+npm run build
+nsc login
+npx tsx examples/compute/create-macos-instance.ts
+```
+
+`createComputeClient()` defaults to the US region and loads authentication lazily using `loadDefaults()`: a workload token inside Namespace, or your local user token from `nsc login`. You can also set `NSC_TOKEN_FILE` to a token file. Your workspace must have macOS capacity available.
+
+The example creates a real, billable instance in the US region and leaves it running for inspection. It prints the instance URL and an `nsc destroy <instance-id>` command; a 30-minute deadline limits its lifetime even if the script fails while waiting. To select another macOS version, change the `macos.version` shape selector using the [available selectors](https://namespace.so/docs/architecture/compute/macos#available-selectors).
+
 ### Creating Transports
 
 The SDK provides transport creation utilities for different API endpoints:
