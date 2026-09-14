@@ -162,6 +162,14 @@ async function testDevboxClient() {
 		size: "m",
 		environment: { NODE_ENV: "development" },
 	});
+	await client.blueprints.create("macos", {
+		os: "macos",
+		size: "m",
+		selectors: [
+			{ name: "macos.version", value: "26.x" },
+			{ name: "image.with", value: "xcode-26" },
+		],
+	});
 	const directDevbox = await client.devboxes.create({
 		name: "direct-sdk-test",
 		image: "node:22",
@@ -170,6 +178,15 @@ async function testDevboxClient() {
 	await client.devboxes.create({
 		name: "named-image-sdk-test",
 		imageName: "builtin:agents",
+		repository: "https://github.com/namespacelabs/typescript-sdk",
+	});
+	await client.devboxes.create({
+		name: "macos-sdk-test",
+		os: "macos",
+		selectors: [
+			{ name: "macos.version", value: "26.x" },
+			{ name: "image.with", value: "xcode-26" },
+		],
 	});
 	const devbox: Devbox = await client.devboxes.create({
 		name: "sdk-test",
@@ -212,6 +229,12 @@ async function testDevboxClient() {
 	client.devboxes.create({ name: "invalid", blueprint: "typescript", imageName: "builtin:agents" });
 	// @ts-expect-error image and imageName are mutually exclusive.
 	client.devboxes.create({ name: "invalid", image: "node:22", imageName: "builtin:agents" });
+	// @ts-expect-error macOS selectors require os macos.
+	client.devboxes.create({ name: "invalid", selectors: [{ name: "macos.version", value: "26.x" }] });
+	// @ts-expect-error Linux blueprints do not accept macOS selectors.
+	client.blueprints.create("invalid", { image: "node:22", selectors: [{ name: "macos.version", value: "26.x" }] });
+	// @ts-expect-error macOS blueprints do not accept Linux images.
+	client.blueprints.create("invalid", { os: "macos", image: "node:22" });
 	// @ts-expect-error Blueprint creation does not accept inline size overrides.
 	client.devboxes.create({ name: "invalid", blueprint: "typescript", size: "s" });
 	// Machine sizes are open strings so the backend can add names; unknown

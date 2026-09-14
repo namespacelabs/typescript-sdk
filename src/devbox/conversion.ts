@@ -28,6 +28,7 @@ import type {
 	ImageMetadata,
 	ImageSelector,
 	InstanceShape,
+	InstanceSelector,
 	MachineSize,
 	NetworkPolicy,
 } from "./models.js";
@@ -91,7 +92,11 @@ export function toProtoMachineSize(size?: MachineSize): string {
 	return size ?? "";
 }
 
-export function toProtoShape(size?: MachineSize, os?: string): MessageInitShape<typeof InstanceShapeSchema> | undefined {
+export function toProtoShape(
+	size?: MachineSize,
+	os?: string,
+	selectors: InstanceSelector[] = [],
+): MessageInitShape<typeof InstanceShapeSchema> | undefined {
 	if (!size) return undefined;
 	const table: Record<string, InstanceShape | undefined> = os === "macos" ? macosMachineShapes : machineShapes;
 	const shape = table[size];
@@ -106,6 +111,7 @@ export function toProtoShape(size?: MachineSize, os?: string): MessageInitShape<
 		memoryMegabytes: shape.memoryMB,
 		machineArch: shape.architecture ?? "",
 		os: shape.os ?? "",
+		...(selectors.length > 0 ? { selectors } : {}),
 	};
 }
 
@@ -126,6 +132,9 @@ function fromProtoShape(shape: ProtoDevbox["instanceShape"]): InstanceShape | un
 		memoryMB: shape.memoryMegabytes,
 		architecture: shape.machineArch || undefined,
 		os: shape.os || undefined,
+		selectors: shape.selectors.length > 0
+			? shape.selectors.map(({ name, value }) => ({ name, value }))
+			: undefined,
 	} : undefined;
 }
 
@@ -206,12 +215,27 @@ function operationToProto(operation: BlueprintOperation): BlueprintSpec["onCreat
 }
 
 export function blueprintSpec(name: string, definition: BlueprintDefinition): DevboxTemplateSpec {
-	const linux = definition.image.includes("@") || definition.image.includes("/") || definition.image.includes(":")
-		? { imageRef: definition.image }
-		: { imageName: definition.image };
+	if (definition.os !== "macos" && definition.selectors !== undefined) {
+		throw new TypeError('blueprint option "selectors" requires os "macos"');
+	}
+	if (definition.os === "macos" && definition.image !== undefined) {
+		throw new TypeError('blueprint option "image" cannot be used with os "macos"');
+	}
+	const linux = definition.os === "macos"
+		? undefined
+		: definition.image.includes("@") || definition.image.includes("/") || definition.image.includes(":")
+			? { imageRef: definition.image }
+			: { imageName: definition.image };
 	return create(DevboxTemplateSpecSchema, {
 		name,
-		instance: { shape: toProtoShape(definition.size), linux },
+		instance: {
+			shape: toProtoShape(
+				definition.size ?? (definition.os === "macos" ? "m" : undefined),
+				definition.os,
+				definition.selectors,
+			),
+			linux,
+		},
 		site: definition.site ?? DEFAULT_SITE,
 		description: definition.description ?? "",
 		// The server requires blueprints to carry an explicit access mode;
@@ -254,6 +278,10 @@ export function blueprint(proto: ProtoBlueprint): Blueprint {
 	const metadata = spec.instance?.linux;
 	const image = metadata?.imageRef || metadata?.imageName || "";
 	const imageSpec = spec.instance;
+	const shape = fromProtoShape(imageSpec?.shape);
+	const platform = shape?.os === "macos"
+		? { os: "macos" as const, selectors: shape.selectors }
+		: { image };
 	return {
 		id: proto.id,
 		name: spec.name,
@@ -261,13 +289,8 @@ export function blueprint(proto: ProtoBlueprint): Blueprint {
 		createdAt: date(proto.createdAt),
 		updatedAt: date(proto.updatedAt),
 		definition: {
-			image,
-			size: machineSize(imageSpec?.shape ? {
-				vCPUs: imageSpec.shape.virtualCpu,
-				memoryMB: imageSpec.shape.memoryMegabytes,
-				architecture: imageSpec.shape.machineArch || undefined,
-				os: imageSpec.shape.os || undefined,
-			} : undefined),
+			...platform,
+			size: machineSize(shape),
 			site: spec.site,
 			description: spec.description || undefined,
 			access: fromProtoAccessMode(spec.accessMode),

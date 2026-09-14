@@ -204,10 +204,24 @@ Devboxes with a graphical display — macOS devboxes — expose screen access th
 import { writeFile } from "node:fs/promises";
 import { DevboxDisplayUnavailableError } from "@namespacelabs/sdk";
 
+const macosBlueprint = await client.blueprints.create("macos", {
+	os: "macos",
+	size: "m",
+	selectors: [
+		{ name: "macos.version", value: "26.x" },
+		{ name: "image.with", value: "xcode-26" },
+	],
+});
+
 const macos = await client.devboxes.create({
 	name: "my-mac",
 	os: "macos",
 	size: "m",
+	selectors: [
+		{ name: "macos.version", value: "26.x" },
+		{ name: "image.with", value: "xcode-26" },
+	],
+	repository: "https://github.com/namespacelabs/typescript-sdk",
 });
 
 try {
