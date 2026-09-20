@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createServer } from "node:http";
 import test from "node:test";
 import { create } from "@bufbuild/protobuf";
 import {
@@ -17,7 +18,9 @@ import {
 	toProtoShape,
 } from "../src/devbox/conversion.js";
 import { createResources } from "../src/devbox/resources.js";
-import { EventEmitter } from "node:events";
+import { createDevboxClient, type CreateDevboxInput } from "../src/devbox/index.js";
+import { fromBearerToken } from "../src/auth/index.js";
+import { EventEmitter, once } from "node:events";
 import {
 	buildExecRequest,
 	collectExec,
@@ -142,6 +145,72 @@ test("devbox creation forwards explicit image names", async () => {
 	assert.equal(requests[1]?.imageName, undefined);
 	assert.equal(requests[2]?.imageName, "node-22");
 	assert.equal(requests[2]?.imageRef, undefined);
+});
+
+test("devbox checkout options preserve presence in serialized requests", async (t) => {
+	const requests: Record<string, unknown>[] = [];
+	const server = createServer(async (request, response) => {
+		const chunks: Buffer[] = [];
+		for await (const chunk of request) chunks.push(Buffer.from(chunk));
+		requests.push(JSON.parse(Buffer.concat(chunks).toString()));
+		response.writeHead(200, { "content-type": "application/json" });
+		response.end(JSON.stringify({ devbox: { id: "devbox_123", name: "test" } }));
+	});
+	t.after(() => server.close());
+	server.listen(0, "127.0.0.1");
+	await once(server, "listening");
+	const address = server.address();
+	assert(address && typeof address !== "string");
+	const client = createDevboxClient({
+		baseUrl: `http://127.0.0.1:${address.port}`,
+		tokenSource: fromBearerToken("test-token"),
+	});
+	t.after(() => client.close());
+
+	const repository = "https://github.com/namespacelabs/typescript-sdk";
+	const cases: Array<{
+		input: CreateDevboxInput;
+		repository?: string;
+		versionControl?: { gitRepository?: string; ref?: string };
+	}> = [
+		{ input: { name: "inherit" } },
+		{ input: { name: "empty-repository", repository: "" } },
+		{ input: { name: "undefined", versionControl: undefined } },
+		{ input: { name: "checkout", repository }, repository },
+		{ input: { name: "scratch", versionControl: {} }, versionControl: {} },
+		{
+			input: { name: "configured-checkout", versionControl: { gitRepository: repository } },
+			versionControl: { gitRepository: repository },
+		},
+		{
+			input: { name: "checkout-ref", versionControl: { gitRepository: repository, ref: "feature/sdk" } },
+			versionControl: { gitRepository: repository, ref: "feature/sdk" },
+		},
+	];
+	for (const expected of cases) {
+		await t.test(expected.input.name, async () => {
+			await client.devboxes.create({ ...expected.input, start: false });
+			assert.equal(requests.length, 1);
+			const request = requests.shift()!;
+			assert.equal(request.repository, expected.repository);
+			assert.deepEqual(request.versionControl, expected.versionControl);
+			assert.equal("versionControl" in request, expected.versionControl !== undefined);
+		});
+	}
+
+	for (const repository of ["", "https://github.com/namespacelabs/typescript-sdk"]) {
+		for (const versionControl of [{}, { gitRepository: repository }]) {
+			await assert.rejects(
+				client.devboxes.create({ name: "invalid", repository, versionControl } as never),
+				{ name: "TypeError", message: 'create options "repository" and "versionControl" cannot be used together' },
+			);
+		}
+	}
+	await assert.rejects(
+		client.devboxes.create({ name: "invalid", blueprint: "typescript", versionControl: {} } as never),
+		{ name: "TypeError", message: 'create option "versionControl" cannot be used with a blueprint' },
+	);
+	assert.equal(requests.length, 0, "invalid options must be rejected before sending any RPC");
 });
 
 test("devbox creation rejects incompatible image name options", async () => {

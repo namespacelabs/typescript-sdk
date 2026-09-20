@@ -196,6 +196,35 @@ terminal.close();
 client.close();
 ```
 
+For direct creation (without a blueprint), omit `versionControl` and `repository`
+to inherit the tenant's default repository configuration. Pass `versionControl`
+to explicitly configure checkout; an empty object disables checkout entirely.
+
+To create a scratch devbox without checking out any repository:
+
+```typescript
+const scratch = await client.devboxes.create({
+	name: "scratch",
+	imageName: "builtin:base",
+	versionControl: {},
+});
+
+const checkout = await client.devboxes.create({
+	name: "checkout",
+	versionControl: {
+		gitRepository: "https://github.com/namespacelabs/typescript-sdk",
+		ref: "main", // Optional branch, tag, or commit SHA; defaults to the default branch.
+	},
+});
+```
+
+The existing top-level `repository` option remains supported. Setting it to a
+repository URL checks out that repository; an empty string inherits defaults
+and does **not** disable checkout. `repository` and `versionControl` cannot be
+combined, even when either is empty. Neither can be used with a blueprint.
+Invalid combinations are rejected by TypeScript and throw `TypeError` before
+any RPC.
+
 `upload()` and `download()` transfer one file. `copy()` operates inside the devbox and accepts `{ recursive: true }` for directories. All operations accept `AbortSignal` and timeout options.
 
 Devboxes with a graphical display — macOS devboxes — expose screen access through `devbox.display`, backed by VNC. Methods reject with `DevboxDisplayUnavailableError` when the devbox has no display (for example, Linux devboxes):
