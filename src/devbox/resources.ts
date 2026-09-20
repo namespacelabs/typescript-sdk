@@ -63,6 +63,9 @@ class DevboxResources implements DevboxController, DevboxResource {
 		if (input.image !== undefined && input.imageName !== undefined) {
 			throw new TypeError('create options "image" and "imageName" cannot be used together');
 		}
+		if (input.versionControl !== undefined && input.repository !== undefined) {
+			throw new TypeError('create options "repository" and "versionControl" cannot be used together');
+		}
 		if (input.os === "macos" && input.image !== undefined) {
 			throw new TypeError('create option "image" cannot be used with os "macos"');
 		}
@@ -85,6 +88,8 @@ class DevboxResources implements DevboxController, DevboxResource {
 				site: input.site ?? DEFAULT_SITE,
 				volumeSizeGb: positiveBigInt(input.volumeSizeGB, "volumeSizeGB"),
 				repository: input.repository ?? "",
+				// An absent spec inherits defaults; an empty spec disables checkout.
+				versionControl: input.versionControl,
 				environment: Object.entries(input.environment ?? {}).map(([name, value]) => ({ name, value })),
 				documentedPurpose: input.purpose ?? "",
 				accessMode: toProtoAccessMode(input.access),
@@ -380,6 +385,7 @@ function validateBlueprintCreateInput(input: CreateDevboxInput): void {
 		["size", input.size],
 		["volumeSizeGB", input.volumeSizeGB],
 		["repository", input.repository],
+		["versionControl", input.versionControl],
 		["environment", input.environment],
 		["ephemeral", input.ephemeral],
 		["privileged", input.privileged],

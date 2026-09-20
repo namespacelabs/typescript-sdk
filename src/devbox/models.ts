@@ -78,6 +78,7 @@ export type CreateDevboxInput = CreateDevboxInputBase & ({
 	size?: never;
 	volumeSizeGB?: never;
 	repository?: never;
+	versionControl?: never;
 	environment?: never;
 	ephemeral?: never;
 	privileged?: never;
@@ -97,13 +98,24 @@ export type CreateDevboxInput = CreateDevboxInputBase & ({
 	os?: "linux" | "macos";
 	size?: MachineSize;
 	volumeSizeGB?: number;
-	repository?: string;
 	environment?: Record<string, string>;
 	ephemeral?: boolean | { stoppedRetentionMs?: number };
 	privileged?: boolean;
 	features?: string[];
 	networkPolicy?: NetworkPolicy;
-} & (
+} & ({
+	/** Repository to check out. Omitted or empty inherits the tenant default. */
+	repository?: string;
+	versionControl?: never;
+} | {
+	repository?: never;
+	/** Omit to inherit the tenant default; pass `{}` to disable checkout. */
+	versionControl?: {
+		gitRepository?: string;
+		/** Branch, tag, or commit SHA. Omit to use the repository's default branch. */
+		ref?: string;
+	};
+}) & (
 	| { image?: string; imageName?: never }
 	| { image?: never; imageName: string }
 ));

@@ -171,6 +171,12 @@ async function testDevboxClient() {
 		name: "named-image-sdk-test",
 		imageName: "builtin:agents",
 	});
+	await client.devboxes.create({ name: "scratch-sdk-test", versionControl: {} });
+	await client.devboxes.create({ name: "repository-sdk-test", repository: "https://github.com/namespacelabs/typescript-sdk" });
+	await client.devboxes.create({
+		name: "checkout-sdk-test",
+		versionControl: { gitRepository: "https://github.com/namespacelabs/typescript-sdk", ref: "main" },
+	});
 	const devbox: Devbox = await client.devboxes.create({
 		name: "sdk-test",
 		blueprint: blueprint.name,
@@ -214,6 +220,14 @@ async function testDevboxClient() {
 	client.devboxes.create({ name: "invalid", image: "node:22", imageName: "builtin:agents" });
 	// @ts-expect-error Blueprint creation does not accept inline size overrides.
 	client.devboxes.create({ name: "invalid", blueprint: "typescript", size: "s" });
+	// @ts-expect-error repository and versionControl are mutually exclusive.
+	client.devboxes.create({ name: "invalid", repository: "https://github.com/namespacelabs/typescript-sdk", versionControl: {} });
+	// @ts-expect-error Even an empty repository cannot be combined with versionControl.
+	client.devboxes.create({ name: "invalid", repository: "", versionControl: {} });
+	// @ts-expect-error A populated versionControl cannot be combined with repository either.
+	client.devboxes.create({ name: "invalid", repository: "https://github.com/namespacelabs/typescript-sdk", versionControl: { gitRepository: "https://github.com/namespacelabs/typescript-sdk" } });
+	// @ts-expect-error Blueprint creation does not accept checkout overrides.
+	client.devboxes.create({ name: "invalid", blueprint: "typescript", versionControl: {} });
 	// Machine sizes are open strings so the backend can add names; unknown
 	// names typecheck for creation and are rejected server-side.
 	client.devboxes.create({ name: "future-size", image: "node:22", size: "xxl" });
