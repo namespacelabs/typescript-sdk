@@ -154,6 +154,7 @@
 		"build:types": "tsc --project tsconfig.json --declaration --emitDeclarationOnly --outDir ./dist/types",
 		"test:typecheck": "tsc --project tsconfig.test.json",
 		"test:unit": "tsx --test test/*.unit.test.ts",
+		"test:devbox": "tsx --test test/devbox.integration.test.ts",
 		"test:create-instance": "tsx test/create-instance.ts",
 		"test": "npm run test:typecheck && npm run test:unit",
 		"prepublishOnly": "npm run clean && npm run build"

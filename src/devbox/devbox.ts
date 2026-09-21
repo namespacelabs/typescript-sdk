@@ -2,16 +2,21 @@
 // `utils`, so import the default export and destructure.
 import ssh2 from "ssh2";
 import type { FileEntryWithStats, SFTPWrapper, Stats } from "ssh2";
-import { ConnectionManager, operationDeadline, withDeadline } from "./connection.js";
-import { DevboxTimeoutError } from "./errors.js";
+import { collectExec, ConnectionManager, operationDeadline, withDeadline } from "./connection.js";
+import { DevboxTimeoutError, ExecutionNotFoundError } from "./errors.js";
 import type {
 	ClickOptions,
 	CopyOptions,
 	Devbox as DevboxModel,
 	DevboxDisplay,
+	DevboxExecution,
+	DevboxExecutions,
 	DevboxFileSystem,
 	DevboxInfo,
 	DirEntry,
+	ExecutionLogChunk,
+	ExecutionStatus,
+	ExecutionWaitOptions,
 	ExecOptions,
 	ExecResult,
 	MkdirOptions,
@@ -19,6 +24,8 @@ import type {
 	RemoveOptions,
 	Screenshot,
 	ShellOptions,
+	StartExecOptions,
+	StartShellOptions,
 	TerminalOpenOptions,
 	TerminalSession,
 	TransferOptions,
@@ -42,6 +49,7 @@ export class DevboxHandle implements DevboxModel {
 		open: (options?: TerminalOpenOptions) => Promise<TerminalSession>;
 	};
 	readonly display: DevboxDisplay;
+	readonly executions: DevboxExecutions;
 
 	constructor(
 		private currentInfo: DevboxInfo,
@@ -53,6 +61,12 @@ export class DevboxHandle implements DevboxModel {
 		this.display = {
 			screenshot: (options) => this.screenshot(options),
 			click: (x, y, options) => this.click(x, y, options),
+		};
+		this.executions = {
+			start: (argv, options) => this.startExec(argv, options),
+			startShell: (script, options) => this.startShell(script, options),
+			get: (id, options) => this.getExecution(id, options),
+			list: (options) => this.listExecutions(options),
 		};
 	}
 
@@ -83,6 +97,32 @@ export class DevboxHandle implements DevboxModel {
 			...withDeadline(options, deadline),
 			shell: options.shell ?? this.currentInfo.shell,
 		});
+	}
+
+	private async startExec(argv: readonly string[], options: StartExecOptions = {}): Promise<DevboxExecution> {
+		const deadline = operationDeadline(options);
+		const connection = await this.connections.getAgent(this.id, withDeadline(options, deadline));
+		this.markRunning(connection.instanceId);
+		const id = await connection.startExec(argv, withDeadline(options, deadline));
+		return new ExecutionHandle(id, this.id, this.connections);
+	}
+
+	private async startShell(script: string, options: StartShellOptions = {}): Promise<DevboxExecution> {
+		return this.startExec([options.shell ?? this.currentInfo.shell ?? "/bin/sh", "-lc", script], options);
+	}
+
+	private async getExecution(id: string, options: OperationOptions = {}): Promise<DevboxExecution> {
+		if (!id) throw new TypeError("execution id must not be empty");
+		const execution = new ExecutionHandle(id, this.id, this.connections);
+		if ((await execution.status(options)).state === "missing") throw new ExecutionNotFoundError(id);
+		return execution;
+	}
+
+	private async listExecutions(options: OperationOptions = {}): Promise<DevboxExecution[]> {
+		const deadline = operationDeadline(options);
+		const connection = await this.connections.getAgent(this.id, withDeadline(options, deadline));
+		const actions = await connection.listExecutions(withDeadline(options, deadline));
+		return actions.map((action) => new ExecutionHandle(action.id, this.id, this.connections));
 	}
 
 	async start(options?: OperationOptions): Promise<this> {
@@ -141,6 +181,31 @@ export class DevboxHandle implements DevboxModel {
 
 	private replaceInfo(info: DevboxInfo): void {
 		this.currentInfo = info;
+	}
+}
+
+class ExecutionHandle implements DevboxExecution {
+	constructor(
+		readonly id: string,
+		private readonly devboxId: string,
+		private readonly connections: ConnectionManager,
+	) {}
+
+	async status(options: OperationOptions = {}): Promise<ExecutionStatus> {
+		const deadline = operationDeadline(options);
+		const connection = await this.connections.getAgent(this.devboxId, withDeadline(options, deadline));
+		return connection.executionStatus(this.id, withDeadline(options, deadline));
+	}
+
+	async *logs(options: OperationOptions = {}): AsyncIterableIterator<ExecutionLogChunk> {
+		operationDeadline(options);
+		// Connection acquisition has its own client-wide budget; it does not consume the read timeout.
+		const connection = await this.connections.getAgent(this.devboxId, { signal: options.signal });
+		yield* connection.executionLogs(this.id, options);
+	}
+
+	wait(options: ExecutionWaitOptions = {}): Promise<ExecResult> {
+		return collectExec(this.logs(options), { ...options, maxOutputBytes: options.maxOutputBytes ?? 10 * 1024 * 1024 });
 	}
 }
 
