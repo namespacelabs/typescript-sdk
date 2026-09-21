@@ -196,6 +196,99 @@ terminal.close();
 client.close();
 ```
 
+### Asynchronous execution
+
+`devbox.executions.start()` and `devbox.executions.startShell()` return an execution handle as soon as the
+agent accepts the command, without waiting for it to exit. Unlike foreground
+`exec()`/`shell()`, these commands continue when the client disconnects.
+
+```typescript
+const client = createDevboxClient({ connectionTimeoutMs: 90_000 });
+const devbox = await client.devboxes.get("my-devbox");
+const execution = await devbox.executions.start(["bash", "-lc", "sleep 3; echo done"], {
+	cwd: "/tmp",
+	env: { CI: "true" },
+	timeoutMs: 10_000,
+});
+const id = execution.id; // Save this together with the devbox ID.
+client.close();
+
+const otherClient = createDevboxClient();
+const sameDevbox = await otherClient.devboxes.get(devbox.id);
+const reattached = await sameDevbox.executions.get(id);
+const status = await reattached.status(); // running | completed | missing
+const result = await reattached.wait({ timeoutMs: 30_000, maxOutputBytes: 1024 * 1024 });
+console.log(result.exitCode, result.stdout, result.stderr, result.error);
+
+// Discover retained commands, including commands started by other clients:
+const executions = await sameDevbox.executions.list();
+for (const entry of executions) console.log(entry.id, await entry.status());
+
+// Alternatively, consume retained and live bytes without collecting output:
+for await (const chunk of reattached.logs({ timeoutMs: 30_000 })) {
+	process.stdout.write(chunk.stdout);
+	process.stderr.write(chunk.stderr);
+	if (chunk.result) console.log("exit", chunk.result.exitCode, chunk.result.error);
+}
+otherClient.close();
+```
+
+- `executions.startShell(script, options)` uses the devbox's configured shell, with an
+  optional `shell` override. Start options support `cwd`, `env`, and initial
+  `stdin` (string or bytes), just like foreground execution. Output callbacks
+  `onStdout` and `onStderr` belong on `wait()`, not on the start call.
+- Only `completed` status has an exit code and completion time. An exit code
+  of zero in agent metadata does not imply completion. Nonzero exits and
+  command-start failures resolve normally with `exitCode` and optional `error`.
+- `executions.get()` rejects with `ExecutionNotFoundError` for an absent ID;
+  an existing handle's `status()` returns `missing` if it is no longer retained.
+  `logs()` and `wait()` reject with `ExecutionNotFoundError` for missing output.
+  Transport/authentication failures reject, never masquerade as `missing`.
+- `executions.list()` returns handles for all command executions retained by the
+  current agent, running and completed, sorted by start time. Boot operations are
+  excluded. There is no pagination or durable history. A listed execution may be
+  evicted before its status or logs are read. Connection failures reject rather
+  than returning an empty list.
+- Each `wait()`/`logs()` call has its own reader, including concurrent calls.
+  Every reader replays from the beginning of retained output, then follows live
+  output until a final result. Repeated waits invoke callbacks again; nothing
+  is cached in the handle. Streams do not automatically reconnect. There is no
+  cursor, so reopening after a failure may duplicate output: exactly-once
+  delivery across reconnects is not guaranteed. Decode UTF-8 incrementally when
+  consuming byte chunks, since a character can span chunks.
+- `wait()` captures at most 10 MiB of combined stdout/stderr by default. Set a
+  finite, non-negative integer `maxOutputBytes` to change the limit. Exceeding
+  it rejects with `ExecutionOutputLimitError`; use `logs()` for large output.
+  Streaming does not collect output and applies transport backpressure.
+- Client `connectionTimeoutMs` bounds connection establishment. Start-call
+  `timeoutMs` covers connection acquisition plus the start RPC, not command
+  runtime. `wait()`/`logs()` `timeoutMs` starts after connection acquisition;
+  their signal also cancels acquisition. `status()`, `executions.get()`, and
+  `executions.list()` use one operation timeout including acquisition. Start
+  options never carry over to later reads. Read timeouts reject with `DevboxTimeoutError`.
+- Aborting, timing out, breaking iteration, exceeding the output limit, or
+  closing a client only stops reading an asynchronous execution. **None of
+  these operations kills the remote command.** If StartExec fails after being
+  sent, the command may already exist. The SDK never retries it automatically;
+  blindly retrying may launch a duplicate.
+- Execution IDs are agent-local, and log retention is not indefinite. Do not
+  rely on IDs or output surviving VM replacement. Looking up an execution is
+  connection-backed and may activate a stopped devbox, but cannot restore an
+  execution lost with its previous agent.
+
+There is no kill/signal, incremental stdin, or stdin-close RPC. Supporting those
+operations requires backend protocol and agent changes; this API does not
+emulate them with detached shells or transport cancellation.
+
+Run the opt-in integration tests against an authenticated Linux devbox with
+`bash`, `cat`, `head`, and `sleep` installed (no devbox is created or deleted):
+
+```sh
+SDK_TEST_DEVBOX=my-devbox npm run test:devbox
+```
+
+### Checkout configuration
+
 For direct creation (without a blueprint), omit `versionControl` and `repository`
 to inherit the tenant's default repository configuration. Pass `versionControl`
 to explicitly configure checkout; an empty object disables checkout entirely.

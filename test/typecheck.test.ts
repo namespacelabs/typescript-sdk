@@ -187,6 +187,49 @@ async function testDevboxClient() {
 		env: { CI: "true" },
 	});
 	const shellResult = await devbox.shell(`printf '%s\\n' "$HOME"`);
+	const executions: devboxPublicApi.DevboxExecutions = devbox.executions;
+	const execution: devboxPublicApi.DevboxExecution = await executions.start(["cat"], {
+		cwd: "/tmp", env: { CI: "true" }, stdin: new Uint8Array([65]), timeoutMs: 5_000,
+	});
+	const shellExecution: sdkPublicApi.DevboxExecution = await devbox.executions.startShell("echo hello", { shell: "/bin/bash" });
+	const reattached = await devbox.executions.get(execution.id);
+	const listed: sdkPublicApi.DevboxExecution[] = await devbox.executions.list({
+		timeoutMs: 5_000, signal: new AbortController().signal,
+	});
+	for (const entry of listed) {
+		const entryStatus: devboxPublicApi.ExecutionStatus = await entry.status();
+		const entryResult: devboxPublicApi.ExecResult = await entry.wait();
+	}
+	const status: devboxPublicApi.ExecutionStatus = await reattached.status();
+	if (status.state === "completed") {
+		const exitCode: number = status.exitCode;
+		const completedAt: Date = status.completedAt;
+	} else {
+		// @ts-expect-error Only completed executions have an exit code.
+		status.exitCode;
+	}
+	const waited: devboxPublicApi.ExecResult = await reattached.wait({
+		timeoutMs: 10_000, maxOutputBytes: 1024, signal: new AbortController().signal,
+		onStdout: (data: Uint8Array) => data.byteLength,
+		onStderr: (data: Uint8Array) => data.byteLength,
+	});
+	for await (const chunk of shellExecution.logs()) {
+		const output: Uint8Array = chunk.stdout;
+		const errorOutput: Uint8Array = chunk.stderr;
+		const code: number | undefined = chunk.result?.exitCode;
+	}
+	// @ts-expect-error Output callbacks belong to wait, not the start RPC.
+	await devbox.executions.start(["true"], { onStdout: () => {} });
+	// @ts-expect-error Asynchronous execution is grouped under executions.
+	devbox.startExec;
+	// @ts-expect-error Asynchronous shell execution is grouped under executions.
+	devbox.startShell;
+	// @ts-expect-error Execution lookup is grouped under executions.
+	devbox.getExecution;
+	// @ts-expect-error There is no kill RPC.
+	execution.kill();
+	// @ts-expect-error There is no incremental stdin RPC.
+	execution.write("hello");
 	const terminal = await devbox.terminal.open({ columns: 120, rows: 40 });
 	terminal.write("pwd\n");
 	terminal.resize(160, 50);

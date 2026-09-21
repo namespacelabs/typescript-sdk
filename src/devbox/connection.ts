@@ -1,5 +1,6 @@
 import { Duplex } from "node:stream";
 import { create } from "@bufbuild/protobuf";
+import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { Code, ConnectError, createClient, type Client as RpcClient } from "@connectrpc/connect";
 import { createGrpcTransport } from "@connectrpc/connect-node";
 import { Client, type ClientChannel, type SFTPWrapper } from "ssh2";
@@ -10,7 +11,6 @@ import { DevBoxService } from "../proto/namespace/private/devbox/devbox_pb.js";
 import {
 	AgentService,
 	StartExecRequestSchema,
-	type ExecLogChunk,
 	type StartExecRequest,
 } from "../proto/namespace/private/devbox/wire/wire_pb.js";
 import {
@@ -21,12 +21,16 @@ import {
 	type ComputeClient,
 	type DisplayConnection,
 } from "./display.js";
-import { DevboxGatewayError, DevboxTimeoutError, IncompleteResponseError } from "./errors.js";
+import { DevboxGatewayError, DevboxTimeoutError, ExecutionNotFoundError, ExecutionOutputLimitError, IncompleteResponseError } from "./errors.js";
 import type {
+	ExecutionLogChunk,
+	ExecutionStatus,
+	ExecutionWaitOptions,
 	ExecOptions,
 	ExecResult,
 	OperationOptions,
 	ShellOptions,
+	StartExecOptions,
 	TerminalOpenOptions,
 	TerminalSession,
 } from "./models.js";
@@ -36,12 +40,16 @@ type DevboxRpcClient = RpcClient<typeof DevBoxService>;
 class GatewaySocket extends Duplex {
 	constructor(private readonly websocket: WebSocket) {
 		super();
-		websocket.on("message", (data: RawData) => this.push(rawDataBuffer(data)));
+		websocket.on("message", (data: RawData) => {
+			if (!this.push(rawDataBuffer(data))) websocket.pause();
+		});
 		websocket.on("close", () => this.push(null));
 		websocket.on("error", (error) => this.destroy(error));
 	}
 
-	_read(): void {}
+	_read(): void {
+		this.websocket.resume();
+	}
 
 	_write(chunk: Buffer, _encoding: BufferEncoding, callback: (error?: Error | null) => void): void {
 		if (this.websocket.readyState !== WebSocket.OPEN) {
@@ -186,6 +194,69 @@ export class AgentConnection {
 		return this.run(buildExecRequest([shell, "-lc", script], options), options, deadline);
 	}
 
+	async startExec(argv: readonly string[], options: StartExecOptions): Promise<string> {
+		checkExecutionTimeout(options);
+		try {
+			const response = await this.client.startExec(buildExecRequest(argv, options), options);
+			if (!response.execId) throw new IncompleteResponseError("devbox start exec response");
+			return response.execId;
+		} catch (error) {
+			throw executionError(error, options);
+		}
+	}
+
+	async listExecutions(options: OperationOptions) {
+		checkExecutionTimeout(options);
+		try {
+			const response = await this.client.listLogs({}, options);
+			return response.actions.filter((action) => action.command);
+		} catch (error) {
+			throw executionError(error, options);
+		}
+	}
+
+	async executionStatus(id: string, options: OperationOptions): Promise<ExecutionStatus> {
+		const actions = await this.listExecutions(options);
+		const action = actions.find((action) => action.id === id);
+		if (!action) return { state: "missing" };
+		const startedAt = action.startedAt ? timestampDate(action.startedAt) : undefined;
+		if (!action.completedAt) return { state: "running", startedAt };
+		return {
+			state: "completed",
+			startedAt,
+			completedAt: timestampDate(action.completedAt),
+			exitCode: action.exitCode,
+			...(action.error ? { error: action.error } : {}),
+		};
+	}
+
+	async *executionLogs(id: string, options: OperationOptions): AsyncIterableIterator<ExecutionLogChunk> {
+		checkExecutionTimeout(options);
+		const controller = new AbortController();
+		const signal = options.signal ? AbortSignal.any([options.signal, controller.signal]) : controller.signal;
+		let completed = false;
+		try {
+			for await (const chunk of this.client.streamExecLogs({ execId: id }, { ...options, signal })) {
+				if (chunk.result) completed = true;
+				yield {
+					stdout: chunk.stdout,
+					stderr: chunk.stderr,
+					...(chunk.result ? { result: {
+						exitCode: chunk.result.exitCode,
+						...(chunk.result.error ? { error: chunk.result.error } : {}),
+					} } : {}),
+				};
+			}
+			if (!completed) throw new IncompleteResponseError("devbox exec stream");
+		} catch (error) {
+			if (error instanceof ConnectError && error.code === Code.NotFound) throw new ExecutionNotFoundError(id);
+			throw executionError(error, options);
+		} finally {
+			// A consumer break or callback failure must release this RPC, not the shared connection.
+			controller.abort();
+		}
+	}
+
 	private async run(request: StartExecRequest, options: ExecOptions, deadline: number | undefined): Promise<ExecResult> {
 		const callOptions = withDeadline(options, deadline);
 		try {
@@ -200,6 +271,19 @@ export class AgentConnection {
 			throw error;
 		}
 	}
+}
+
+function checkExecutionTimeout(options: OperationOptions): void {
+	operationDeadline(options);
+	// Connect interprets zero as no timeout, but an exhausted SDK budget must not send an RPC.
+	if (options.timeoutMs === 0) throw new DevboxTimeoutError("devbox execution operation timed out", 0);
+}
+
+function executionError(error: unknown, options: OperationOptions): unknown {
+	if (error instanceof ConnectError && error.code === Code.DeadlineExceeded && options.timeoutMs !== undefined) {
+		return new DevboxTimeoutError(`devbox execution operation timed out after ${options.timeoutMs}ms`, options.timeoutMs);
+	}
+	return error;
 }
 
 /**
@@ -236,13 +320,21 @@ export function buildExecRequest(
  * buffering them, and map the final result chunk to an `ExecResult`.
  */
 export async function collectExec(
-	stream: AsyncIterable<ExecLogChunk>,
-	options: Pick<ExecOptions, "onStdout" | "onStderr">,
+	stream: AsyncIterable<ExecutionLogChunk>,
+	options: Pick<ExecutionWaitOptions, "onStdout" | "onStderr" | "maxOutputBytes">,
 ): Promise<ExecResult> {
+	if (options.maxOutputBytes !== undefined && (!Number.isSafeInteger(options.maxOutputBytes) || options.maxOutputBytes < 0)) {
+		throw new RangeError("maxOutputBytes must be a non-negative safe integer");
+	}
 	const stdout: Buffer[] = [];
 	const stderr: Buffer[] = [];
-	let result: { exitCode: number; error: string } | undefined;
+	let outputBytes = 0;
+	let result: ExecutionLogChunk["result"];
 	for await (const chunk of stream) {
+		outputBytes += chunk.stdout.length + chunk.stderr.length;
+		if (options.maxOutputBytes !== undefined && outputBytes > options.maxOutputBytes) {
+			throw new ExecutionOutputLimitError(options.maxOutputBytes);
+		}
 		if (chunk.stdout.length > 0) {
 			const data = Buffer.from(chunk.stdout);
 			stdout.push(data);
@@ -259,7 +351,7 @@ export async function collectExec(
 	return {
 		exitCode: result.exitCode,
 		signal: null,
-		...(result.error === "" ? {} : { error: result.error }),
+		...(result.error ? { error: result.error } : {}),
 		stdout: Buffer.concat(stdout).toString("utf8"),
 		stderr: Buffer.concat(stderr).toString("utf8"),
 	};
@@ -682,6 +774,8 @@ async function openWebSocket(websocket: WebSocket, signal: AbortSignal, timeoutM
 			settled = true;
 			cleanup();
 			if (error) {
+				// terminate() emits another error when the handshake has not completed.
+				websocket.once("error", () => {});
 				websocket.terminate();
 				reject(error);
 			} else {

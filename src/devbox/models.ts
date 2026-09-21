@@ -161,6 +161,63 @@ export interface ExecResult {
 	stderr: string;
 }
 
+/** `timeoutMs` covers connection acquisition and StartExec, not command lifetime. */
+export type StartExecOptions = OperationOptions & Pick<ExecOptions, "cwd" | "env" | "stdin">;
+
+export interface StartShellOptions extends StartExecOptions {
+	shell?: string;
+}
+
+export type ExecutionStatus =
+	| { state: "missing" }
+	| { state: "running"; startedAt?: Date }
+	| { state: "completed"; startedAt?: Date; completedAt: Date; exitCode: number; error?: string };
+
+export interface ExecutionLogChunk {
+	stdout: Uint8Array;
+	stderr: Uint8Array;
+	/** Present only after completion; process failures do not reject the stream. */
+	result?: { exitCode: number; error?: string };
+}
+
+export interface ExecutionWaitOptions extends OperationOptions, Pick<ExecOptions, "onStdout" | "onStderr"> {
+	/** Combined stdout/stderr byte limit. Defaults to 10 MiB; exceeding it rejects with ExecutionOutputLimitError. */
+	maxOutputBytes?: number;
+}
+
+/** An agent-local execution, not a cached promise. IDs and logs may be lost on VM replacement or eviction. */
+export interface DevboxExecution {
+	readonly id: string;
+	/** Missing is a successful lookup with no matching execution; transport failures reject. */
+	status(options?: OperationOptions): Promise<ExecutionStatus>;
+	/**
+	 * Replay retained output, then follow live output through the final result.
+	 * Each reader is independent; no cursor or automatic reconnect, and no output
+	 * collection. Breaking iteration or aborting cancels only this reader.
+	 * timeoutMs starts after connection acquisition (bounded by client connectionTimeoutMs).
+	 */
+	logs(options?: OperationOptions): AsyncIterableIterator<ExecutionLogChunk>;
+	/**
+	 * Collect replayed/live output, resolving even on nonzero exits or command errors.
+	 * Repeated/concurrent waits open independent readers and replay callbacks again.
+	 * Missing executions reject with ExecutionNotFoundError. Aborts, timeouts, and
+	 * output limits stop this reader, never the command. timeoutMs starts after
+	 * connection acquisition; start options are not inherited.
+	 */
+	wait(options?: ExecutionWaitOptions): Promise<ExecResult>;
+}
+
+export interface DevboxExecutions {
+	/** Start without waiting for completion. Never automatically retries an uncertain StartExec response. */
+	start(argv: readonly string[], options?: StartExecOptions): Promise<DevboxExecution>;
+	/** Like start, through the configured devbox shell (or the supplied shell). */
+	startShell(script: string, options?: StartShellOptions): Promise<DevboxExecution>;
+	/** Look up an agent-local ID; rejects with ExecutionNotFoundError if no longer retained. */
+	get(id: string, options?: OperationOptions): Promise<DevboxExecution>;
+	/** List retained command executions (running and completed), sorted by start time. Excludes boot operations. */
+	list(options?: OperationOptions): Promise<DevboxExecution[]>;
+}
+
 export interface TerminalOpenOptions extends OperationOptions {
 	columns?: number;
 	rows?: number;
@@ -299,6 +356,8 @@ export interface Devbox {
 	 * Connection-backed: using it on a stopped devbox activates it first.
 	 */
 	readonly display: DevboxDisplay;
+	/** Asynchronous executions. Connection-backed: using it on a stopped devbox activates it first. */
+	readonly executions: DevboxExecutions;
 	/**
 	 * Run a command on the devbox and collect its output.
 	 *

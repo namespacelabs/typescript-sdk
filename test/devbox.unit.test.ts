@@ -484,6 +484,29 @@ test("exec streams without a final result fail", async () => {
 	assert.deepEqual(success, { exitCode: 0, signal: null, stdout: "", stderr: "" });
 });
 
+test("output limits count combined bytes, preserve split UTF-8, and close the reader", async () => {
+	const chunks = () => execChunks(
+		{ stdout: Uint8Array.from([0xe2, 0x82]) },
+		{ stderr: new TextEncoder().encode("err") },
+		{ stdout: Uint8Array.from([0xac, 0x21]) },
+		{ result: { exitCode: 0 } },
+	);
+	assert.deepEqual(await collectExec(chunks(), { maxOutputBytes: 7 }), {
+		exitCode: 0, signal: null, stdout: "€!", stderr: "err",
+	});
+	let closed = false;
+	async function* tracked() {
+		try { yield* chunks(); } finally { closed = true; }
+	}
+	await assert.rejects(collectExec(tracked(), { maxOutputBytes: 6 }), { name: "ExecutionOutputLimitError" });
+	assert.equal(closed, true);
+	for (const maxOutputBytes of [-1, 1.5, Infinity, NaN]) {
+		await assert.rejects(collectExec(chunks(), { maxOutputBytes }), RangeError);
+	}
+	assert.equal((await collectExec(execChunks({ result: { exitCode: 0 } }), { maxOutputBytes: 0 })).stdout, "");
+	await assert.rejects(collectExec(chunks(), { maxOutputBytes: 0 }), { name: "ExecutionOutputLimitError" });
+});
+
 test("ssh and agent connections are cached independently", async () => {
 	const connects = { ssh: 0, agent: 0 };
 	const manager = new ConnectionManager(

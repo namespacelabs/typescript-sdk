@@ -45,3 +45,17 @@ export class IncompleteResponseError extends DevboxError {
 
 /** Image optimization failed or ended before completing. */
 export class ImageOptimizationError extends DevboxError {}
+
+/** The agent has no retained execution for this ID. */
+export class ExecutionNotFoundError extends DevboxError {
+	constructor(readonly executionId: string) {
+		super(`devbox execution ${executionId} was not found`);
+	}
+}
+
+/** Output collection stopped at its byte limit; the remote command is not terminated. */
+export class ExecutionOutputLimitError extends DevboxError {
+	constructor(readonly maxOutputBytes: number) {
+		super(`devbox execution output exceeded ${maxOutputBytes} bytes; use logs() to stream without collecting`);
+	}
+}
