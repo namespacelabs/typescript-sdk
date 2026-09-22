@@ -16,6 +16,7 @@ import type {
 	DirEntry,
 	ExecutionLogChunk,
 	ExecutionStatus,
+	ExecutionStopOptions,
 	ExecutionWaitOptions,
 	ExecOptions,
 	ExecResult,
@@ -195,6 +196,15 @@ class ExecutionHandle implements DevboxExecution {
 		const deadline = operationDeadline(options);
 		const connection = await this.connections.getAgent(this.devboxId, withDeadline(options, deadline));
 		return connection.executionStatus(this.id, withDeadline(options, deadline));
+	}
+
+	async stop(options: ExecutionStopOptions = {}): Promise<void> {
+		if (options.mode !== undefined && options.mode !== "graceful" && options.mode !== "force") {
+			throw new TypeError('execution stop mode must be "graceful" or "force"');
+		}
+		const deadline = operationDeadline(options);
+		const connection = await this.connections.getAgent(this.devboxId, withDeadline(options, deadline));
+		await connection.stopExecution(this.id, withDeadline(options, deadline));
 	}
 
 	async *logs(options: OperationOptions = {}): AsyncIterableIterator<ExecutionLogChunk> {

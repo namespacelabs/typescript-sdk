@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { Code, ConnectError } from "@connectrpc/connect";
+import { Code, ConnectError, createClient } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-node";
 import { fromBearerToken, loadDefaults } from "../src/auth/index.js";
 import { bearerAuthInterceptor } from "../src/api/interceptors.js";
+import { ConnectionManager } from "../src/devbox/connection.js";
+import { DevBoxService } from "../src/proto/namespace/private/devbox/devbox_pb.js";
 import {
 	createDevboxClient,
 	DevboxGatewayError,
@@ -14,6 +16,100 @@ import {
 } from "../src/devbox/index.js";
 
 const ref = process.env.SDK_TEST_DEVBOX;
+
+test("real devbox execution stop", { skip: !ref, timeout: 120_000 }, async (t) => {
+	const client = createDevboxClient();
+	t.after(() => client.close());
+	const devbox = await client.devboxes.get(ref!);
+	// Wait for the child to finish exec before signaling its process group.
+	const ready = `sleep 30 & child=$!; until [[ "$(ps -p "$child" -o comm=)" == *sleep ]]; do sleep 0.01; done; printf 'ready\n'; wait "$child"`;
+
+	for (const exitCode of [0, 23]) {
+		await t.test(`reattached graceful stop retains cleanup and exit ${exitCode}`, async (t) => {
+			const execution = await devbox.executions.start(["bash", "-c",
+				`trap 'printf cleanup; sleep 2; printf cleanup-err >&2; exit ${exitCode}' TERM; ${ready}`,
+			], { cwd: "/tmp" });
+			t.after(() => execution.stop({ mode: "force", timeoutMs: 5_000 }));
+			await waitUntilReady(execution);
+			const other = createDevboxClient();
+			try {
+				const box = await other.devboxes.get(ref!);
+				const reattached = await box.executions.get(execution.id);
+				if (exitCode === 0) await reattached.stop();
+				else await reattached.stop({ timeoutMs: 5_000 });
+				assert.equal((await reattached.status()).state, "running", "stop acknowledges before cleanup completes");
+				const result = await reattached.wait({ timeoutMs: 10_000 });
+				assert.equal(result.exitCode, exitCode);
+				assert.equal(result.signal, null);
+				assert.equal(result.stdout, "ready\ncleanup");
+				assert.match(result.stderr, /cleanup-err/);
+				if (exitCode === 0) assert.equal(result.error, undefined);
+				else assert.ok(result.error);
+				const status = await reattached.status();
+				assert.equal(status.state, "completed");
+				assert.ok(status.state === "completed" && status.exitCode === exitCode && status.completedAt instanceof Date);
+				await reattached.stop({ mode: "force" });
+				await reattached.stop({ mode: "graceful" });
+				assert.deepEqual(await execution.wait(), result);
+				assert.deepEqual(await readLogs(reattached), { stdout: result.stdout, stderr: result.stderr, exitCode });
+			} finally {
+				other.close();
+			}
+		});
+	}
+
+	for (const escalate of [false, true]) {
+		await t.test(escalate ? "graceful stop never auto-escalates" : "forced stop skips cleanup", async (t) => {
+			const trap = escalate ? "trap '' TERM" : "trap 'printf unexpected-cleanup; exit 0' TERM";
+			const execution = await devbox.executions.start(["bash", "-c", `${trap}; ${ready}`], { cwd: "/tmp" });
+			t.after(() => execution.stop({ mode: "force", timeoutMs: 5_000 }));
+			await waitUntilReady(execution);
+			await assert.rejects(execution.stop({ mode: "force", timeoutMs: 0 }), DevboxTimeoutError);
+			await assert.rejects(execution.stop({ mode: "force", signal: AbortSignal.abort() }));
+			await assert.rejects(execution.stop({ mode: "invalid" } as never), TypeError);
+			assert.equal((await execution.status()).state, "running");
+			if (escalate) {
+				await execution.stop({});
+				await execution.stop({ mode: "graceful" });
+				await new Promise((resolve) => setTimeout(resolve, 6_000));
+				assert.equal((await execution.status()).state, "running");
+			}
+			await execution.stop({ mode: "force" });
+			const result = await execution.wait({ timeoutMs: 10_000 });
+			assert.equal(result.exitCode, -1);
+			assert.equal(result.signal, null);
+			assert.match(result.error!, /killed/);
+			assert.equal(result.stdout, "ready\n");
+			assert.deepEqual(await execution.wait(), result);
+			assert.equal((await execution.status()).state, "completed");
+		});
+	}
+
+	await t.test("missing stop IDs differ from transport failures", async () => {
+		// Lookup rejects missing IDs before constructing a public handle. Exercise
+		// the stop RPC directly to cover an ID evicted after a handle was obtained.
+		const tokens = await loadDefaults();
+		const manager = new ConnectionManager(createClient(DevBoxService, createConnectTransport({
+			httpVersion: "1.1",
+			baseUrl: process.env.NSC_DEVBOX_ENDPOINT ?? "https://private-api.iad.namespaceapis.com",
+			interceptors: [bearerAuthInterceptor(tokens)],
+		})), tokens, 10_000);
+		try {
+			const connection = await manager.getAgent(ref!);
+			await assert.rejects(connection.stopExecution("sdk-nonexistent-execution", { mode: "force" }), ExecutionNotFoundError);
+			const id = await connection.startExec(["true"], { cwd: "/tmp" });
+			connection.close();
+			await assert.rejects(connection.stopExecution(id, { mode: "force", timeoutMs: 5_000 }), (error: unknown) => {
+				assert.equal(error instanceof ExecutionNotFoundError, false);
+				assert.ok(error instanceof ConnectError);
+				assert.notEqual(error.code, Code.NotFound);
+				return true;
+			});
+		} finally {
+			manager.close();
+		}
+	});
+});
 
 test("real devbox asynchronous execution", { skip: !ref, timeout: 120_000 }, async (t) => {
 	const client = createDevboxClient();
@@ -204,6 +300,15 @@ test("real devbox asynchronous execution", { skip: !ref, timeout: 120_000 }, asy
 		assert.ok(result.error);
 	});
 });
+
+async function waitUntilReady(execution: DevboxExecution) {
+	let stdout = "";
+	for await (const chunk of execution.logs({ timeoutMs: 10_000 })) {
+		stdout += Buffer.from(chunk.stdout).toString();
+		if (stdout.includes("ready\n")) return;
+	}
+	assert.fail("execution ended without becoming ready");
+}
 
 async function readLogs(execution: DevboxExecution, onFirstOutput?: () => Promise<void>) {
 	let stdout = "";

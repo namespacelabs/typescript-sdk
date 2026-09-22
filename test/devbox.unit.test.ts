@@ -484,6 +484,17 @@ test("exec streams without a final result fail", async () => {
 	assert.deepEqual(success, { exitCode: 0, signal: null, stdout: "", stderr: "" });
 });
 
+test("stopped execution results preserve exit codes without inferring a signal", async () => {
+	for (const result of [{ exitCode: 0 }, { exitCode: 23, error: "exit status 23" }, { exitCode: -1, error: "signal: killed" }]) {
+		const collected = await collectExec(execChunks(
+			{ stdout: new TextEncoder().encode("before stop") },
+			{ stderr: new TextEncoder().encode("diagnostic") },
+			{ result },
+		), {});
+		assert.deepEqual(collected, { ...result, signal: null, stdout: "before stop", stderr: "diagnostic" });
+	}
+});
+
 test("output limits count combined bytes, preserve split UTF-8, and close the reader", async () => {
 	const chunks = () => execChunks(
 		{ stdout: Uint8Array.from([0xe2, 0x82]) },
