@@ -193,6 +193,18 @@ async function testDevboxClient() {
 	});
 	const shellExecution: sdkPublicApi.DevboxExecution = await devbox.executions.startShell("echo hello", { shell: "/bin/bash" });
 	const reattached = await devbox.executions.get(execution.id);
+	const stopOptions: devboxPublicApi.ExecutionStopOptions = {
+		mode: "graceful", timeoutMs: 5_000, signal: new AbortController().signal,
+	};
+	const stopped: void = await reattached.stop(stopOptions);
+	const forceOptions: sdkPublicApi.ExecutionStopOptions = { mode: "force" };
+	await reattached.stop(forceOptions);
+	await execution.stop();
+	await execution.stop({});
+	const defaultStopOptions: devboxPublicApi.ExecutionStopOptions = { timeoutMs: 5_000 };
+	await execution.stop(defaultStopOptions);
+	// @ts-expect-error Arbitrary signals are not supported.
+	await execution.stop({ mode: "SIGINT" });
 	const listed: sdkPublicApi.DevboxExecution[] = await devbox.executions.list({
 		timeoutMs: 5_000, signal: new AbortController().signal,
 	});
@@ -226,7 +238,7 @@ async function testDevboxClient() {
 	devbox.startShell;
 	// @ts-expect-error Execution lookup is grouped under executions.
 	devbox.getExecution;
-	// @ts-expect-error There is no kill RPC.
+	// @ts-expect-error Forced termination uses stop({ mode: "force" }).
 	execution.kill();
 	// @ts-expect-error There is no incremental stdin RPC.
 	execution.write("hello");

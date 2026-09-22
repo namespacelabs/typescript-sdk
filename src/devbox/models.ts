@@ -185,11 +185,25 @@ export interface ExecutionWaitOptions extends OperationOptions, Pick<ExecOptions
 	maxOutputBytes?: number;
 }
 
+export interface ExecutionStopOptions extends OperationOptions {
+	/** Defaults to graceful: SIGTERM without automatic escalation. Force sends SIGKILL. */
+	mode?: "graceful" | "force";
+}
+
 /** An agent-local execution, not a cached promise. IDs and logs may be lost on VM replacement or eviction. */
 export interface DevboxExecution {
 	readonly id: string;
 	/** Missing is a successful lookup with no matching execution; transport failures reject. */
 	status(options?: OperationOptions): Promise<ExecutionStatus>;
+	/**
+	 * Request termination, without waiting for exit. Use status(), logs(), or wait()
+	 * for completion. Repeated/completed stops are no-ops; graceful can escalate to
+	 * force. Missing IDs reject with ExecutionNotFoundError.
+	 * Targets the original process group until its leader exits, not detached or
+	 * surviving descendants. timeoutMs covers acquisition and the stop RPC; aborting
+	 * or timing out cannot undo a stop already accepted by the agent.
+	 */
+	stop(options?: ExecutionStopOptions): Promise<void>;
 	/**
 	 * Replay retained output, then follow live output through the final result.
 	 * Each reader is independent; no cursor or automatic reconnect, and no output

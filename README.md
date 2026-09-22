@@ -242,7 +242,7 @@ otherClient.close();
   command-start failures resolve normally with `exitCode` and optional `error`.
 - `executions.get()` rejects with `ExecutionNotFoundError` for an absent ID;
   an existing handle's `status()` returns `missing` if it is no longer retained.
-  `logs()` and `wait()` reject with `ExecutionNotFoundError` for missing output.
+  `stop()`, `logs()`, and `wait()` reject with `ExecutionNotFoundError` for missing executions.
   Transport/authentication failures reject, never masquerade as `missing`.
 - `executions.list()` returns handles for all command executions retained by the
   current agent, running and completed, sorted by start time. Boot operations are
@@ -264,7 +264,7 @@ otherClient.close();
   `timeoutMs` covers connection acquisition plus the start RPC, not command
   runtime. `wait()`/`logs()` `timeoutMs` starts after connection acquisition;
   their signal also cancels acquisition. `status()`, `executions.get()`, and
-  `executions.list()` use one operation timeout including acquisition. Start
+  `executions.list()`, as well as `stop()`, use one operation timeout including acquisition. Start
   options never carry over to later reads. Read timeouts reject with `DevboxTimeoutError`.
 - Aborting, timing out, breaking iteration, exceeding the output limit, or
   closing a client only stops reading an asynchronous execution. **None of
@@ -276,12 +276,32 @@ otherClient.close();
   connection-backed and may activate a stopped devbox, but cannot restore an
   execution lost with its previous agent.
 
-There is no kill/signal, incremental stdin, or stdin-close RPC. Supporting those
-operations requires backend protocol and agent changes; this API does not
-emulate them with detached shells or transport cancellation.
+To terminate an execution, `stop()` defaults to graceful termination:
+
+```ts
+await execution.stop(); // Send SIGTERM; equivalent to { mode: "graceful" }.
+// If needed, a separate request escalates to SIGKILL:
+await execution.stop({ mode: "force", timeoutMs: 5_000 });
+const result = await execution.wait({ timeoutMs: 10_000 });
+```
+
+`stop()` acknowledges the request, not completion; `status()`, `logs()`, or `wait()`
+provide the final result. Graceful stop allows cleanup and never escalates
+automatically. Forced stop sends SIGKILL without cleanup. Repeating the same or
+weaker mode, or stopping an already completed execution, is a no-op. Cleanup can
+exit successfully or with its own nonzero code. Signal termination reports exit
+code `-1` and agent error detail; `ExecResult.signal` remains `null` because the
+protocol does not provide a structured signal field.
+
+Stop targets the original process group only until its leader exits; detached or
+surviving descendants are not managed. Canceling or timing out the stop RPC does
+not undo a request already accepted by the agent. The SDK does not retry it
+automatically. Agents without `StopExec` reject with `ConnectError` code
+`Unimplemented`; there is no shell-based fallback. Arbitrary signals, incremental
+stdin, and stdin-close still require backend changes.
 
 Run the opt-in integration tests against an authenticated Linux devbox with
-`bash`, `cat`, `head`, and `sleep` installed (no devbox is created or deleted):
+`bash`, `cat`, `head`, `ps`, and `sleep` installed (no devbox is created or deleted):
 
 ```sh
 SDK_TEST_DEVBOX=my-devbox npm run test:devbox

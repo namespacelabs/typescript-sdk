@@ -11,6 +11,7 @@ import { DevBoxService } from "../proto/namespace/private/devbox/devbox_pb.js";
 import {
 	AgentService,
 	StartExecRequestSchema,
+	StopExecRequest_Mode,
 	type StartExecRequest,
 } from "../proto/namespace/private/devbox/wire/wire_pb.js";
 import {
@@ -25,6 +26,7 @@ import { DevboxGatewayError, DevboxTimeoutError, ExecutionNotFoundError, Executi
 import type {
 	ExecutionLogChunk,
 	ExecutionStatus,
+	ExecutionStopOptions,
 	ExecutionWaitOptions,
 	ExecOptions,
 	ExecResult,
@@ -201,6 +203,19 @@ export class AgentConnection {
 			if (!response.execId) throw new IncompleteResponseError("devbox start exec response");
 			return response.execId;
 		} catch (error) {
+			throw executionError(error, options);
+		}
+	}
+
+	async stopExecution(id: string, options: ExecutionStopOptions): Promise<void> {
+		checkExecutionTimeout(options);
+		try {
+			await this.client.stopExec({
+				execId: id,
+				mode: options.mode === "force" ? StopExecRequest_Mode.FORCE : StopExecRequest_Mode.GRACEFUL,
+			}, options);
+		} catch (error) {
+			if (error instanceof ConnectError && error.code === Code.NotFound) throw new ExecutionNotFoundError(id);
 			throw executionError(error, options);
 		}
 	}
