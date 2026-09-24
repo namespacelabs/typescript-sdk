@@ -187,6 +187,15 @@ await devbox.fs.upload("./package.json", "/workspace/package.json");
 await devbox.fs.download("/workspace/results.json", "./results.json");
 await devbox.fs.copy("/workspace/results.json", "/workspace/results-copy.json");
 
+const text = await devbox.fs.read("/var/log/app.log");
+const bytes = await devbox.fs.read("/var/log/app.log", {
+	format: "bytes",
+	offset: 1024,
+	length: 64 * 1024,
+});
+const stream = await devbox.fs.read("/data/output.bin", { format: "stream" });
+for await (const chunk of stream) process.stdout.write(chunk);
+
 // PTY sessions are explicit and separate from shell execution.
 const terminal = await devbox.terminal.open({ columns: 120, rows: 40 });
 terminal.onData((data) => process.stdout.write(data));
@@ -338,7 +347,12 @@ combined, even when either is empty. Neither can be used with a blueprint.
 Invalid combinations are rejected by TypeScript and throw `TypeError` before
 any RPC.
 
-`upload()` and `download()` transfer one file. `copy()` operates inside the devbox and accepts `{ recursive: true }` for directories. All operations accept `AbortSignal` and timeout options.
+`upload()` and `download()` transfer one file. `copy()` operates inside the
+devbox and accepts `{ recursive: true }` for directories. `read()` returns
+UTF-8 text by default; pass `format: "bytes"` for a `Uint8Array` or
+`format: "stream"` for a `ReadableStream`. Its `offset` and `length` options
+are byte-based. The existing `readFile()` returns the complete file as a
+`Uint8Array`. All operations accept `AbortSignal` and timeout options.
 
 Devboxes with a graphical display — macOS devboxes — expose screen access through `devbox.display`, backed by VNC. Methods reject with `DevboxDisplayUnavailableError` when the devbox has no display (for example, Linux devboxes):
 

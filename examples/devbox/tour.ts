@@ -155,8 +155,14 @@ async function main() {
 		await devbox.fs.mkdir(`${remoteDir}/nested`, { recursive: true });
 
 		await devbox.fs.writeFile(`${remoteDir}/greeting.txt`, "hello from the tour\n");
-		const contents = await devbox.fs.readFile(`${remoteDir}/greeting.txt`);
-		console.log("readFile:", new TextDecoder().decode(contents).trim());
+		const contents = await devbox.fs.read(`${remoteDir}/greeting.txt`);
+		console.log("read:", contents.trim());
+
+		const stream = await devbox.fs.read(`${remoteDir}/greeting.txt`, { format: "stream" });
+		process.stdout.write("stream: ");
+		for await (const chunk of stream) {
+			process.stdout.write(chunk);
+		}
 
 		console.log("exists:", await devbox.fs.exists(`${remoteDir}/greeting.txt`));
 

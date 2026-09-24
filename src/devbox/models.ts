@@ -301,6 +301,14 @@ export interface WriteFileOptions extends OperationOptions {
 	mode?: number;
 }
 
+/** Options for reading a remote file. Offsets and lengths are measured in bytes. */
+export interface ReadOptions extends OperationOptions {
+	/** Zero-based byte offset at which to start reading. Defaults to 0. */
+	offset?: number;
+	/** Maximum positive number of bytes to read. Omit to read through EOF. */
+	length?: number;
+}
+
 export interface CopyOptions extends OperationOptions {
 	recursive?: boolean;
 }
@@ -334,6 +342,27 @@ export interface DevboxFileSystem {
 	download(remotePath: string, localPath: string, options?: TransferOptions): Promise<void>;
 	/** Copy a file or directory within the devbox. */
 	copy(sourcePath: string, destinationPath: string, options?: CopyOptions): Promise<void>;
+	/** Read remote file contents as UTF-8 text (the default format). */
+	read(
+		remotePath: string,
+		options?: ReadOptions & {
+			format?: "text";
+		},
+	): Promise<string>;
+	/** Read remote file contents as buffered bytes. */
+	read(
+		remotePath: string,
+		options: ReadOptions & {
+			format: "bytes";
+		},
+	): Promise<Uint8Array>;
+	/** Stream remote file contents as bytes. */
+	read(
+		remotePath: string,
+		options: ReadOptions & {
+			format: "stream";
+		},
+	): Promise<ReadableStream<Uint8Array>>;
 	/** Read a remote file's contents into memory. */
 	readFile(remotePath: string, options?: OperationOptions): Promise<Uint8Array>;
 	/** Write data to a remote file, creating or truncating it. */
