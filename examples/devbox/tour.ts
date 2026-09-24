@@ -106,6 +106,7 @@ async function main() {
 		const devbox = await client.devboxes.create({
 			name: devboxName,
 			blueprint: blueprintName,
+			labels: { example: "typescript-sdk-tour" },
 		});
 		devboxCreated = true;
 		console.log("created devbox:", devbox.id, "state:", devbox.info.state);
@@ -113,7 +114,7 @@ async function main() {
 		// get() resolves runtime state; list() intentionally does not
 		// (listed devboxes report state "unknown" — it is cheap).
 		const fetched = await client.devboxes.get(devbox.id);
-		console.log("devboxes.get:", fetched.id, "state:", fetched.info.state);
+		console.log("devboxes.get:", fetched.id, "state:", fetched.info.state, "labels:", fetched.info.labels);
 
 		const devboxPage = await client.devboxes.list({ limit: 10 });
 		console.log(`devboxes.list: ${devboxPage.items.length} devboxes (first page)`);

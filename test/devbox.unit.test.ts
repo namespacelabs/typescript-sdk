@@ -147,6 +147,111 @@ test("devbox creation forwards explicit image names", async () => {
 	assert.equal(requests[2]?.imageRef, undefined);
 });
 
+test("devbox creation sends and returns labels", async () => {
+	const inputLabels = {
+		environment: "staging",
+		team: "sdk",
+	};
+	const protoLabels = [
+		{ name: "environment", value: "staging" },
+		{ name: "team", value: "sdk" },
+	];
+	let requestLabels: typeof protoLabels | undefined;
+	const rpc = {
+		create: async (request: { labels?: typeof protoLabels }) => {
+			requestLabels = request.labels;
+			return {
+				devbox: create(DevBoxSchema, {
+					id: "devbox_123",
+					name: "labeled",
+					labels: protoLabels,
+				}),
+			};
+		},
+	} as never;
+	const { devboxes } = createResources(rpc, {} as ConnectionManager);
+
+	const devbox = await devboxes.create({
+		name: "labeled",
+		labels: inputLabels,
+		start: false,
+	});
+
+	assert.deepEqual(requestLabels, protoLabels);
+	assert.deepEqual(devbox.info.labels, inputLabels);
+});
+
+test("blueprint devbox creation sends labels", async () => {
+	const inputLabels = {
+		environment: "staging",
+		team: "sdk",
+	};
+	const protoLabels = [
+		{ name: "environment", value: "staging" },
+		{ name: "team", value: "sdk" },
+	];
+	let requestLabels: typeof protoLabels | undefined;
+	const rpc = {
+		fetchTemplate: async () => ({
+			template: create(DevboxTemplateSchema, {
+				id: "blueprint_123",
+				version: 7n,
+				spec: blueprintSpec("typescript", { image: "node:22" }),
+			}),
+		}),
+		createFromTemplate: async (request: { labels?: typeof protoLabels }) => {
+			requestLabels = request.labels;
+			return {
+				devbox: create(DevBoxSchema, {
+					id: "devbox_123",
+					name: "labeled",
+					labels: protoLabels,
+				}),
+			};
+		},
+	} as never;
+	const { devboxes } = createResources(rpc, {} as ConnectionManager);
+
+	const devbox = await devboxes.create({
+		name: "labeled",
+		blueprint: "typescript",
+		labels: inputLabels,
+		start: false,
+	});
+
+	assert.deepEqual(requestLabels, protoLabels);
+	assert.deepEqual(devbox.info.labels, inputLabels);
+});
+
+test("get and list return devbox labels", async () => {
+	const protoDevbox = create(DevBoxSchema, {
+		id: "devbox_123",
+		name: "labeled",
+		labels: [
+			{ name: "environment", value: "staging" },
+			{ name: "team", value: "sdk" },
+		],
+	});
+	const rpc = {
+		fetch: async () => ({ devbox: protoDevbox }),
+		list: async () => ({
+			devboxes: [protoDevbox],
+			paginationCursor: new Uint8Array(),
+		}),
+	} as never;
+	const { devboxes } = createResources(rpc, {} as ConnectionManager);
+	const expectedLabels = {
+		environment: "staging",
+		team: "sdk",
+	};
+
+	const fetched = await devboxes.get("labeled");
+	const listed = await devboxes.list();
+
+	assert.deepEqual(fetched.info.labels, expectedLabels);
+	assert.deepEqual(listed.items[0]?.info.labels, expectedLabels);
+});
+
 test("devbox checkout options preserve presence in serialized requests", async (t) => {
 	const requests: Record<string, unknown>[] = [];
 	const server = createServer(async (request, response) => {

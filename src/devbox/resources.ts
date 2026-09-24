@@ -91,6 +91,7 @@ class DevboxResources implements DevboxController, DevboxResource {
 				// An absent spec inherits defaults; an empty spec disables checkout.
 				versionControl: input.versionControl,
 				environment: Object.entries(input.environment ?? {}).map(([name, value]) => ({ name, value })),
+				labels: Object.entries(input.labels ?? {}).map(([name, value]) => ({ name, value })),
 				documentedPurpose: input.purpose ?? "",
 				accessMode: toProtoAccessMode(input.access),
 				ephemeral: ephemeralValue(input.ephemeral),
@@ -216,6 +217,7 @@ class DevboxResources implements DevboxController, DevboxResource {
 		return this.rpc.createFromTemplate({
 			name: input.name,
 			templateId: selected.id,
+			labels: Object.entries(input.labels ?? {}).map(([name, value]) => ({ name, value })),
 			activate,
 			documentedPurpose: input.purpose ?? "",
 			overrides: input.site || input.access ? {
