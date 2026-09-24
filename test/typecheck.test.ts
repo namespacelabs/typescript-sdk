@@ -262,6 +262,18 @@ async function testDevboxClient() {
 	await devbox.fs.copy("/workspace/result.json", "/workspace/result-copy.json");
 	await devbox.fs.writeFile("/workspace/message.txt", "hello");
 	const contents: Uint8Array = await devbox.fs.readFile("/workspace/message.txt");
+	const text: string = await devbox.fs.read("/workspace/message.txt");
+	const bytes: Uint8Array = await devbox.fs.read("/workspace/message.txt", {
+		format: "bytes",
+		offset: 10,
+		length: 100,
+	});
+	const stream: ReadableStream<Uint8Array> = await devbox.fs.read("/workspace/message.txt", {
+		format: "stream",
+		offset: 10,
+	});
+	// @ts-expect-error A dynamic format has no single return type overload.
+	await devbox.fs.read("/workspace/message.txt", { format: "json" });
 
 	const images = await client.images.list({ includeBuiltin: true });
 	const image = await client.images.register({ ref: "node:22", name: "node-22" });

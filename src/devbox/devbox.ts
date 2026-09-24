@@ -1,7 +1,14 @@
+import { Readable } from "node:stream";
+
 // ssh2 is CommonJS; Node's ESM named-export detection does not surface
 // `utils`, so import the default export and destructure.
 import ssh2 from "ssh2";
-import type { FileEntryWithStats, SFTPWrapper, Stats } from "ssh2";
+import type {
+	FileEntryWithStats,
+	ReadStream as SftpReadStream,
+	SFTPWrapper,
+	Stats,
+} from "ssh2";
 import { collectExec, ConnectionManager, operationDeadline, withDeadline } from "./connection.js";
 import { DevboxTimeoutError, ExecutionNotFoundError } from "./errors.js";
 import type {
@@ -22,6 +29,7 @@ import type {
 	ExecResult,
 	MkdirOptions,
 	OperationOptions,
+	ReadOptions,
 	RemoveOptions,
 	Screenshot,
 	ShellOptions,
@@ -251,6 +259,64 @@ class RemoteFileSystem implements DevboxFileSystem {
 		}
 	}
 
+	async read(
+		remotePath: string,
+		options?: ReadOptions & {
+			format?: "text";
+		},
+	): Promise<string>;
+
+	async read(
+		remotePath: string,
+		options: ReadOptions & {
+			format: "bytes";
+		},
+	): Promise<Uint8Array>;
+
+	async read(
+		remotePath: string,
+		options: ReadOptions & {
+			format: "stream";
+		},
+	): Promise<ReadableStream<Uint8Array>>;
+
+	async read(
+		remotePath: string,
+		options: ReadOptions & {
+			format?: "text" | "bytes" | "stream";
+		} = {},
+	): Promise<string | Uint8Array | ReadableStream<Uint8Array>> {
+		validateReadOptions(options);
+
+		const stream = await this.withSftp(options, async (sftp, operationOptions) => {
+			const nodeStream = sftp.createReadStream(remotePath, {
+				start: options.offset,
+				end: options.length === undefined
+					? undefined
+					: (options.offset ?? 0) + options.length - 1,
+			});
+
+			watchStream(nodeStream, operationOptions);
+			return nodeStream;
+		});
+
+		if (options.format === "stream") {
+			return Readable.toWeb(stream) as ReadableStream<Uint8Array>;
+		}
+
+		const chunks: Uint8Array[] = [];
+		for await (const chunk of stream) {
+			chunks.push(chunk);
+		}
+
+		const bytes = Buffer.concat(chunks);
+		if (options.format === "bytes") {
+			return bytes;
+		}
+
+		return new TextDecoder().decode(bytes);
+	}
+
 	async readFile(remotePath: string, options: OperationOptions = {}): Promise<Uint8Array> {
 		return this.withSftp(options, (sftp, operationOptions) => sftpCall<Buffer>(operationOptions, (callback) => {
 			sftp.readFile(remotePath, callback);
@@ -343,6 +409,72 @@ class RemoteFileSystem implements DevboxFileSystem {
 		// The SFTP channel is cached per connection; do not close it here.
 		const sftp = await connection.sftp(withDeadline(options, deadline));
 		return operation(sftp, withDeadline(options, deadline));
+	}
+}
+
+function validateReadOptions(options: ReadOptions & { format?: string }): void {
+	if (
+		options.format !== undefined
+		&& options.format !== "text"
+		&& options.format !== "bytes"
+		&& options.format !== "stream"
+	) {
+		throw new TypeError('read format must be "text", "bytes", or "stream"');
+	}
+
+	if (
+		options.offset !== undefined
+		&& (!Number.isSafeInteger(options.offset) || options.offset < 0)
+	) {
+		throw new RangeError("read offset must be a non-negative safe integer");
+	}
+
+	if (
+		options.length !== undefined
+		&& (!Number.isSafeInteger(options.length) || options.length <= 0)
+	) {
+		throw new RangeError("read length must be a positive safe integer");
+	}
+
+	if (
+		options.length !== undefined
+		&& (options.offset ?? 0) > Number.MAX_SAFE_INTEGER - options.length
+	) {
+		throw new RangeError("read range exceeds the maximum safe integer");
+	}
+}
+
+function watchStream(stream: SftpReadStream, options: OperationOptions): void {
+	const timer = options.timeoutMs === undefined
+		? undefined
+		: setTimeout(() => {
+			const error = new DevboxTimeoutError(
+				`devbox filesystem operation timed out after ${options.timeoutMs}ms`,
+				options.timeoutMs,
+			);
+
+			stream.destroy(error);
+		}, options.timeoutMs);
+
+	const onAbort = () => {
+		stream.destroy(abortError(options.signal));
+	};
+
+	const cleanup = () => {
+		if (timer) {
+			clearTimeout(timer);
+		}
+
+		options.signal?.removeEventListener("abort", onAbort);
+	};
+
+	stream.once("close", cleanup);
+	stream.once("end", cleanup);
+
+	if (options.signal?.aborted) {
+		onAbort();
+	} else {
+		options.signal?.addEventListener("abort", onAbort, { once: true });
 	}
 }
 

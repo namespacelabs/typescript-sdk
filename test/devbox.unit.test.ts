@@ -21,6 +21,7 @@ import { createResources } from "../src/devbox/resources.js";
 import { createDevboxClient, type CreateDevboxInput } from "../src/devbox/index.js";
 import { fromBearerToken } from "../src/auth/index.js";
 import { EventEmitter, once } from "node:events";
+import { Readable } from "node:stream";
 import {
 	buildExecRequest,
 	collectExec,
@@ -29,6 +30,7 @@ import {
 	SshConnection,
 	withDeadline,
 } from "../src/devbox/connection.js";
+import { DevboxHandle } from "../src/devbox/devbox.js";
 import { ExecLogChunkSchema, type ExecLogChunk } from "../src/proto/namespace/private/devbox/wire/wire_pb.js";
 import { cachingTokenSource } from "../src/auth/caching.js";
 
@@ -487,6 +489,117 @@ test("sftp cache is invalidated on channel close and failed open", async () => {
 	const third = await connection.sftp();
 	assert.notEqual(third, first);
 	assert.equal(opens, 3);
+});
+
+function devboxWithSftp(sftp: {
+	createReadStream: (path: string, options: { start?: number; end?: number }) => Readable;
+}) {
+	let connections = 0;
+	const box = new DevboxHandle(
+		{ id: "devbox", name: "devbox", state: "running", ephemeral: false } as never,
+		{
+			get: async () => {
+				connections += 1;
+				return { sftp: async () => sftp };
+			},
+		} as never,
+		{} as never,
+	);
+	return { box, connectionCount: () => connections };
+}
+
+function devboxWithFile(contents: Uint8Array) {
+	const ranges: Array<{ start?: number; end?: number }> = [];
+	const result = devboxWithSftp({
+		createReadStream: (_path, options) => {
+			ranges.push(options);
+			const start = options.start ?? 0;
+			const end = options.end === undefined ? contents.byteLength : options.end + 1;
+			return Readable.from([contents.slice(start, end)]);
+		},
+	});
+	return { ...result, ranges };
+}
+
+test("filesystem read supports text, byte ranges, and streams", async () => {
+	const { box, ranges } = devboxWithFile(new TextEncoder().encode("zero-one-two"));
+
+	assert.equal(await box.fs.read("/log"), "zero-one-two");
+	assert.deepEqual(await box.fs.read("/log", { format: "bytes", offset: 5, length: 3 }), Buffer.from("one"));
+	assert.deepEqual(await box.fs.read("/log", { format: "bytes", offset: 10, length: 10 }), Buffer.from("wo"));
+	assert.deepEqual(await box.fs.read("/log", { format: "bytes", offset: 20, length: 10 }), Buffer.alloc(0));
+
+	const stream = await box.fs.read("/log", { format: "stream", offset: 9 });
+	const chunks: Uint8Array[] = [];
+	for await (const chunk of stream) chunks.push(chunk);
+	assert.equal(Buffer.concat(chunks).toString(), "two");
+	assert.deepEqual(ranges, [
+		{ start: undefined, end: undefined },
+		{ start: 5, end: 7 },
+		{ start: 10, end: 19 },
+		{ start: 20, end: 29 },
+		{ start: 9, end: undefined },
+	]);
+});
+
+test("filesystem read validates byte ranges before connecting", async () => {
+	const { box, connectionCount } = devboxWithFile(new Uint8Array());
+
+	await assert.rejects(box.fs.read("/log", { offset: -1 }), /non-negative safe integer/);
+	await assert.rejects(box.fs.read("/log", { length: 0 }), /positive safe integer/);
+	await assert.rejects(box.fs.read("/log", { format: "json" } as never), /read format/);
+	await assert.rejects(
+		box.fs.read("/log", { offset: Number.MAX_SAFE_INTEGER, length: 2 }),
+		/range exceeds/,
+	);
+	assert.equal(connectionCount(), 0);
+});
+
+function controlledRead() {
+	let destroyed = false;
+	let markStarted!: () => void;
+	const started = new Promise<void>((resolve) => { markStarted = resolve; });
+	const { box } = devboxWithSftp({
+		createReadStream: () => {
+			markStarted();
+			return new Readable({
+				read() {},
+				destroy(error, callback) {
+					destroyed = true;
+					callback(error);
+				},
+			});
+		},
+	});
+	return { box, started, isDestroyed: () => destroyed };
+}
+
+test("filesystem read closes streams on abort, timeout, and cancellation", async (t) => {
+	await t.test("abort", async () => {
+		const { box, started, isDestroyed } = controlledRead();
+		const controller = new AbortController();
+		const pending = box.fs.read("/log", { format: "bytes", signal: controller.signal });
+		await started;
+		controller.abort();
+		await assert.rejects(pending, { name: "AbortError" });
+		assert.equal(isDestroyed(), true);
+	});
+
+	await t.test("timeout", async () => {
+		const { box, started, isDestroyed } = controlledRead();
+		const pending = box.fs.read("/log", { format: "bytes", timeoutMs: 5 });
+		await started;
+		await assert.rejects(pending, /timed out/);
+		assert.equal(isDestroyed(), true);
+	});
+
+	await t.test("stream cancellation", async () => {
+		const { box, started, isDestroyed } = controlledRead();
+		const stream = await box.fs.read("/log", { format: "stream" });
+		await started;
+		await stream.cancel();
+		assert.equal(isDestroyed(), true);
+	});
 });
 
 function fakeTerminalChannel() {
