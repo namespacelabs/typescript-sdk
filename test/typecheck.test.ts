@@ -169,6 +169,58 @@ async function testDevboxClient() {
 		labels: { environment: "test", team: "sdk" },
 	});
 	const labels: Record<string, string> = directDevbox.info.labels;
+
+	const callback: sdkPublicApi.DevboxInstanceEventCallback = {
+		url: "https://example.com/instance-events",
+		headers: [
+			{ name: "X-Source", value: "managed-agent" },
+			{ name: "Authorization", secretId: "sec_callback_token" },
+		],
+		signingSecretId: "sec_callback_signing",
+	};
+
+	const callbackHeader: devboxPublicApi.DevboxInstanceEventCallbackHeader = {
+		name: "X-Source",
+		value: "managed-agent",
+	};
+
+	await client.devboxes.create({
+		name: "callback-sdk-test",
+		image: "node:22",
+		instanceEventCallback: callback,
+	});
+
+	// @ts-expect-error Blueprint creation cannot yet configure an instance event callback.
+	client.devboxes.create({
+		name: "invalid",
+		blueprint: "typescript",
+		instanceEventCallback: callback,
+	});
+
+	client.devboxes.create({
+		name: "invalid",
+		image: "node:22",
+		instanceEventCallback: {
+			url: "https://example.com/instance-events",
+			// @ts-expect-error Callback headers cannot set both a static and secret-backed value.
+			headers: [{
+				name: "Authorization",
+				value: "Bearer token",
+				secretId: "sec_callback_token",
+			}],
+		},
+	});
+
+	client.devboxes.create({
+		name: "invalid",
+		image: "node:22",
+		instanceEventCallback: {
+			url: "https://example.com/instance-events",
+			// @ts-expect-error Callback headers require either a static or secret-backed value.
+			headers: [{ name: "Authorization" }],
+		},
+	});
+
 	const predicate: devboxPublicApi.DevboxLabelPredicate = {
 		name: "team",
 		value: "sdk",

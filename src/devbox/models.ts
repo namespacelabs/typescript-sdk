@@ -31,6 +31,26 @@ export interface NetworkPolicy {
 	advisory?: boolean;
 }
 
+export type DevboxInstanceEventCallbackHeader =
+	| {
+		name: string;
+		value: string;
+		secretId?: never;
+	}
+	| {
+		name: string;
+		secretId: string;
+		value?: never;
+	};
+
+export interface DevboxInstanceEventCallback {
+	/** Public HTTP(S) endpoint that receives instance lifecycle events as JSON. */
+	url: string;
+	headers?: DevboxInstanceEventCallbackHeader[];
+	/** Vault secret used to sign callback payloads with HMAC-SHA256. */
+	signingSecretId?: string;
+}
+
 export interface DevboxInfo {
 	id: string;
 	name: string;
@@ -88,6 +108,7 @@ export type CreateDevboxInput = CreateDevboxInputBase & ({
 	privileged?: never;
 	features?: never;
 	networkPolicy?: never;
+	instanceEventCallback?: never;
 } | {
 	blueprint?: never;
 	/**
@@ -107,6 +128,11 @@ export type CreateDevboxInput = CreateDevboxInputBase & ({
 	privileged?: boolean;
 	features?: string[];
 	networkPolicy?: NetworkPolicy;
+	/**
+	 * Receives lifecycle events for every compute instance backing this devbox.
+	 * The callback is immutable after creation.
+	 */
+	instanceEventCallback?: DevboxInstanceEventCallback;
 } & ({
 	/** Repository to check out. Omitted or empty inherits the tenant default. */
 	repository?: string;
