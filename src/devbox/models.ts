@@ -34,6 +34,8 @@ export interface NetworkPolicy {
 export interface DevboxInfo {
 	id: string;
 	name: string;
+	/** Labels attached to the devbox and its backing instance. */
+	labels: Record<string, string>;
 	/**
 	 * Runtime state as of the call that produced this snapshot.
 	 *
@@ -64,6 +66,8 @@ export interface DevboxInfo {
 
 interface CreateDevboxInputBase {
 	name: string;
+	/** Labels to attach to the devbox and its backing instance. */
+	labels?: Record<string, string>;
 	site?: string;
 	purpose?: string;
 	access?: AccessMode;

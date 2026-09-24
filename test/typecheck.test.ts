@@ -166,7 +166,9 @@ async function testDevboxClient() {
 		name: "direct-sdk-test",
 		image: "node:22",
 		size: "s",
+		labels: { environment: "test", team: "sdk" },
 	});
+	const labels: Record<string, string> = directDevbox.info.labels;
 	await client.devboxes.create({
 		name: "named-image-sdk-test",
 		imageName: "builtin:agents",

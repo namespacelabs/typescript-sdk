@@ -170,6 +170,7 @@ export function devboxInfo(devbox: ProtoDevbox, instanceId?: string, state?: Dev
 	return {
 		id: devbox.id,
 		name: devbox.name,
+		labels: Object.fromEntries(devbox.labels.map(({ name, value }) => [name, value])),
 		state: state ?? (instanceId ? "running" : "unknown"),
 		instanceId: instanceId || undefined,
 		image: devbox.imageRef,
