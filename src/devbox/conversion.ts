@@ -18,11 +18,16 @@ import {
 	type Image as ProtoImage,
 	type NetworkPolicySpec,
 } from "../proto/namespace/private/devbox/devbox_pb.js";
+import {
+	LabelFilterEntry_LabelFilterOp,
+	LabelFilterEntrySchema,
+} from "../proto/namespace/stdlib/labels_pb.js";
 import type {
 	AccessMode,
 	Blueprint,
 	BlueprintDefinition,
 	BlueprintOperation,
+	DevboxLabelPredicate,
 	DevboxInfo,
 	Image,
 	ImageMetadata,
@@ -164,6 +169,30 @@ export function positiveBigInt(value: number | undefined, field: string): bigint
 
 export function optionalDuration(value: number | undefined): Duration | undefined {
 	return value === undefined ? undefined : durationFromMs(value);
+}
+
+export function labelPredicate(
+	predicate: DevboxLabelPredicate,
+): MessageInitShape<typeof LabelFilterEntrySchema> {
+	switch (predicate.operator) {
+		case "exists":
+			return {
+				name: predicate.name,
+				op: LabelFilterEntry_LabelFilterOp.EXIST,
+			};
+		case "not-equal":
+			return {
+				name: predicate.name,
+				value: predicate.value,
+				op: LabelFilterEntry_LabelFilterOp.NOT_EQUAL,
+			};
+		default:
+			return {
+				name: predicate.name,
+				value: predicate.value,
+				op: LabelFilterEntry_LabelFilterOp.EQUAL,
+			};
+	}
 }
 
 export function devboxInfo(devbox: ProtoDevbox, instanceId?: string, state?: DevboxInfo["state"]): DevboxInfo {

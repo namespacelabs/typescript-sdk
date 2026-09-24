@@ -169,6 +169,28 @@ async function testDevboxClient() {
 		labels: { environment: "test", team: "sdk" },
 	});
 	const labels: Record<string, string> = directDevbox.info.labels;
+	const predicate: devboxPublicApi.DevboxLabelPredicate = {
+		name: "team",
+		value: "sdk",
+		operator: "equal",
+	};
+	const labelFilters: sdkPublicApi.DevboxLabelFilter[] = [
+		predicate,
+		{
+			anyOf: [
+				{ name: "cursor", operator: "exists" },
+				{ name: "team", value: "deprecated", operator: "not-equal" },
+			],
+		},
+	];
+	await client.devboxes.list({ labelFilters });
+	client.devboxes.iterate({ labelFilters });
+	// @ts-expect-error Equality predicates require a value.
+	client.devboxes.list({ labelFilters: [{ name: "team", operator: "equal" }] });
+	// @ts-expect-error Not-equal predicates require a value.
+	client.devboxes.list({ labelFilters: [{ name: "team", operator: "not-equal" }] });
+	// @ts-expect-error Exists predicates do not accept a value.
+	client.devboxes.list({ labelFilters: [{ name: "team", operator: "exists", value: "sdk" }] });
 	await client.devboxes.create({
 		name: "named-image-sdk-test",
 		imageName: "builtin:agents",
