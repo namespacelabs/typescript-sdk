@@ -1,6 +1,7 @@
 import { create, type MessageInitShape } from "@bufbuild/protobuf";
 import { durationFromMs, timestampDate, type Duration, type Timestamp } from "@bufbuild/protobuf/wkt";
 import { InstanceShapeSchema } from "../proto/namespace/cloud/compute/v1beta/compute_pb.js";
+import { HttpCallbackEndpointSchema } from "../proto/namespace/stdlib/callback_pb.js";
 import {
 	AccessMode as ProtoAccessMode,
 	BlueprintSpec_OpSchema,
@@ -27,6 +28,7 @@ import type {
 	Blueprint,
 	BlueprintDefinition,
 	BlueprintOperation,
+	DevboxInstanceEventCallback,
 	DevboxLabelPredicate,
 	DevboxInfo,
 	Image,
@@ -141,6 +143,27 @@ export function toProtoNetworkPolicy(policy?: NetworkPolicy): NetworkPolicySpec 
 			advisory: policy.advisory ?? false,
 		},
 	}) : undefined;
+}
+
+export function toProtoInstanceEventCallback(
+	callback?: DevboxInstanceEventCallback,
+): MessageInitShape<typeof HttpCallbackEndpointSchema> | undefined {
+	if (!callback) return undefined;
+
+	return {
+		postUrl: callback.url,
+		headers: callback.headers?.map((header) => {
+			const valueFrom = "secretId" in header
+				? { fromSecretId: header.secretId }
+				: { static: header.value };
+
+			return {
+				name: header.name,
+				valueFrom,
+			};
+		}),
+		signWithSecretId: callback.signingSecretId ?? "",
+	};
 }
 
 function fromProtoNetworkPolicy(policy?: NetworkPolicySpec): NetworkPolicy | undefined {

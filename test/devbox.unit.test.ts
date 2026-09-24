@@ -254,6 +254,54 @@ test("get and list return devbox labels", async () => {
 	assert.deepEqual(listed.items[0]?.info.labels, expectedLabels);
 });
 
+test("devbox creation serializes instance event callbacks", async (t) => {
+	const requests: Record<string, unknown>[] = [];
+
+	const server = createServer(async (request, response) => {
+		const chunks: Buffer[] = [];
+		for await (const chunk of request) chunks.push(Buffer.from(chunk));
+
+		requests.push(JSON.parse(Buffer.concat(chunks).toString()));
+		response.writeHead(200, { "content-type": "application/json" });
+		response.end(JSON.stringify({ devbox: { id: "devbox_123", name: "callback" } }));
+	});
+
+	t.after(() => server.close());
+	server.listen(0, "127.0.0.1");
+	await once(server, "listening");
+
+	const address = server.address();
+	assert(address && typeof address !== "string");
+
+	const client = createDevboxClient({
+		baseUrl: `http://127.0.0.1:${address.port}`,
+		tokenSource: fromBearerToken("test-token"),
+	});
+	t.after(() => client.close());
+
+	await client.devboxes.create({
+		name: "callback",
+		start: false,
+		instanceEventCallback: {
+			url: "https://example.com/instance-events",
+			headers: [
+				{ name: "X-Source", value: "managed-agent" },
+				{ name: "Authorization", secretId: "sec_callback_token" },
+			],
+			signingSecretId: "sec_callback_signing",
+		},
+	});
+
+	assert.deepEqual(requests[0]?.instanceEventCallback, {
+		postUrl: "https://example.com/instance-events",
+		headers: [
+			{ name: "X-Source", valueFrom: { static: "managed-agent" } },
+			{ name: "Authorization", valueFrom: { fromSecretId: "sec_callback_token" } },
+		],
+		signWithSecretId: "sec_callback_signing",
+	});
+});
+
 test("list serializes ANDed label filters with explicit OR groups", async (t) => {
 	const requests: Record<string, unknown>[] = [];
 	const server = createServer(async (request, response) => {

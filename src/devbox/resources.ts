@@ -22,6 +22,7 @@ import {
 	optionalDuration,
 	positiveBigInt,
 	toProtoAccessMode,
+	toProtoInstanceEventCallback,
 	toProtoMachineSize,
 	toProtoNetworkPolicy,
 	toProtoShape,
@@ -99,6 +100,7 @@ class DevboxResources implements DevboxController, DevboxResource {
 				privileged: input.privileged,
 				features: input.features ? { enabled: input.features } : undefined,
 				networkPolicy: toProtoNetworkPolicy(input.networkPolicy),
+				instanceEventCallback: toProtoInstanceEventCallback(input.instanceEventCallback),
 				activate: shouldStart,
 			}, options);
 
