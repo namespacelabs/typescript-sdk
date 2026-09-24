@@ -18,6 +18,7 @@ import {
 	image,
 	imageMetadata,
 	imageSelector,
+	labelPredicate,
 	optionalDuration,
 	positiveBigInt,
 	toProtoAccessMode,
@@ -123,6 +124,12 @@ class DevboxResources implements DevboxController, DevboxResource {
 			maxEntries: positiveBigInt(options.limit, "limit"),
 			orderBy: devboxOrder(options.orderBy),
 			matchEphemeral: ephemeralFilter(options.ephemeral),
+			matchLabels: options.labelFilters?.map((filter) => {
+				const predicates = "anyOf" in filter ? filter.anyOf : [filter];
+				return {
+					anyOf: predicates.map(labelPredicate),
+				};
+			}),
 		}, options);
 		return {
 			items: response.devboxes.map((entry) => this.handle(devboxInfo(entry))),

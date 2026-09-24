@@ -119,6 +119,12 @@ async function main() {
 		const devboxPage = await client.devboxes.list({ limit: 10 });
 		console.log(`devboxes.list: ${devboxPage.items.length} devboxes (first page)`);
 
+		const filteredDevboxPage = await client.devboxes.list({
+			limit: 10,
+			labelFilters: [{ name: "example", value: "typescript-sdk-tour" }],
+		});
+		console.log(`devboxes.list by label: ${filteredDevboxPage.items.length} devboxes`);
+
 		let devboxCount = 0;
 		for await (const _ of client.devboxes.iterate()) devboxCount++;
 		console.log(`devboxes.iterate: ${devboxCount} devboxes (all pages)`);

@@ -254,6 +254,89 @@ test("get and list return devbox labels", async () => {
 	assert.deepEqual(listed.items[0]?.info.labels, expectedLabels);
 });
 
+test("list serializes ANDed label filters with explicit OR groups", async (t) => {
+	const requests: Record<string, unknown>[] = [];
+	const server = createServer(async (request, response) => {
+		const chunks: Buffer[] = [];
+		for await (const chunk of request) chunks.push(Buffer.from(chunk));
+		requests.push(JSON.parse(Buffer.concat(chunks).toString()));
+		response.writeHead(200, { "content-type": "application/json" });
+		response.end(JSON.stringify({ devboxes: [] }));
+	});
+	t.after(() => server.close());
+	server.listen(0, "127.0.0.1");
+	await once(server, "listening");
+	const address = server.address();
+	assert(address && typeof address !== "string");
+	const client = createDevboxClient({
+		baseUrl: `http://127.0.0.1:${address.port}`,
+		tokenSource: fromBearerToken("test-token"),
+	});
+	t.after(() => client.close());
+
+	await client.devboxes.list({
+		labelFilters: [
+			{ name: "environment", value: "development" },
+			{
+				anyOf: [
+					{ name: "cursor", operator: "exists" },
+					{ name: "lifecycle", value: "deprecated", operator: "not-equal" },
+				],
+			},
+		],
+	});
+
+	assert.deepEqual(requests[0]?.matchLabels, [
+		{
+			anyOf: [
+				{ name: "environment", value: "development", op: "EQUAL" },
+			],
+		},
+		{
+			anyOf: [
+				{ name: "cursor", op: "EXIST" },
+				{ name: "lifecycle", value: "deprecated", op: "NOT_EQUAL" },
+			],
+		},
+	]);
+});
+
+test("iterate forwards label filters to every page", async () => {
+	const requests: Array<{
+		matchLabels?: unknown;
+		paginationCursor?: Uint8Array;
+	}> = [];
+	const rpc = {
+		list: async (request: {
+			matchLabels?: unknown;
+			paginationCursor?: Uint8Array;
+		}) => {
+			requests.push(request);
+			return {
+				devboxes: [],
+				paginationCursor: requests.length === 1 ? new Uint8Array([1]) : new Uint8Array(),
+			};
+		},
+	} as never;
+	const { devboxes } = createResources(rpc, {} as ConnectionManager);
+
+	for await (const _ of devboxes.iterate({
+		labelFilters: [{ name: "managed-agent", operator: "exists" }],
+	})) {
+		// No results are needed to exercise pagination.
+	}
+
+	assert.equal(requests.length, 2);
+	assert.deepEqual(requests[0]?.matchLabels, requests[1]?.matchLabels);
+	assert.deepEqual(requests[0]?.matchLabels, [
+		{
+			anyOf: [
+				{ name: "managed-agent", op: 3 },
+			],
+		},
+	]);
+});
+
 test("devbox checkout options preserve presence in serialized requests", async (t) => {
 	const requests: Record<string, unknown>[] = [];
 	const server = createServer(async (request, response) => {

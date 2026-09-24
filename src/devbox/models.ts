@@ -132,11 +132,33 @@ export interface UpdateDevboxInput {
 	networkPolicy?: NetworkPolicy;
 }
 
+export type DevboxLabelPredicate =
+	| {
+		name: string;
+		value: string;
+		operator?: "equal" | "not-equal";
+	}
+	| {
+		name: string;
+		operator: "exists";
+		value?: never;
+	};
+
+export type DevboxLabelFilter =
+	| DevboxLabelPredicate
+	| { anyOf: DevboxLabelPredicate[] };
+
 export interface ListDevboxesOptions extends OperationOptions {
 	cursor?: string;
 	limit?: number;
 	orderBy?: "created" | "last-used";
 	ephemeral?: boolean;
+	/**
+	 * Label filters to apply. Top-level filters are ANDed; predicates in an
+	 * `anyOf` group are ORed and the group must not be empty. A `not-equal`
+	 * predicate also matches devboxes where the label is absent.
+	 */
+	labelFilters?: DevboxLabelFilter[];
 }
 
 export interface Page<T> {
