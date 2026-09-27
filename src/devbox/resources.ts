@@ -25,6 +25,7 @@ import {
 	toProtoInstanceEventCallback,
 	toProtoNetworkPolicy,
 	toProtoShape,
+	serializeVersionControl,
 } from "./conversion.js";
 import { ImageOptimizationError, IncompleteResponseError } from "./errors.js";
 import { DevboxHandle, type DevboxController } from "./devbox.js";
@@ -89,7 +90,7 @@ class DevboxResources implements DevboxController, DevboxResource {
 				volumeSizeGb: positiveBigInt(input.volumeSizeGB, "volumeSizeGB"),
 				repository: input.repository ?? "",
 				// An absent spec inherits defaults; an empty spec disables checkout.
-				versionControl: input.versionControl,
+				versionControl: serializeVersionControl(input.versionControl),
 				environment: Object.entries(input.environment ?? {}).map(([name, value]) => ({ name, value })),
 				labels: Object.entries(input.labels ?? {}).map(([name, value]) => ({ name, value })),
 				documentedPurpose: input.purpose ?? "",

@@ -26,6 +26,31 @@ export interface NetworkPolicy {
 	advisory?: boolean;
 }
 
+export type CheckoutMethod = "git-clone" | "git-snapshot-unpack";
+
+export interface GitRepositorySpec {
+	repository: string;
+	/** Branch, tag, or commit SHA. Omit to use the repository's default branch. */
+	ref?: string;
+	checkoutMethod?: CheckoutMethod;
+}
+
+export type VersionControlSpec =
+	| {
+		repositories?: GitRepositorySpec[];
+		gitRepository?: never;
+		ref?: never;
+		checkoutMethod?: never;
+	}
+	| {
+		repositories?: never;
+		/** @deprecated Use `repositories`. */
+		gitRepository?: string;
+		/** Branch, tag, or commit SHA. Omit to use the repository's default branch. */
+		ref?: string;
+		checkoutMethod?: CheckoutMethod;
+	};
+
 export type DevboxInstanceEventCallbackHeader =
 	| {
 		name: string;
@@ -77,6 +102,7 @@ export interface DevboxInfo {
 	volumeSizeGB?: number;
 	purpose?: string;
 	ephemeral: boolean;
+	versionControl?: VersionControlSpec;
 }
 
 interface CreateDevboxInputBase {
@@ -135,11 +161,7 @@ export type CreateDevboxInput = CreateDevboxInputBase & ({
 } | {
 	repository?: never;
 	/** Omit to inherit the tenant default; pass `{}` to disable checkout. */
-	versionControl?: {
-		gitRepository?: string;
-		/** Branch, tag, or commit SHA. Omit to use the repository's default branch. */
-		ref?: string;
-	};
+	versionControl?: VersionControlSpec;
 }) & (
 	| { image?: string; imageName?: never }
 	| { image?: never; imageName: string }
@@ -551,6 +573,7 @@ export interface BlueprintDefinition {
 	networkPolicy?: NetworkPolicy;
 	busyTimeoutMs?: number;
 	initScript?: string;
+	versionControl?: VersionControlSpec;
 }
 
 export interface ImageMetadata {

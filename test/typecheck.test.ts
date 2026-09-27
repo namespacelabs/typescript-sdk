@@ -254,6 +254,15 @@ async function testDevboxClient() {
 		name: "checkout-sdk-test",
 		versionControl: { gitRepository: "https://github.com/namespacelabs/typescript-sdk", ref: "main" },
 	});
+	await client.devboxes.create({
+		name: "multi-checkout-sdk-test",
+		versionControl: {
+			repositories: [
+				{ repository: "https://github.com/namespacelabs/typescript-sdk", ref: "main" },
+				{ repository: "https://github.com/namespacelabs/docs", checkoutMethod: "git-snapshot-unpack" },
+			],
+		},
+	});
 	const devbox: Devbox = await client.devboxes.create({
 		name: "sdk-test",
 		blueprint: blueprint.name,
@@ -370,6 +379,8 @@ async function testDevboxClient() {
 	client.devboxes.create({ name: "invalid", repository: "", versionControl: {} });
 	// @ts-expect-error A populated versionControl cannot be combined with repository either.
 	client.devboxes.create({ name: "invalid", repository: "https://github.com/namespacelabs/typescript-sdk", versionControl: { gitRepository: "https://github.com/namespacelabs/typescript-sdk" } });
+	// @ts-expect-error Modern and legacy version-control fields cannot be combined.
+	client.devboxes.create({ name: "invalid", versionControl: { repositories: [], gitRepository: "https://github.com/namespacelabs/typescript-sdk" } });
 	// @ts-expect-error Blueprint creation does not accept checkout overrides.
 	client.devboxes.create({ name: "invalid", blueprint: "typescript", versionControl: {} });
 	client.devboxes.create({ name: "future-size", image: "node:22", size: "xxl" });
