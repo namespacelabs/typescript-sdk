@@ -39,9 +39,13 @@ import type {
 
 type DevboxRpcClient = RpcClient<typeof DevBoxService>;
 
-class GatewaySocket extends Duplex {
+export class GatewaySocket extends Duplex {
 	constructor(private readonly websocket: WebSocket) {
 		super();
+
+		// Drain incoming data before closing both sides so ssh2 fails pending requests.
+		this.once("end", () => this.destroy());
+
 		websocket.on("message", (data: RawData) => {
 			if (!this.push(rawDataBuffer(data))) websocket.pause();
 		});
