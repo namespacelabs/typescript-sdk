@@ -79,9 +79,14 @@ export class GatewaySocket extends Duplex {
 	 * Invoke `listener` once the underlying gateway websocket closes. Unlike
 	 * the Duplex "close" event, this fires as soon as the transport is gone,
 	 * even while a consumer still holds the writable side open.
+	 * If the websocket has already closed, invoke it immediately.
 	 */
 	onceClosed(listener: () => void): void {
-		this.websocket.once("close", listener);
+		if (this.websocket.readyState === WebSocket.CLOSED) {
+			listener();
+		} else {
+			this.websocket.once("close", listener);
+		}
 	}
 }
 
@@ -97,6 +102,7 @@ export class SshConnection {
 	constructor(
 		readonly instanceId: string,
 		private readonly client: Client,
+		private readonly socket: GatewaySocket,
 	) {}
 
 	close(): void {
@@ -104,7 +110,21 @@ export class SshConnection {
 	}
 
 	onClose(listener: () => void): void {
-		this.client.once("close", listener);
+		let notified = false;
+		const notify = () => {
+			if (notified) {
+				return;
+			}
+
+			notified = true;
+			this.client.off("close", notify);
+			listener();
+		};
+
+		this.client.once("close", notify);
+
+		// A closed transport is unusable even while buffered SSH data is still draining.
+		this.socket.onceClosed(notify);
 	}
 
 	async openTerminal(options: TerminalOpenOptions = {}): Promise<TerminalSession> {
@@ -766,7 +786,7 @@ async function connectSshOnce(options: ConnectSshOptions, timeoutMs: number): Pr
 		throw error;
 	}
 	client.on("error", () => {});
-	return new SshConnection(options.instanceId, client);
+	return new SshConnection(options.instanceId, client, socket);
 }
 
 async function openWebSocket(websocket: WebSocket, signal: AbortSignal, timeoutMs: number): Promise<GatewaySocket> {

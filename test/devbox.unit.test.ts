@@ -585,12 +585,16 @@ function fakeSshClient(overrides: Record<string, unknown> = {}) {
 test("sftp channel is opened once and shared", async () => {
 	let opens = 0;
 	const channel = new EventEmitter();
-	const connection = new SshConnection("instance", fakeSshClient({
-		sftp: (callback: (error: Error | undefined, sftp: EventEmitter) => void) => {
-			opens += 1;
-			queueMicrotask(() => callback(undefined, channel));
-		},
-	}) as never);
+	const connection = new SshConnection(
+		"instance",
+		fakeSshClient({
+			sftp: (callback: (error: Error | undefined, sftp: EventEmitter) => void) => {
+				opens += 1;
+				queueMicrotask(() => callback(undefined, channel));
+			},
+		}) as never,
+		{} as never,
+	);
 
 	const [first, second] = await Promise.all([connection.sftp(), connection.sftp()]);
 	assert.equal(first, second);
@@ -601,18 +605,22 @@ test("sftp channel is opened once and shared", async () => {
 test("sftp cache is invalidated on channel close and failed open", async () => {
 	let opens = 0;
 	const channels: EventEmitter[] = [];
-	const connection = new SshConnection("instance", fakeSshClient({
-		sftp: (callback: (error: Error | undefined, sftp?: EventEmitter) => void) => {
-			opens += 1;
-			if (opens === 2) {
-				queueMicrotask(() => callback(new Error("channel open failure")));
-				return;
-			}
-			const channel = new EventEmitter();
-			channels.push(channel);
-			queueMicrotask(() => callback(undefined, channel));
-		},
-	}) as never);
+	const connection = new SshConnection(
+		"instance",
+		fakeSshClient({
+			sftp: (callback: (error: Error | undefined, sftp?: EventEmitter) => void) => {
+				opens += 1;
+				if (opens === 2) {
+					queueMicrotask(() => callback(new Error("channel open failure")));
+					return;
+				}
+				const channel = new EventEmitter();
+				channels.push(channel);
+				queueMicrotask(() => callback(undefined, channel));
+			},
+		}) as never,
+		{} as never,
+	);
 
 	const first = await connection.sftp();
 	first.emit("close");
@@ -745,13 +753,17 @@ function fakeTerminalChannel() {
 
 test("terminal wait resolves on exit and preserves onExit listeners", async () => {
 	const channel = fakeTerminalChannel();
-	const connection = new SshConnection("instance", fakeSshClient({
-		shell: (
-			_window: unknown,
-			_options: unknown,
-			callback: (error: Error | undefined, channel: unknown) => void,
-		) => queueMicrotask(() => callback(undefined, channel)),
-	}) as never);
+	const connection = new SshConnection(
+		"instance",
+		fakeSshClient({
+			shell: (
+				_window: unknown,
+				_options: unknown,
+				callback: (error: Error | undefined, channel: unknown) => void,
+			) => queueMicrotask(() => callback(undefined, channel)),
+		}) as never,
+		{} as never,
+	);
 
 	const terminal = await connection.openTerminal();
 	const exits: Array<{ exitCode: number | null; signal: string | null }> = [];
