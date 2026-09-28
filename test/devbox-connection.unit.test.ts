@@ -53,6 +53,86 @@ test("the next filesystem call replaces a pooled connection whose gateway closed
 	assert.notEqual(connections[1].connection, original.connection);
 });
 
+test("a closed gateway is evicted while its SSH connection is still draining", { timeout: 5_000 }, async (t) => {
+	const port = await startSftpServer(t, (sftp, id) => {
+		sftp.attrs(id, { mode: 0o100644, uid: 0, gid: 0, size: 42, atime: 0, mtime: 0 });
+	});
+	const { devbox, connections } = createPooledDevbox(t, port);
+	assert.equal(await devbox.fs.exists("/amp"), true);
+	const original = connections[0];
+	let closeNotifications = 0;
+	original.connection.onClose(() => {
+		closeNotifications++;
+	});
+
+	// Pause consumption so SSH cannot observe EOF when the transport closes.
+	original.gateway.socket.pause();
+	let sshHasClosed = false;
+	original.client.once("close", () => {
+		sshHasClosed = true;
+	});
+
+	const sshClosed = once(original.client, "close");
+	const transportClosed = once(original.gateway.websocket, "close");
+	original.gateway.peer.close();
+	await transportClosed;
+	assert.equal(sshHasClosed, false);
+	assert.equal(original.gateway.socket.destroyed, false);
+
+	// Reconnect before unpausing the old socket: eviction must not wait for SSH close.
+	assert.equal(await devbox.fs.exists("/amp"), true);
+	assert.equal(connections.length, 2);
+	assert.notEqual(connections[1].connection, original.connection);
+	assert.equal(closeNotifications, 1);
+
+	// The later SSH close must not notify twice or evict the replacement.
+	original.gateway.socket.resume();
+	await sshClosed;
+	assert.equal(closeNotifications, 1);
+	assert.equal(await devbox.fs.exists("/amp"), true);
+	assert.equal(connections.length, 2);
+});
+
+test("SSH close still notifies when the gateway is open, without a second notification later", { timeout: 5_000 }, async (t) => {
+	const { socket, websocket, peer } = await openGateway(t);
+	const client = new Client();
+	const connection = new SshConnection("instance", client, socket);
+	let notifications = 0;
+	connection.onClose(() => {
+		notifications++;
+	});
+
+	// Exercise the SSH-only signal independently of transport teardown.
+	client.emit("close");
+	assert.equal(websocket.readyState, WebSocket.OPEN);
+	assert.equal(notifications, 1);
+
+	const transportClosed = once(websocket, "close");
+	peer.close();
+	await transportClosed;
+	assert.equal(notifications, 1);
+});
+
+test("registering onClose after gateway closure notifies immediately", { timeout: 5_000 }, async (t) => {
+	const { socket, websocket, peer } = await openGateway(t);
+	const client = new Client();
+	const connection = new SshConnection("instance", client, socket);
+	const transportClosed = once(websocket, "close");
+	peer.close();
+	await transportClosed;
+
+	let notifications = 0;
+	connection.onClose(() => {
+		notifications++;
+	});
+
+	assert.equal(notifications, 1);
+	assert.equal(client.listenerCount("close"), 0);
+
+	client.emit("close");
+	assert.equal(notifications, 1);
+});
+
 test("gateway closure drains buffered incoming data before destroying the socket", { timeout: 5_000 }, async (t) => {
 	const { socket, websocket, peer } = await openGateway(t);
 	const transportClosed = once(websocket, "close");
@@ -117,7 +197,7 @@ function createPooledDevbox(t: TestContext, sshPort: number) {
 		const ready = once(client, "ready");
 		client.connect({ sock: gateway.socket, username: "test", keepaliveInterval: 15_000 });
 		await ready;
-		const connection = new SshConnection("instance", client);
+		const connection = new SshConnection("instance", client, gateway.socket);
 		connections.push({ gateway, client, connection });
 		return connection;
 	};
