@@ -161,6 +161,7 @@ async function testDevboxClient() {
 		image: "node:22",
 		size: "m",
 		environment: { NODE_ENV: "development" },
+		initScript: "npm install",
 	});
 	const directDevbox = await client.devboxes.create({
 		name: "direct-sdk-test",
@@ -371,8 +372,6 @@ async function testDevboxClient() {
 	client.devboxes.create({ name: "invalid", repository: "https://github.com/namespacelabs/typescript-sdk", versionControl: { gitRepository: "https://github.com/namespacelabs/typescript-sdk" } });
 	// @ts-expect-error Blueprint creation does not accept checkout overrides.
 	client.devboxes.create({ name: "invalid", blueprint: "typescript", versionControl: {} });
-	// Machine sizes are open strings so the backend can add names; unknown
-	// names typecheck for creation and are rejected server-side.
 	client.devboxes.create({ name: "future-size", image: "node:22", size: "xxl" });
 	// @ts-expect-error Product APIs expose blueprints, not templates.
 	client.templates;

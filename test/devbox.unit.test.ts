@@ -14,7 +14,6 @@ import {
 	cursorToBytes,
 	imageSelector,
 	positiveBigInt,
-	toProtoMachineSize,
 	toProtoShape,
 } from "../src/devbox/conversion.js";
 import { createResources } from "../src/devbox/resources.js";
@@ -47,6 +46,7 @@ test("blueprint conversion preserves native SDK fields", () => {
 		features: [],
 		networkPolicy: { allowedDomains: ["registry.npmjs.org"] },
 		busyTimeoutMs: 30_000,
+		initScript: "npm install",
 	});
 
 	const converted = blueprint(create(DevboxTemplateSchema, {
@@ -71,17 +71,10 @@ test("blueprint conversion preserves native SDK fields", () => {
 		60_000,
 	);
 	assert.equal(converted.definition.busyTimeoutMs, 30_000);
-});
-
-test("machine sizes serialize as backend-resolved names", () => {
-	// Creation passes the name through; the backend resolves it to a shape.
-	assert.equal(toProtoMachineSize("m"), "m");
-	assert.equal(toProtoMachineSize("xxl"), "xxl");
-	assert.equal(toProtoMachineSize(undefined), "");
+	assert.equal(converted.definition.initScript, "npm install");
 });
 
 test("shape resolution rejects sizes unknown to this SDK version", () => {
-	// Update and blueprints require a concrete shape, so unknown names throw.
 	assert.throws(() => toProtoShape("xxl"), TypeError);
 });
 
@@ -128,21 +121,27 @@ test("image selectors accept names and returned repository digest refs", () => {
 });
 
 test("devbox creation forwards explicit image names", async () => {
-	const requests: Array<{ imageRef?: string; imageName?: string }> = [];
+	const requests: Array<{
+		imageRef?: string;
+		imageName?: string;
+		instanceShape?: { virtualCpu?: number; memoryMegabytes?: number };
+	}> = [];
 	const rpc = {
-		create: async (request: { imageRef?: string; imageName?: string }) => {
+		create: async (request: typeof requests[number]) => {
 			requests.push(request);
 			return { devbox: create(DevBoxSchema, { id: "devbox_123", name: "test" }) };
 		},
 	} as never;
 	const { devboxes } = createResources(rpc, {} as ConnectionManager);
 
-	await devboxes.create({ name: "named", imageName: "builtin:agents", start: false });
+	await devboxes.create({ name: "named", imageName: "builtin:agents", size: "m", start: false });
 	await devboxes.create({ name: "ref", image: "node:22", start: false });
 	await devboxes.create({ name: "legacy-name", image: "node-22", start: false });
 
 	assert.equal(requests[0]?.imageName, "builtin:agents");
 	assert.equal(requests[0]?.imageRef, undefined);
+	assert.equal(requests[0]?.instanceShape?.virtualCpu, 8);
+	assert.equal(requests[0]?.instanceShape?.memoryMegabytes, 16 * 1024);
 	assert.equal(requests[1]?.imageRef, "node:22");
 	assert.equal(requests[1]?.imageName, undefined);
 	assert.equal(requests[2]?.imageName, "node-22");

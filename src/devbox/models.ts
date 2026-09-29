@@ -8,12 +8,7 @@ export interface OperationOptions {
 export type AccessMode = "private" | "workspace";
 
 /**
- * Named machine size, resolved by the backend.
- *
- * `"s"`, `"m"`, `"l"`, and `"xl"` are the sizes known at the time of this SDK
- * release; the backend may accept additional names over time, so any string is
- * allowed when creating a devbox. Updating a devbox or defining a blueprint
- * resolves the size client-side and only supports the known names.
+ * Named machine size.
  *
  * macOS devboxes support `"m"` and `"l"` (always resolved client-side).
  */
@@ -555,6 +550,7 @@ export interface BlueprintDefinition {
 	features?: string[];
 	networkPolicy?: NetworkPolicy;
 	busyTimeoutMs?: number;
+	initScript?: string;
 }
 
 export interface ImageMetadata {

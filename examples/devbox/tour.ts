@@ -214,8 +214,7 @@ async function main() {
 		await devbox.stop();
 		console.log("stopped:", devbox.info.state);
 
-		// update() adjusts the devbox configuration; size is an open string
-		// resolved by the backend.
+		// update() adjusts the devbox configuration.
 		await devbox.update({ size: "m" });
 		console.log("updated size to m");
 

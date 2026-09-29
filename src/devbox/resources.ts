@@ -23,7 +23,6 @@ import {
 	positiveBigInt,
 	toProtoAccessMode,
 	toProtoInstanceEventCallback,
-	toProtoMachineSize,
 	toProtoNetworkPolicy,
 	toProtoShape,
 } from "./conversion.js";
@@ -82,11 +81,10 @@ class DevboxResources implements DevboxController, DevboxResource {
 				...(input.imageName !== undefined
 					? { imageName: input.imageName }
 					: imageFields(input.image)),
-				// Linux sizes resolve server-side; macOS has no server-side
-				// named-size resolution, so the shape is resolved client-side.
-				...(input.os === "macos"
-					? { instanceShape: toProtoShape(input.size ?? "m", "macos") }
-					: { machineSize: toProtoMachineSize(input.size) }),
+				instanceShape: toProtoShape(
+					input.os === "macos" ? input.size ?? "m" : input.size,
+					input.os,
+				),
 				site: input.site ?? DEFAULT_SITE,
 				volumeSizeGb: positiveBigInt(input.volumeSizeGB, "volumeSizeGB"),
 				repository: input.repository ?? "",
