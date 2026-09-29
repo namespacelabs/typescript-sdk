@@ -41,11 +41,7 @@ import type {
 
 export const DEFAULT_SITE = "iad";
 
-/**
- * Shapes for the machine sizes known to this SDK release. Only used where the
- * protocol requires a concrete instance shape (update, blueprints); devbox
- * creation sends the size name and lets the backend resolve it.
- */
+/** Linux machine size shapes. */
 const machineShapes: Record<"s" | "m" | "l" | "xl", InstanceShape> = {
 	s: { vCPUs: 4, memoryMB: 8 * 1024, architecture: "amd64", os: "linux" },
 	m: { vCPUs: 8, memoryMB: 16 * 1024, architecture: "amd64", os: "linux" },
@@ -54,9 +50,8 @@ const machineShapes: Record<"s" | "m" | "l" | "xl", InstanceShape> = {
 };
 
 /**
- * macOS machine sizes. macOS devboxes run on Apple Silicon; the protocol has
- * no server-side named-size resolution for macOS, so these shapes are resolved
- * client-side (mirroring the CLI's shape table).
+ * macOS machine sizes. macOS devboxes run on Apple Silicon; these shapes
+ * mirror the CLI's shape table.
  */
 const macosMachineShapes: Record<"m" | "l", InstanceShape> = {
 	m: { vCPUs: 6, memoryMB: 14 * 1024, architecture: "arm64", os: "macos" },
@@ -87,15 +82,6 @@ function fromProtoAccessMode(access: ProtoAccessMode): AccessMode | undefined {
 		case ProtoAccessMode.TENANT_WIDE: return "workspace";
 		default: return undefined;
 	}
-}
-
-/**
- * Named sizes are resolved server-side: the service maps the size name to a
- * canonical instance shape, so the SDK does not need to stay in sync with
- * shape definitions and the backend can add sizes without an SDK release.
- */
-export function toProtoMachineSize(size?: MachineSize): string {
-	return size ?? "";
 }
 
 export function toProtoShape(size?: MachineSize, os?: string): MessageInitShape<typeof InstanceShapeSchema> | undefined {
@@ -280,6 +266,7 @@ export function blueprintSpec(name: string, definition: BlueprintDefinition): De
 		} : undefined,
 		features: definition.features ? { enabled: definition.features } : undefined,
 		networkPolicy: toProtoNetworkPolicy(definition.networkPolicy),
+		initScript: definition.initScript ?? "",
 	});
 }
 
@@ -332,6 +319,7 @@ export function blueprint(proto: ProtoBlueprint): Blueprint {
 			features: spec.features?.enabled,
 			networkPolicy: fromProtoNetworkPolicy(spec.networkPolicy),
 			busyTimeoutMs: milliseconds(spec.busyEnsureMinimumDuration),
+			initScript: spec.initScript || undefined,
 		},
 	};
 }
