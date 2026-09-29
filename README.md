@@ -320,7 +320,8 @@ SDK_TEST_DEVBOX=my-devbox npm run test:devbox
 
 For direct creation (without a blueprint), omit `versionControl` and `repository`
 to inherit the tenant's default repository configuration. Pass `versionControl`
-to explicitly configure checkout; an empty object disables checkout entirely.
+to explicitly configure checkout; an empty object or empty `repositories` list
+disables checkout entirely.
 
 To create a scratch devbox without checking out any repository:
 
@@ -334,11 +335,22 @@ const scratch = await client.devboxes.create({
 const checkout = await client.devboxes.create({
 	name: "checkout",
 	versionControl: {
-		gitRepository: "https://github.com/namespacelabs/typescript-sdk",
-		ref: "main", // Optional branch, tag, or commit SHA; defaults to the default branch.
+		repositories: [
+			{
+				repository: "https://github.com/namespacelabs/typescript-sdk",
+				ref: "main", // Optional branch, tag, or commit SHA; defaults to the default branch.
+			},
+			{ repository: "https://github.com/namespacelabs/docs" },
+		],
 	},
 });
 ```
+
+Each of the up to 20 repository entries can select its own branch, tag, or
+commit with `ref`, and its own `"git-clone"` or `"git-snapshot-unpack"`
+checkout method. Blueprint definitions accept the same `versionControl` field.
+Returned Devbox information and blueprints expose checkout configuration through
+`versionControl.repositories`.
 
 The existing top-level `repository` option remains supported. Setting it to a
 repository URL checks out that repository; an empty string inherits defaults

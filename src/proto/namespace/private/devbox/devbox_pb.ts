@@ -2516,7 +2516,7 @@ export type VersionControlSpec = Message<"namespace.private.devbox.v1beta.Versio
   checkoutMethod: VersionControlSpec_CheckoutMethod;
 
   /**
-   * WIP: multi-repo support that will deprecate fields above. Not yet ready!
+   * Repositories to check out. Each repository is placed in its own directory in the workspace.
    *
    * @generated from field: repeated namespace.private.devbox.v1beta.VersionControlSpec.GitRepositorySpec repositories = 4;
    */

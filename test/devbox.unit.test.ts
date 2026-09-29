@@ -10,11 +10,14 @@ import {
 	blueprint,
 	blueprintSpec,
 	DEFAULT_SITE,
+	devboxInfo,
+	deserializeVersionControl,
 	cursorFromBytes,
 	cursorToBytes,
 	imageSelector,
 	positiveBigInt,
 	toProtoShape,
+	serializeVersionControl,
 } from "../src/devbox/conversion.js";
 import { createResources } from "../src/devbox/resources.js";
 import { createDevboxClient, type CreateDevboxInput } from "../src/devbox/index.js";
@@ -47,6 +50,12 @@ test("blueprint conversion preserves native SDK fields", () => {
 		networkPolicy: { allowedDomains: ["registry.npmjs.org"] },
 		busyTimeoutMs: 30_000,
 		initScript: "npm install",
+		versionControl: {
+			repositories: [
+				{ repository: "github.com/example/frontend", ref: "feature/ui" },
+				{ repository: "github.com/example/backend", checkoutMethod: "git-snapshot-unpack" },
+			],
+		},
 	});
 
 	const converted = blueprint(create(DevboxTemplateSchema, {
@@ -72,6 +81,53 @@ test("blueprint conversion preserves native SDK fields", () => {
 	);
 	assert.equal(converted.definition.busyTimeoutMs, 30_000);
 	assert.equal(converted.definition.initScript, "npm install");
+	assert.deepEqual(converted.definition.versionControl, {
+		repositories: [
+			{ repository: "github.com/example/frontend", ref: "feature/ui", checkoutMethod: undefined },
+			{ repository: "github.com/example/backend", ref: undefined, checkoutMethod: "git-snapshot-unpack" },
+		],
+	});
+});
+
+test("version control conversion normalizes legacy reads without collapsing multiple repositories", () => {
+	assert.deepEqual(deserializeVersionControl(serializeVersionControl({
+		gitRepository: "github.com/example/legacy",
+		ref: "main",
+		checkoutMethod: "git-clone",
+	})), {
+		repositories: [{ repository: "github.com/example/legacy", ref: "main", checkoutMethod: "git-clone" }],
+	});
+
+	const versionControl = serializeVersionControl({
+		repositories: [
+			{ repository: "github.com/example/frontend" },
+			{ repository: "github.com/example/backend", ref: "release", checkoutMethod: "git-snapshot-unpack" },
+		],
+	});
+	assert.equal(versionControl?.gitRepository, "");
+	assert.deepEqual(deserializeVersionControl(versionControl), {
+		repositories: [
+			{ repository: "github.com/example/frontend", ref: undefined, checkoutMethod: undefined },
+			{ repository: "github.com/example/backend", ref: "release", checkoutMethod: "git-snapshot-unpack" },
+		],
+	});
+});
+
+test("devbox info includes repository configuration", () => {
+	const info = devboxInfo(create(DevBoxSchema, {
+		id: "devbox_123",
+		name: "multi-repo",
+		versionControl: serializeVersionControl({
+			repositories: [
+				{ repository: "github.com/example/frontend" },
+				{ repository: "github.com/example/backend" },
+			],
+		}),
+	}));
+	assert.deepEqual(info.versionControl?.repositories?.map(({ repository }) => repository), [
+		"github.com/example/frontend",
+		"github.com/example/backend",
+	]);
 });
 
 test("shape resolution rejects sizes unknown to this SDK version", () => {
@@ -408,13 +464,14 @@ test("devbox checkout options preserve presence in serialized requests", async (
 	const cases: Array<{
 		input: CreateDevboxInput;
 		repository?: string;
-		versionControl?: { gitRepository?: string; ref?: string };
+		versionControl?: Record<string, unknown>;
 	}> = [
 		{ input: { name: "inherit" } },
 		{ input: { name: "empty-repository", repository: "" } },
 		{ input: { name: "undefined", versionControl: undefined } },
 		{ input: { name: "checkout", repository }, repository },
 		{ input: { name: "scratch", versionControl: {} }, versionControl: {} },
+		{ input: { name: "scratch-modern", versionControl: { repositories: [] } }, versionControl: {} },
 		{
 			input: { name: "configured-checkout", versionControl: { gitRepository: repository } },
 			versionControl: { gitRepository: repository },
@@ -422,6 +479,23 @@ test("devbox checkout options preserve presence in serialized requests", async (
 		{
 			input: { name: "checkout-ref", versionControl: { gitRepository: repository, ref: "feature/sdk" } },
 			versionControl: { gitRepository: repository, ref: "feature/sdk" },
+		},
+		{
+			input: {
+				name: "multiple-checkouts",
+				versionControl: {
+					repositories: [
+						{ repository, ref: "main", checkoutMethod: "git-clone" },
+						{ repository: "https://github.com/namespacelabs/docs" },
+					],
+				},
+			},
+			versionControl: {
+				repositories: [
+					{ repository, ref: "main", checkoutMethod: "CHECKOUT_METHOD_GIT_CLONE" },
+					{ repository: "https://github.com/namespacelabs/docs" },
+				],
+			},
 		},
 	];
 	for (const expected of cases) {
@@ -446,6 +520,25 @@ test("devbox checkout options preserve presence in serialized requests", async (
 	await assert.rejects(
 		client.devboxes.create({ name: "invalid", blueprint: "typescript", versionControl: {} } as never),
 		{ name: "TypeError", message: 'create option "versionControl" cannot be used with a blueprint' },
+	);
+	await assert.rejects(
+		client.devboxes.create({
+			name: "invalid",
+			versionControl: {
+				repositories: [{ repository }],
+				gitRepository: repository,
+			},
+		} as never),
+		{ name: "TypeError", message: 'versionControl "repositories" cannot be combined with legacy fields' },
+	);
+	await assert.rejects(
+		client.devboxes.create({
+			name: "invalid",
+			versionControl: {
+				repositories: Array.from({ length: 21 }, (_, index) => ({ repository: `github.com/example/repo-${index}` })),
+			},
+		}),
+		{ name: "RangeError", message: "versionControl.repositories must contain at most 20 repositories" },
 	);
 	assert.equal(requests.length, 0, "invalid options must be rejected before sending any RPC");
 });

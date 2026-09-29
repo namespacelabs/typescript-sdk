@@ -12,12 +12,15 @@ import {
 	ListRequest_OrderBy,
 	ListTemplatesRequest_OrderBy,
 	NetworkPolicySpecSchema,
+	VersionControlSpecSchema,
+	VersionControlSpec_CheckoutMethod,
 	type BlueprintSpec,
 	type DevBox as ProtoDevbox,
 	type DevboxTemplate as ProtoBlueprint,
 	type DevboxTemplateSpec,
 	type Image as ProtoImage,
 	type NetworkPolicySpec,
+	type VersionControlSpec as ProtoVersionControlSpec,
 } from "../proto/namespace/private/devbox/devbox_pb.js";
 import {
 	LabelFilterEntry_LabelFilterOp,
@@ -37,6 +40,8 @@ import type {
 	InstanceShape,
 	MachineSize,
 	NetworkPolicy,
+	CheckoutMethod,
+	VersionControlSpec,
 } from "./models.js";
 
 export const DEFAULT_SITE = "iad";
@@ -230,7 +235,72 @@ export function devboxInfo(devbox: ProtoDevbox, instanceId?: string, state?: Dev
 		volumeSizeGB: safeNumber(devbox.volumeSizeGb, "devbox volume size"),
 		purpose: devbox.documentedPurpose || undefined,
 		ephemeral: devbox.ephemeral !== undefined,
+		versionControl: deserializeVersionControl(devbox.versionControl),
 	};
+}
+
+export function serializeVersionControl(spec?: VersionControlSpec): ProtoVersionControlSpec | undefined {
+	if (spec === undefined) {
+		return undefined;
+	}
+	if (spec.repositories !== undefined) {
+		if (spec.gitRepository !== undefined || spec.ref !== undefined || spec.checkoutMethod !== undefined) {
+			throw new TypeError('versionControl "repositories" cannot be combined with legacy fields');
+		}
+		if (spec.repositories.length > 20) {
+			throw new RangeError("versionControl.repositories must contain at most 20 repositories");
+		}
+		return create(VersionControlSpecSchema, {
+			repositories: spec.repositories.map((repository) => ({
+				repository: repository.repository,
+				ref: repository.ref ?? "",
+				checkoutMethod: serializeCheckoutMethod(repository.checkoutMethod),
+			})),
+		});
+	}
+	return create(VersionControlSpecSchema, {
+		gitRepository: spec.gitRepository ?? "",
+		ref: spec.ref ?? "",
+		checkoutMethod: serializeCheckoutMethod(spec.checkoutMethod),
+	});
+}
+
+export function deserializeVersionControl(spec?: ProtoVersionControlSpec): VersionControlSpec | undefined {
+	if (!spec) {
+		return undefined;
+	}
+	const repositories = spec.repositories.length > 0
+		? spec.repositories
+		: spec.gitRepository
+			? [{
+				repository: spec.gitRepository,
+				ref: spec.ref,
+				checkoutMethod: spec.checkoutMethod,
+			}]
+			: [];
+	return {
+		repositories: repositories.map((repository) => ({
+			repository: repository.repository,
+			ref: repository.ref || undefined,
+			checkoutMethod: deserializeCheckoutMethod(repository.checkoutMethod),
+		})),
+	};
+}
+
+function serializeCheckoutMethod(method?: CheckoutMethod): VersionControlSpec_CheckoutMethod {
+	switch (method) {
+		case "git-clone": return VersionControlSpec_CheckoutMethod.GIT_CLONE;
+		case "git-snapshot-unpack": return VersionControlSpec_CheckoutMethod.GIT_SNAPSHOT_UNPACK;
+		default: return VersionControlSpec_CheckoutMethod.UNSPECIFIED;
+	}
+}
+
+function deserializeCheckoutMethod(method: VersionControlSpec_CheckoutMethod): CheckoutMethod | undefined {
+	switch (method) {
+		case VersionControlSpec_CheckoutMethod.GIT_CLONE: return "git-clone";
+		case VersionControlSpec_CheckoutMethod.GIT_SNAPSHOT_UNPACK: return "git-snapshot-unpack";
+		default: return undefined;
+	}
 }
 
 function operationToProto(operation: BlueprintOperation): BlueprintSpec["onCreate"][number] {
@@ -267,6 +337,7 @@ export function blueprintSpec(name: string, definition: BlueprintDefinition): De
 		features: definition.features ? { enabled: definition.features } : undefined,
 		networkPolicy: toProtoNetworkPolicy(definition.networkPolicy),
 		initScript: definition.initScript ?? "",
+		versionControl: serializeVersionControl(definition.versionControl),
 	});
 }
 
@@ -320,6 +391,7 @@ export function blueprint(proto: ProtoBlueprint): Blueprint {
 			networkPolicy: fromProtoNetworkPolicy(spec.networkPolicy),
 			busyTimeoutMs: milliseconds(spec.busyEnsureMinimumDuration),
 			initScript: spec.initScript || undefined,
+			versionControl: deserializeVersionControl(spec.versionControl),
 		},
 	};
 }
