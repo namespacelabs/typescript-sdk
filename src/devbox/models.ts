@@ -559,8 +559,7 @@ export interface BlueprintSession {
 	emoji?: string;
 }
 
-export interface BlueprintDefinition {
-	image: string;
+interface BlueprintDefinitionBase {
 	size?: MachineSize;
 	site?: string;
 	description?: string;
@@ -568,13 +567,38 @@ export interface BlueprintDefinition {
 	access?: AccessMode;
 	environment?: Record<string, string>;
 	volumeSizeGB?: number;
-	ephemeral?: boolean | { stoppedRetentionMs?: number };
 	features?: string[];
 	networkPolicy?: NetworkPolicy;
 	busyTimeoutMs?: number;
 	initScript?: string;
 	versionControl?: VersionControlSpec;
 }
+
+export type BlueprintDefinition = BlueprintDefinitionBase & (
+	| {
+		os?: "linux";
+		image: string;
+		ephemeral?: boolean | { stoppedRetentionMs?: number };
+		wholeSystemPersistence?: never;
+	}
+	| {
+		os: "macos";
+		image?: never;
+		ephemeral?: false;
+		/**
+		 * Whether the entire macOS system persists across restarts. Omit to use
+		 * the platform default; `false` explicitly selects workspace-only
+		 * persistence.
+		 */
+		wholeSystemPersistence?: boolean;
+	}
+	| {
+		os: "macos";
+		image?: never;
+		ephemeral: true | { stoppedRetentionMs?: number };
+		wholeSystemPersistence?: never;
+	}
+);
 
 export interface ImageMetadata {
 	workspaceDir?: string;

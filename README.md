@@ -163,6 +163,15 @@ const blueprint = await client.blueprints.create("typescript", {
 	environment: { NODE_ENV: "development" },
 });
 
+// macOS blueprints use a Namespace-managed image. Whole-system persistence
+// retains the complete macOS system across restarts; omit the option to follow
+// the platform default, or set it to false to pin workspace-only persistence.
+const macBlueprint = await client.blueprints.create("macos", {
+	os: "macos",
+	size: "m",
+	wholeSystemPersistence: true,
+});
+
 const devbox = await client.devboxes.create({
 	name: "my-devbox",
 	blueprint: blueprint.name,

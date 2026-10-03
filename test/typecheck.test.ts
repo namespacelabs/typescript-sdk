@@ -163,6 +163,22 @@ async function testDevboxClient() {
 		environment: { NODE_ENV: "development" },
 		initScript: "npm install",
 	});
+	await client.blueprints.create("mac-default", { os: "macos" });
+	await client.blueprints.create("mac-whole-system", {
+		os: "macos",
+		size: "l",
+		wholeSystemPersistence: true,
+	});
+	await client.blueprints.create("mac-ephemeral", {
+		os: "macos",
+		ephemeral: { stoppedRetentionMs: 60_000 },
+	});
+	// @ts-expect-error Linux blueprints cannot configure macOS persistence.
+	client.blueprints.create("invalid", { image: "node:22", wholeSystemPersistence: true });
+	// @ts-expect-error macOS blueprints use a Namespace-managed image.
+	client.blueprints.create("invalid", { os: "macos", image: "node:22" });
+	// @ts-expect-error Ephemeral macOS blueprints cannot configure persistence.
+	client.blueprints.create("invalid", { os: "macos", ephemeral: true, wholeSystemPersistence: true });
 	const directDevbox = await client.devboxes.create({
 		name: "direct-sdk-test",
 		image: "node:22",

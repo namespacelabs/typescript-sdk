@@ -12,6 +12,7 @@ import {
 	ListRequest_OrderBy,
 	ListTemplatesRequest_OrderBy,
 	NetworkPolicySpecSchema,
+	PersistenceMode,
 	VersionControlSpecSchema,
 	VersionControlSpec_CheckoutMethod,
 	type BlueprintSpec,
@@ -315,12 +316,35 @@ function operationToProto(operation: BlueprintOperation): BlueprintSpec["onCreat
 }
 
 export function blueprintSpec(name: string, definition: BlueprintDefinition): DevboxTemplateSpec {
-	const linux = definition.image.includes("@") || definition.image.includes("/") || definition.image.includes(":")
+	const macOS = definition.os === "macos";
+	if (macOS && definition.image !== undefined) {
+		throw new TypeError('blueprint option "image" cannot be used with os "macos"');
+	}
+	if (!macOS && !definition.image) {
+		throw new TypeError('blueprint option "image" is required for linux');
+	}
+	if (!macOS && definition.wholeSystemPersistence !== undefined) {
+		throw new TypeError('blueprint option "wholeSystemPersistence" can only be used with os "macos"');
+	}
+	if (definition.ephemeral && definition.wholeSystemPersistence !== undefined) {
+		throw new TypeError('blueprint option "wholeSystemPersistence" cannot be used with "ephemeral"');
+	}
+	const linux = macOS ? undefined : definition.image.includes("@") || definition.image.includes("/") || definition.image.includes(":")
 		? { imageRef: definition.image }
 		: { imageName: definition.image };
+	const persistenceMode = macOS && !definition.ephemeral
+		? definition.wholeSystemPersistence === undefined
+			? PersistenceMode.UNSPECIFIED
+			: definition.wholeSystemPersistence
+				? PersistenceMode.WHOLE_SYSTEM
+				: PersistenceMode.WORKSPACE
+		: PersistenceMode.UNSPECIFIED;
 	return create(DevboxTemplateSpecSchema, {
 		name,
-		instance: { shape: toProtoShape(definition.size), linux },
+		instance: {
+			shape: toProtoShape(macOS ? definition.size ?? "m" : definition.size, definition.os),
+			linux,
+		},
 		site: definition.site ?? DEFAULT_SITE,
 		description: definition.description ?? "",
 		// The server requires blueprints to carry an explicit access mode;
@@ -338,6 +362,7 @@ export function blueprintSpec(name: string, definition: BlueprintDefinition): De
 		networkPolicy: toProtoNetworkPolicy(definition.networkPolicy),
 		initScript: definition.initScript ?? "",
 		versionControl: serializeVersionControl(definition.versionControl),
+		persistenceMode,
 	});
 }
 
@@ -365,34 +390,47 @@ export function blueprint(proto: ProtoBlueprint): Blueprint {
 	const metadata = spec.instance?.linux;
 	const image = metadata?.imageRef || metadata?.imageName || "";
 	const imageSpec = spec.instance;
+	const os = imageSpec?.shape?.os === "macos" ? "macos" : "linux";
+	const ephemeral = spec.ephemeral ? {
+		stoppedRetentionMs: milliseconds(spec.ephemeral.stoppedRetentionDuration),
+	} : false;
+	const common = {
+		size: machineSize(imageSpec?.shape ? {
+			vCPUs: imageSpec.shape.virtualCpu,
+			memoryMB: imageSpec.shape.memoryMegabytes,
+			architecture: imageSpec.shape.machineArch || undefined,
+			os: imageSpec.shape.os || undefined,
+		} : undefined),
+		site: spec.site,
+		description: spec.description || undefined,
+		access: fromProtoAccessMode(spec.accessMode),
+		environment: Object.fromEntries(spec.environment.filter((entry) => !entry.fromSecretId).map((entry) => [entry.name, entry.value])),
+		volumeSizeGB: safeNumber(spec.volumeSizeGb, "blueprint volume size"),
+		features: spec.features?.enabled,
+		networkPolicy: fromProtoNetworkPolicy(spec.networkPolicy),
+		busyTimeoutMs: milliseconds(spec.busyEnsureMinimumDuration),
+		initScript: spec.initScript || undefined,
+		versionControl: deserializeVersionControl(spec.versionControl),
+	};
+	const definition: BlueprintDefinition = os === "macos"
+		? ephemeral
+			? { ...common, os, ephemeral }
+			: {
+				...common,
+				os,
+				ephemeral,
+				wholeSystemPersistence: spec.persistenceMode === PersistenceMode.UNSPECIFIED
+					? undefined
+					: spec.persistenceMode === PersistenceMode.WHOLE_SYSTEM,
+			}
+		: { ...common, os, image, ephemeral };
 	return {
 		id: proto.id,
 		name: spec.name,
 		version: proto.version,
 		createdAt: date(proto.createdAt),
 		updatedAt: date(proto.updatedAt),
-		definition: {
-			image,
-			size: machineSize(imageSpec?.shape ? {
-				vCPUs: imageSpec.shape.virtualCpu,
-				memoryMB: imageSpec.shape.memoryMegabytes,
-				architecture: imageSpec.shape.machineArch || undefined,
-				os: imageSpec.shape.os || undefined,
-			} : undefined),
-			site: spec.site,
-			description: spec.description || undefined,
-			access: fromProtoAccessMode(spec.accessMode),
-			environment: Object.fromEntries(spec.environment.filter((entry) => !entry.fromSecretId).map((entry) => [entry.name, entry.value])),
-			volumeSizeGB: safeNumber(spec.volumeSizeGb, "blueprint volume size"),
-			ephemeral: spec.ephemeral ? {
-				stoppedRetentionMs: milliseconds(spec.ephemeral.stoppedRetentionDuration),
-			} : false,
-			features: spec.features?.enabled,
-			networkPolicy: fromProtoNetworkPolicy(spec.networkPolicy),
-			busyTimeoutMs: milliseconds(spec.busyEnsureMinimumDuration),
-			initScript: spec.initScript || undefined,
-			versionControl: deserializeVersionControl(spec.versionControl),
-		},
+		definition,
 	};
 }
 
