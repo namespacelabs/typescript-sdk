@@ -9,8 +9,8 @@
  * Namespace workload, falling back to your local user token (`nsc login`).
  *
  * macOS devboxes run on Apple Silicon and boot a Namespace-managed macOS
- * base image; custom images and blueprints are Linux-only, so this tour
- * focuses on the devbox lifecycle, commands, filesystem, and terminal.
+ * base image; custom images are Linux-only, so this tour focuses on the
+ * devbox lifecycle, commands, filesystem, and terminal.
  * Provisioning a macOS devbox can take a few minutes.
  *
  * The devbox created by this script is named uniquely and deleted at the

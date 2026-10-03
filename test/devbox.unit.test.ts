@@ -5,6 +5,7 @@ import { create } from "@bufbuild/protobuf";
 import {
 	DevBoxSchema,
 	DevboxTemplateSchema,
+	PersistenceMode,
 } from "../src/proto/namespace/private/devbox/devbox_pb.js";
 import {
 	blueprint,
@@ -87,6 +88,62 @@ test("blueprint conversion preserves native SDK fields", () => {
 			{ repository: "github.com/example/backend", ref: undefined, checkoutMethod: "git-snapshot-unpack" },
 		],
 	});
+});
+
+test("macOS blueprint conversion preserves persistence choices", () => {
+	const inherited = blueprintSpec("mac-default", { os: "macos" });
+	assert.equal(inherited.instance?.linux, undefined);
+	assert.equal(inherited.instance?.shape?.virtualCpu, 6);
+	assert.equal(inherited.instance?.shape?.memoryMegabytes, 14 * 1024);
+	assert.equal(inherited.instance?.shape?.machineArch, "arm64");
+	assert.equal(inherited.instance?.shape?.os, "macos");
+	assert.equal(inherited.persistenceMode, PersistenceMode.UNSPECIFIED);
+	assert.equal(blueprint(create(DevboxTemplateSchema, {
+		id: "blueprint_default",
+		spec: inherited,
+	})).definition.wholeSystemPersistence, undefined);
+
+	const workspace = blueprintSpec("mac-workspace", {
+		os: "macos",
+		wholeSystemPersistence: false,
+	});
+	assert.equal(workspace.persistenceMode, PersistenceMode.WORKSPACE);
+	assert.equal(blueprint(create(DevboxTemplateSchema, {
+		id: "blueprint_workspace",
+		spec: workspace,
+	})).definition.wholeSystemPersistence, false);
+
+	const wholeSystem = blueprintSpec("mac-whole-system", {
+		os: "macos",
+		size: "l",
+		volumeSizeGB: 600,
+		wholeSystemPersistence: true,
+	});
+	assert.equal(wholeSystem.persistenceMode, PersistenceMode.WHOLE_SYSTEM);
+	assert.equal(wholeSystem.volumeSizeGb, 600n);
+	assert.equal(blueprint(create(DevboxTemplateSchema, {
+		id: "blueprint_mac",
+		version: 1n,
+		spec: wholeSystem,
+	})).definition.wholeSystemPersistence, true);
+
+	const ephemeral = blueprintSpec("mac-ephemeral", {
+		os: "macos",
+		ephemeral: true,
+	});
+	assert.equal(ephemeral.persistenceMode, PersistenceMode.UNSPECIFIED);
+});
+
+test("blueprint conversion rejects persistence options outside persistent macOS", () => {
+	assert.throws(() => blueprintSpec("linux", {
+		image: "node:22",
+		wholeSystemPersistence: true,
+	} as never), /only be used with os "macos"/);
+	assert.throws(() => blueprintSpec("mac-ephemeral", {
+		os: "macos",
+		ephemeral: true,
+		wholeSystemPersistence: true,
+	} as never), /cannot be used with "ephemeral"/);
 });
 
 test("version control conversion normalizes legacy reads without collapsing multiple repositories", () => {
