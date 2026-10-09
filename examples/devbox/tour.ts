@@ -23,6 +23,7 @@ const runId = Date.now().toString(36);
 const imageName = `tour-image-${runId}`;
 const blueprintName = `tour-blueprint-${runId}`;
 const devboxName = `tour-devbox-${runId}`;
+const serviceName = `tour-service-${runId}`;
 
 async function main() {
 	// Defaults to workload permissions, falling back to the user token.
@@ -154,6 +155,30 @@ async function main() {
 		// Non-zero exits report the code plus the agent's failure detail.
 		const failed = await devbox.exec(["sh", "-c", "exit 3"]);
 		console.log("failed exec:", failed.exitCode, failed.error);
+
+		// ── Services ────────────────────────────────────────────────────
+
+		const service = await devbox.services.create({
+			name: serviceName,
+			command: "sh",
+			args: ["-c", 'echo "$TOUR_SERVICE"; sleep 1'],
+			environment: { TOUR_SERVICE: "service-ready" },
+		});
+		console.log("created service:", service.id, "state:", service.process?.state);
+
+		const fetchedService = await devbox.services.get(serviceName);
+		console.log("services.get:", fetchedService.id);
+
+		const listedServices = await devbox.services.list();
+		console.log(`services.list: ${listedServices.length} services`);
+
+		for await (const chunk of devbox.services.logs(service.id)) {
+			process.stdout.write(chunk.stdout);
+			process.stderr.write(chunk.stderr);
+		}
+
+		await devbox.services.delete(service.id);
+		console.log("deleted service");
 
 		// ── Filesystem ──────────────────────────────────────────────────
 

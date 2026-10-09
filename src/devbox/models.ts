@@ -301,6 +301,113 @@ export interface DevboxExecutions {
 	list(options?: OperationOptions): Promise<DevboxExecution[]>;
 }
 
+export type ServiceEnvironmentValue = string | { secretId: string };
+
+export interface CreateServiceInput {
+	name: string;
+	/** Executable name or path. Arguments are passed literally without shell interpretation. */
+	command: string;
+	args?: readonly string[];
+	/** Absolute path or path relative to the devbox workspace directory. */
+	cwd?: string;
+	/** Configured environment overrides. Secret values are resolved by the devbox agent. */
+	environment?: Record<string, ServiceEnvironmentValue>;
+	description?: string;
+	/** Omit to follow `startPolicy`; true starts now and false creates the service durably stopped. */
+	start?: boolean;
+	/** Defaults to `"on-boot"`, which starts on creation and whenever the agent boots. */
+	startPolicy?: "on-boot" | "manual";
+	/** Defaults to `"on-failure"`. */
+	restartPolicy?: "never" | "on-failure" | "always";
+	/** Prevent idle shutdown while the service process is active. Defaults to false. */
+	preventIdleShutdown?: boolean;
+}
+
+export interface StopServiceOptions extends OperationOptions {
+	/** Defaults to graceful termination, allowing process cleanup. Force kills immediately. */
+	mode?: "graceful" | "force";
+}
+
+export interface ServiceProcess {
+	state:
+		| "starting"
+		| "running"
+		| "stopping"
+		| "stopped"
+		| "failed"
+		| "restarting"
+		| "unknown";
+	pid?: number;
+	startedAt?: Date;
+	/** Restarts since the service was last explicitly started, not a lifetime total. */
+	restartCount: number;
+	/** May describe an earlier attempt while the supervised service is still active. */
+	lastExit?: {
+		exitCode: number;
+		error?: string;
+		exitedAt?: Date;
+	};
+}
+
+export interface ServicePort {
+	id: string;
+	name?: string;
+	number: number;
+	kind: "port-forward" | "http-ingress" | "unknown";
+	owner: "user" | "namespace" | "unknown";
+}
+
+/** Detached service state as observed from the current devbox agent. */
+export interface Service {
+	id: string;
+	name: string;
+	command: string;
+	args: string[];
+	cwd?: string;
+	/** Configured overrides, not the process's complete resolved environment. */
+	environment: Record<string, ServiceEnvironmentValue>;
+	description?: string;
+	startPolicy: "on-boot" | "manual" | "on-http-ingress" | "unknown";
+	restartPolicy: "never" | "on-failure" | "always" | "unknown";
+	preventIdleShutdown: boolean;
+	/** Durable automatic-start suppression, not confirmation that the process has exited. */
+	stopped: boolean;
+	owner: "user" | "namespace" | "unknown";
+	ports: ServicePort[];
+	process?: ServiceProcess;
+}
+
+export interface ServiceResource {
+	/**
+	 * Persist a supervised command and return the process state observed after the
+	 * agent's initial launch wait, not confirmation of launch or application readiness.
+	 * Connection-backed: activates a stopped devbox.
+	 */
+	create(input: CreateServiceInput, options?: OperationOptions): Promise<Service>;
+	/** List-backed lookup by exact ID or user-owned name. Activates a stopped devbox. */
+	get(ref: string, options?: OperationOptions): Promise<Service>;
+	/** List user- and Namespace-owned services from the current devbox agent. */
+	list(options?: OperationOptions): Promise<Service[]>;
+	/**
+	 * Clear durable stopped state and return the process state observed after the
+	 * agent's initial launch wait, not confirmation of launch or application readiness.
+	 */
+	start(ref: string, options?: OperationOptions): Promise<ServiceProcess>;
+	/** Durably suppress automatic starts and request termination without waiting for process exit. */
+	stop(ref: string, options?: StopServiceOptions): Promise<ServiceProcess | undefined>;
+	/**
+	 * Permanently remove the service, escalating from graceful to forced termination
+	 * after 15 seconds. Rejects if the agent cannot complete deletion within 20 seconds.
+	 */
+	delete(ref: string, options?: OperationOptions): Promise<void>;
+	/**
+	 * Replay retained output, then follow the latest retained supervised run.
+	 * Automatic retry attempts may share that run. Each reader is independent;
+	 * breaking iteration or aborting cancels only the reader.
+	 */
+	logs(ref: string, options?: OperationOptions): AsyncIterableIterator<ExecutionLogChunk>;
+}
+
 export interface TerminalOpenOptions extends OperationOptions {
 	columns?: number;
 	rows?: number;
@@ -470,6 +577,8 @@ export interface Devbox {
 	readonly display: DevboxDisplay;
 	/** Asynchronous executions. Connection-backed: using it on a stopped devbox activates it first. */
 	readonly executions: DevboxExecutions;
+	/** Durable supervised services. Connection-backed: using it on a stopped devbox activates it first. */
+	readonly services: ServiceResource;
 	/**
 	 * Run a command on the devbox and collect its output.
 	 *

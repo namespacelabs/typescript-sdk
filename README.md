@@ -176,6 +176,16 @@ await devbox.shell("npm install && npm test", {
 	cwd: "/workspace",
 });
 
+// Services start immediately by default and continue running independently.
+await devbox.services.create({
+	name: "web",
+	command: "node",
+	args: [
+		"-e",
+		"require('node:http').createServer((_request, response) => response.end('Hello!')).listen(3000)",
+	],
+});
+
 // Commands run through the devbox agent, which retains each command and its
 // output for later inspection (`devbox logs`). Relative `cwd` paths resolve
 // against the devbox workspace directory. When `cwd` is omitted, commands run

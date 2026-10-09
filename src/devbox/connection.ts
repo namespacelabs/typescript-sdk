@@ -12,7 +12,9 @@ import {
 	AgentService,
 	StartExecRequestSchema,
 	StopExecRequest_Mode,
+	type CreateServiceRequest,
 	type StartExecRequest,
+	type StopServiceRequest,
 } from "../proto/namespace/private/devbox/wire/wire_pb.js";
 import {
 	computeApiBaseUrl,
@@ -209,6 +211,26 @@ export class AgentConnection {
 		this.socket.onceClosed(listener);
 	}
 
+	async createService(request: CreateServiceRequest, options: OperationOptions) {
+		return this.client.createService(request, options);
+	}
+
+	async listServices(options: OperationOptions) {
+		return this.client.listServices({}, options);
+	}
+
+	async startService(ref: string, options: OperationOptions) {
+		return this.client.startService({ idOrName: ref }, options);
+	}
+
+	async stopService(request: StopServiceRequest, options: OperationOptions) {
+		return this.client.stopService(request, options);
+	}
+
+	async deleteService(ref: string, options: OperationOptions): Promise<void> {
+		await this.client.deleteService({ idOrName: ref }, options);
+	}
+
 	async exec(argv: readonly string[], options: ExecOptions = {}): Promise<ExecResult> {
 		const deadline = operationDeadline(options);
 		return this.run(buildExecRequest(argv, options), options, deadline);
@@ -244,14 +266,18 @@ export class AgentConnection {
 		}
 	}
 
-	async listExecutions(options: OperationOptions) {
+	async listLogActions(options: OperationOptions) {
 		checkExecutionTimeout(options);
 		try {
 			const response = await this.client.listLogs({}, options);
-			return response.actions.filter((action) => action.command);
+			return response.actions;
 		} catch (error) {
 			throw executionError(error, options);
 		}
+	}
+
+	async listExecutions(options: OperationOptions) {
+		return (await this.listLogActions(options)).filter((action) => action.command);
 	}
 
 	async executionStatus(id: string, options: OperationOptions): Promise<ExecutionStatus> {

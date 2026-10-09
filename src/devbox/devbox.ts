@@ -32,6 +32,7 @@ import type {
 	ReadOptions,
 	RemoveOptions,
 	Screenshot,
+	ServiceResource,
 	ShellOptions,
 	StartExecOptions,
 	StartShellOptions,
@@ -41,6 +42,7 @@ import type {
 	UpdateDevboxInput,
 	WriteFileOptions,
 } from "./models.js";
+import { ServiceResources } from "./services.js";
 
 const { utils: sshUtils } = ssh2;
 
@@ -59,6 +61,7 @@ export class DevboxHandle implements DevboxModel {
 	};
 	readonly display: DevboxDisplay;
 	readonly executions: DevboxExecutions;
+	readonly services: ServiceResource;
 
 	constructor(
 		private currentInfo: DevboxInfo,
@@ -77,6 +80,7 @@ export class DevboxHandle implements DevboxModel {
 			get: (id, options) => this.getExecution(id, options),
 			list: (options) => this.listExecutions(options),
 		};
+		this.services = new ServiceResources(this.id, connections);
 	}
 
 	get id(): string {
