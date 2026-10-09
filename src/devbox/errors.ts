@@ -59,3 +59,17 @@ export class ExecutionOutputLimitError extends DevboxError {
 		super(`devbox execution output exceeded ${maxOutputBytes} bytes; use logs() to stream without collecting`);
 	}
 }
+
+/** The devbox agent has no service matching the supplied ID or user-owned name. */
+export class ServiceNotFoundError extends DevboxError {
+	constructor(readonly ref: string) {
+		super(`devbox service ${ref} was not found`);
+	}
+}
+
+/** The service has no retained supervised run whose output can be read. */
+export class ServiceLogsNotFoundError extends DevboxError {
+	constructor(readonly serviceId: string) {
+		super(`devbox service ${serviceId} has no retained logs`);
+	}
+}

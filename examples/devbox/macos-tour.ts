@@ -10,7 +10,8 @@
  *
  * macOS devboxes run on Apple Silicon and boot a Namespace-managed macOS
  * base image; custom images and blueprints are Linux-only, so this tour
- * focuses on the devbox lifecycle, commands, filesystem, and terminal.
+ * focuses on the devbox lifecycle, commands, services, filesystem, terminal,
+ * and display.
  * Provisioning a macOS devbox can take a few minutes.
  *
  * The devbox created by this script is named uniquely and deleted at the
@@ -23,6 +24,7 @@ import { createDevboxClient } from "@namespacelabs/sdk";
 
 const runId = Date.now().toString(36);
 const devboxName = `tour-macos-${runId}`;
+const serviceName = `tour-macos-service-${runId}`;
 
 async function main() {
 	const client = createDevboxClient();
@@ -63,6 +65,30 @@ async function main() {
 
 		const failed = await devbox.exec(["sh", "-c", "exit 3"]);
 		console.log("failed exec:", failed.exitCode, failed.error);
+
+		// ── Services ────────────────────────────────────────────────────
+
+		const service = await devbox.services.create({
+			name: serviceName,
+			command: "sh",
+			args: ["-c", 'echo "$TOUR_SERVICE"; sleep 1'],
+			environment: { TOUR_SERVICE: "service-ready" },
+		});
+		console.log("created service:", service.id, "state:", service.process?.state);
+
+		const fetchedService = await devbox.services.get(serviceName);
+		console.log("services.get:", fetchedService.id);
+
+		const listedServices = await devbox.services.list();
+		console.log(`services.list: ${listedServices.length} services`);
+
+		for await (const chunk of devbox.services.logs(service.id)) {
+			process.stdout.write(chunk.stdout);
+			process.stderr.write(chunk.stderr);
+		}
+
+		await devbox.services.delete(service.id);
+		console.log("deleted service");
 
 		// ── Filesystem ──────────────────────────────────────────────────
 

@@ -328,6 +328,69 @@ async function testDevboxClient() {
 	execution.kill();
 	// @ts-expect-error There is no incremental stdin RPC.
 	execution.write("hello");
+
+	// Service creation and snapshots.
+	const services: devboxPublicApi.ServiceResource = devbox.services;
+	const serviceInput: sdkPublicApi.CreateServiceInput = {
+		name: "web",
+		command: "node",
+		args: ["server.js"],
+		cwd: "app",
+		environment: {
+			NODE_ENV: "production",
+			API_TOKEN: { secretId: "sec_api" },
+		},
+		description: "Web server",
+		start: false,
+		startPolicy: "on-boot",
+		restartPolicy: "on-failure",
+		preventIdleShutdown: true,
+	};
+	const service: devboxPublicApi.Service = await services.create(serviceInput, {
+		timeoutMs: 10_000,
+	});
+	const fetchedService: sdkPublicApi.Service = await services.get(service.id);
+	const listedServices: devboxPublicApi.Service[] = await services.list();
+	const serviceEnvironment: sdkPublicApi.ServiceEnvironmentValue = { secretId: "sec_api" };
+	const servicePort: devboxPublicApi.ServicePort | undefined = service.ports[0];
+	const serviceState: devboxPublicApi.ServiceProcess["state"] | undefined = service.process?.state;
+
+	// Service lifecycle operations.
+	const startedService: devboxPublicApi.ServiceProcess = await services.start(service.name);
+	const stopServiceOptions: sdkPublicApi.StopServiceOptions = {
+		mode: "graceful",
+		timeoutMs: 5_000,
+	};
+	const stoppedService: devboxPublicApi.ServiceProcess | undefined = await services.stop(
+		service.id,
+		stopServiceOptions,
+	);
+	await services.stop(service.id, { mode: "force" });
+
+	// Service logs use the execution log chunk type.
+	for await (const chunk of services.logs(service.id, { timeoutMs: 30_000 })) {
+		const output: Uint8Array = chunk.stdout;
+		const errorOutput: Uint8Array = chunk.stderr;
+		const code: number | undefined = chunk.result?.exitCode;
+	}
+	await services.delete(service.id);
+
+	// Services expose snapshots through a deliberately narrow resource API.
+	// @ts-expect-error Services are snapshots operated on through ServiceResource.
+	service.start();
+	// @ts-expect-error Service creation does not expose port configuration.
+	services.create({ name: "web", command: "node", ports: [] });
+	// @ts-expect-error HTTP-ingress start policy requires unsupported service-owned port creation.
+	services.create({ name: "web", command: "node", startPolicy: "on-http-ingress" });
+	// @ts-expect-error Running as another user is not exposed.
+	services.create({ name: "web", command: "node", runAs: "root" });
+	// @ts-expect-error Snapshot-only log reads are not a service-specific option.
+	services.logs(service.id, { follow: false });
+	// @ts-expect-error Arbitrary service signals are not exposed.
+	services.signal(service.id, "SIGINT");
+	// @ts-expect-error Services are scoped to a running Devbox handle.
+	client.services;
+
 	const terminal = await devbox.terminal.open({ columns: 120, rows: 40 });
 	terminal.write("pwd\n");
 	terminal.resize(160, 50);
