@@ -31,6 +31,7 @@ import type {
 	Blueprint,
 	BlueprintDefinition,
 	BlueprintOperation,
+	CheckoutMethod,
 	DevboxInstanceEventCallback,
 	DevboxLabelPredicate,
 	DevboxInfo,
@@ -41,7 +42,7 @@ import type {
 	InstanceShape,
 	MachineSize,
 	NetworkPolicy,
-	CheckoutMethod,
+	Session,
 	VersionControlSpec,
 } from "./models.js";
 
@@ -315,6 +316,20 @@ function operationToProto(operation: BlueprintOperation): BlueprintSpec["onCreat
 	);
 }
 
+export function serializeSessions(sessions?: Session[]) {
+	return (sessions ?? []).map((session) => ({
+		name: session.name,
+		command: session.command,
+	}));
+}
+
+function deserializeSessions(sessions: DevboxTemplateSpec["sessions"]): Session[] {
+	return sessions.map((session) => ({
+		name: session.name,
+		command: session.command,
+	}));
+}
+
 export function blueprintSpec(name: string, definition: BlueprintDefinition): DevboxTemplateSpec {
 	const linux = definition.image.includes("@") || definition.image.includes("/") || definition.image.includes(":")
 		? { imageRef: definition.image }
@@ -339,6 +354,7 @@ export function blueprintSpec(name: string, definition: BlueprintDefinition): De
 		networkPolicy: toProtoNetworkPolicy(definition.networkPolicy),
 		initScript: definition.initScript ?? "",
 		versionControl: serializeVersionControl(definition.versionControl),
+		sessions: serializeSessions(definition.sessions),
 	});
 }
 
@@ -352,11 +368,7 @@ export function imageMetadata(metadata: ImageMetadata): BlueprintSpec {
 		onStartup: (metadata.onStart ?? []).map(operationToProto),
 		includeInPath: metadata.includeInPath ?? [],
 		workspaceDir: metadata.workspaceDir ?? "",
-		sessions: (metadata.sessions ?? []).map((session) => ({
-			name: session.name,
-			command: session.command,
-			emoji: session.emoji ?? "",
-		})),
+		sessions: serializeSessions(metadata.sessions),
 	});
 }
 
@@ -396,6 +408,7 @@ export function blueprint(proto: ProtoBlueprint): Blueprint {
 			busyTimeoutMs: milliseconds(spec.busyEnsureMinimumDuration),
 			initScript: spec.initScript || undefined,
 			versionControl: deserializeVersionControl(spec.versionControl),
+			sessions: deserializeSessions(spec.sessions),
 		},
 	};
 }
