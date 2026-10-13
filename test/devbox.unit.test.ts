@@ -62,6 +62,10 @@ test("blueprint conversion preserves native SDK fields", () => {
 			{ name: "server", number: 3000 },
 			{ number: 5432 },
 		],
+		exposedPorts: [
+			{ name: "web", number: 8080 },
+			{ number: 8000 },
+		],
 		versionControl: {
 			repositories: [
 				{ repository: "github.com/example/frontend", ref: "feature/ui" },
@@ -111,10 +115,16 @@ test("blueprint conversion preserves native SDK fields", () => {
 	assert.deepEqual(spec.ports.map(({ name, number, kind }) => ({ name, number, kind })), [
 		{ name: "server", number: 3000, kind: PortSpec_Kind.PORT_FORWARD },
 		{ name: "", number: 5432, kind: PortSpec_Kind.PORT_FORWARD },
+		{ name: "web", number: 8080, kind: PortSpec_Kind.HTTP_INGRESS },
+		{ name: "", number: 8000, kind: PortSpec_Kind.HTTP_INGRESS },
 	]);
 	assert.deepEqual(converted.definition.portForwards, [
 		{ name: "server", number: 3000 },
 		{ name: undefined, number: 5432 },
+	]);
+	assert.deepEqual(converted.definition.exposedPorts, [
+		{ name: "web", number: 8080 },
+		{ name: undefined, number: 8000 },
 	]);
 	assert.deepEqual(converted.definition.versionControl, {
 		repositories: [
@@ -312,7 +322,7 @@ test("devbox creation serializes sessions", async () => {
 	]);
 });
 
-test("devbox creation serializes port forwards", async () => {
+test("devbox creation serializes configured ports", async () => {
 	let requestPorts: Array<{ name: string; number: number; kind: PortSpec_Kind }> | undefined;
 	const rpc = {
 		create: async (request: { ports?: typeof requestPorts }) => {
@@ -329,11 +339,17 @@ test("devbox creation serializes port forwards", async () => {
 			{ name: "server", number: 3000 },
 			{ number: 5432 },
 		],
+		exposedPorts: [
+			{ name: "web", number: 8080 },
+			{ number: 8000 },
+		],
 	});
 
 	assert.deepEqual(requestPorts, [
 		{ name: "server", number: 3000, kind: PortSpec_Kind.PORT_FORWARD },
 		{ name: "", number: 5432, kind: PortSpec_Kind.PORT_FORWARD },
+		{ name: "web", number: 8080, kind: PortSpec_Kind.HTTP_INGRESS },
+		{ name: "", number: 8000, kind: PortSpec_Kind.HTTP_INGRESS },
 	]);
 });
 
