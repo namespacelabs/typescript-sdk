@@ -22,6 +22,7 @@ import {
 	optionalDuration,
 	positiveBigInt,
 	serializeEnvironment,
+	serializePortForwards,
 	serializeSessions,
 	toProtoAccessMode,
 	toProtoInstanceEventCallback,
@@ -103,6 +104,7 @@ class DevboxResources implements DevboxController, DevboxResource {
 				networkPolicy: toProtoNetworkPolicy(input.networkPolicy),
 				instanceEventCallback: toProtoInstanceEventCallback(input.instanceEventCallback),
 				sessions: serializeSessions(input.sessions),
+				ports: serializePortForwards(input.portForwards),
 				activate: shouldStart,
 			}, options);
 

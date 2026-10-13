@@ -5,6 +5,7 @@ import { create } from "@bufbuild/protobuf";
 import {
 	DevBoxSchema,
 	DevboxTemplateSchema,
+	PortSpec_Kind,
 } from "../src/proto/namespace/private/devbox/devbox_pb.js";
 import {
 	blueprint,
@@ -57,6 +58,10 @@ test("blueprint conversion preserves native SDK fields", () => {
 			{ name: "server", command: "npm run dev" },
 			{ name: "shell", command: "exec bash" },
 		],
+		portForwards: [
+			{ name: "server", number: 3000 },
+			{ number: 5432 },
+		],
 		versionControl: {
 			repositories: [
 				{ repository: "github.com/example/frontend", ref: "feature/ui" },
@@ -102,6 +107,14 @@ test("blueprint conversion preserves native SDK fields", () => {
 	assert.deepEqual(converted.definition.sessions, [
 		{ name: "server", command: "npm run dev" },
 		{ name: "shell", command: "exec bash" },
+	]);
+	assert.deepEqual(spec.ports.map(({ name, number, kind }) => ({ name, number, kind })), [
+		{ name: "server", number: 3000, kind: PortSpec_Kind.PORT_FORWARD },
+		{ name: "", number: 5432, kind: PortSpec_Kind.PORT_FORWARD },
+	]);
+	assert.deepEqual(converted.definition.portForwards, [
+		{ name: "server", number: 3000 },
+		{ name: undefined, number: 5432 },
 	]);
 	assert.deepEqual(converted.definition.versionControl, {
 		repositories: [
@@ -296,6 +309,31 @@ test("devbox creation serializes sessions", async () => {
 	assert.deepEqual(requestSessions, [
 		{ name: "server", command: "npm run dev" },
 		{ name: "shell", command: "exec bash" },
+	]);
+});
+
+test("devbox creation serializes port forwards", async () => {
+	let requestPorts: Array<{ name: string; number: number; kind: PortSpec_Kind }> | undefined;
+	const rpc = {
+		create: async (request: { ports?: typeof requestPorts }) => {
+			requestPorts = request.ports;
+			return { devbox: create(DevBoxSchema, { id: "devbox_123", name: "test" }) };
+		},
+	} as never;
+	const { devboxes } = createResources(rpc, {} as ConnectionManager);
+
+	await devboxes.create({
+		name: "ports",
+		start: false,
+		portForwards: [
+			{ name: "server", number: 3000 },
+			{ number: 5432 },
+		],
+	});
+
+	assert.deepEqual(requestPorts, [
+		{ name: "server", number: 3000, kind: PortSpec_Kind.PORT_FORWARD },
+		{ name: "", number: 5432, kind: PortSpec_Kind.PORT_FORWARD },
 	]);
 });
 

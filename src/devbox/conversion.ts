@@ -12,6 +12,7 @@ import {
 	ListRequest_OrderBy,
 	ListTemplatesRequest_OrderBy,
 	NetworkPolicySpecSchema,
+	PortSpec_Kind,
 	VersionControlSpecSchema,
 	VersionControlSpec_CheckoutMethod,
 	type BlueprintSpec,
@@ -42,6 +43,7 @@ import type {
 	InstanceShape,
 	MachineSize,
 	NetworkPolicy,
+	PortForward,
 	Session,
 	VersionControlSpec,
 } from "./models.js";
@@ -330,6 +332,23 @@ function deserializeSessions(sessions: DevboxTemplateSpec["sessions"]): Session[
 	}));
 }
 
+export function serializePortForwards(portForwards?: PortForward[]) {
+	return (portForwards ?? []).map((portForward) => ({
+		name: portForward.name ?? "",
+		number: portForward.number,
+		kind: PortSpec_Kind.PORT_FORWARD,
+	}));
+}
+
+function deserializePortForwards(ports: DevboxTemplateSpec["ports"]): PortForward[] {
+	return ports
+		.filter((port) => port.kind === PortSpec_Kind.PORT_FORWARD)
+		.map((port) => ({
+			name: port.name || undefined,
+			number: port.number,
+		}));
+}
+
 export function blueprintSpec(name: string, definition: BlueprintDefinition): DevboxTemplateSpec {
 	const isImageRef = !definition.image.startsWith("builtin:")
 		&& (definition.image.includes("@") || definition.image.includes("/") || definition.image.includes(":"));
@@ -357,6 +376,7 @@ export function blueprintSpec(name: string, definition: BlueprintDefinition): De
 		initScript: definition.initScript ?? "",
 		versionControl: serializeVersionControl(definition.versionControl),
 		sessions: serializeSessions(definition.sessions),
+		ports: serializePortForwards(definition.portForwards),
 	});
 }
 
@@ -411,6 +431,7 @@ export function blueprint(proto: ProtoBlueprint): Blueprint {
 			initScript: spec.initScript || undefined,
 			versionControl: deserializeVersionControl(spec.versionControl),
 			sessions: deserializeSessions(spec.sessions),
+			portForwards: deserializePortForwards(spec.ports),
 		},
 	};
 }
