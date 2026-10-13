@@ -71,6 +71,11 @@ export interface DevboxInstanceEventCallback {
 	signingSecretId?: string;
 }
 
+/** A literal environment value or a Vault secret resolved when the process starts. */
+export type EnvironmentVariableValue = string | { secretId: string };
+
+export type EnvironmentVariables = Record<string, EnvironmentVariableValue>;
+
 export interface DevboxInfo {
 	id: string;
 	name: string;
@@ -144,7 +149,7 @@ export type CreateDevboxInput = CreateDevboxInputBase & ({
 	os?: "linux" | "macos";
 	size?: MachineSize;
 	volumeSizeGB?: number;
-	environment?: Record<string, string>;
+	environment?: EnvironmentVariables;
 	ephemeral?: boolean | { stoppedRetentionMs?: number };
 	privileged?: boolean;
 	features?: string[];
@@ -301,7 +306,7 @@ export interface DevboxExecutions {
 	list(options?: OperationOptions): Promise<DevboxExecution[]>;
 }
 
-export type ServiceEnvironmentValue = string | { secretId: string };
+export type ServiceEnvironmentValue = EnvironmentVariableValue;
 
 export interface CreateServiceInput {
 	name: string;
@@ -675,7 +680,7 @@ export interface BlueprintDefinition {
 	description?: string;
 	/** Who can use the blueprint. Defaults to "private". */
 	access?: AccessMode;
-	environment?: Record<string, string>;
+	environment?: EnvironmentVariables;
 	volumeSizeGB?: number;
 	ephemeral?: boolean | { stoppedRetentionMs?: number };
 	features?: string[];

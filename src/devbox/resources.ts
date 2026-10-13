@@ -21,6 +21,7 @@ import {
 	labelPredicate,
 	optionalDuration,
 	positiveBigInt,
+	serializeEnvironment,
 	toProtoAccessMode,
 	toProtoInstanceEventCallback,
 	toProtoNetworkPolicy,
@@ -91,7 +92,7 @@ class DevboxResources implements DevboxController, DevboxResource {
 				repository: input.repository ?? "",
 				// An absent spec inherits defaults; an empty spec disables checkout.
 				versionControl: serializeVersionControl(input.versionControl),
-				environment: Object.entries(input.environment ?? {}).map(([name, value]) => ({ name, value })),
+				environment: serializeEnvironment(input.environment),
 				labels: Object.entries(input.labels ?? {}).map(([name, value]) => ({ name, value })),
 				documentedPurpose: input.purpose ?? "",
 				accessMode: toProtoAccessMode(input.access),

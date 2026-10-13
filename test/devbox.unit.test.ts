@@ -43,7 +43,10 @@ test("blueprint conversion preserves native SDK fields", () => {
 		site: "ord",
 		description: "TypeScript development",
 		access: "workspace",
-		environment: { NODE_ENV: "development" },
+		environment: {
+			NODE_ENV: "development",
+			API_TOKEN: { secretId: "sec_api" },
+		},
 		volumeSizeGB: 50,
 		ephemeral: { stoppedRetentionMs: 60_000 },
 		features: [],
@@ -71,7 +74,14 @@ test("blueprint conversion preserves native SDK fields", () => {
 	assert.equal(spec.instance?.shape?.memoryMegabytes, 16 * 1024);
 	assert.equal(spec.instance?.shape?.machineArch, "amd64");
 	assert.equal(spec.instance?.shape?.os, "linux");
-	assert.deepEqual(converted.definition.environment, { NODE_ENV: "development" });
+	assert.deepEqual(spec.environment.map(({ name, value, fromSecretId }) => ({ name, value, fromSecretId })), [
+		{ name: "NODE_ENV", value: "development", fromSecretId: "" },
+		{ name: "API_TOKEN", value: "", fromSecretId: "sec_api" },
+	]);
+	assert.deepEqual(converted.definition.environment, {
+		NODE_ENV: "development",
+		API_TOKEN: { secretId: "sec_api" },
+	});
 	assert.deepEqual(converted.definition.features, []);
 	assert.equal(
 		typeof converted.definition.ephemeral === "object"
@@ -202,6 +212,32 @@ test("devbox creation forwards explicit image names", async () => {
 	assert.equal(requests[1]?.imageName, undefined);
 	assert.equal(requests[2]?.imageName, "node-22");
 	assert.equal(requests[2]?.imageRef, undefined);
+});
+
+test("devbox creation serializes literal and secret environment values", async () => {
+	let requestEnvironment: Array<{ name: string; value?: string; fromSecretId?: string }> | undefined;
+	const rpc = {
+		create: async (request: { environment?: typeof requestEnvironment }) => {
+			requestEnvironment = request.environment;
+			return { devbox: create(DevBoxSchema, { id: "devbox_123", name: "test" }) };
+		},
+	} as never;
+	const { devboxes } = createResources(rpc, {} as ConnectionManager);
+
+	await devboxes.create({
+		name: "environment",
+		image: "node:22",
+		start: false,
+		environment: {
+			EMPTY: "",
+			API_TOKEN: { secretId: "sec_api" },
+		},
+	});
+
+	assert.deepEqual(requestEnvironment, [
+		{ name: "EMPTY", value: "" },
+		{ name: "API_TOKEN", fromSecretId: "sec_api" },
+	]);
 });
 
 test("devbox creation sends and returns labels", async () => {
