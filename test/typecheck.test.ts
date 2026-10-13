@@ -164,6 +164,7 @@ async function testDevboxClient() {
 			NODE_ENV: "development",
 			API_TOKEN: { secretId: "sec_api" },
 		},
+		sessions: [{ name: "server", command: "npm run dev" }],
 		initScript: "npm install",
 	});
 	const directDevbox = await client.devboxes.create({
@@ -171,8 +172,14 @@ async function testDevboxClient() {
 		image: "node:22",
 		size: "s",
 		environment: { API_TOKEN: { secretId: "sec_api" } },
+		sessions: [{ name: "shell", command: "exec bash" }],
 		labels: { environment: "test", team: "sdk" },
 	});
+	const session: sdkPublicApi.Session = blueprint.definition.sessions?.[0] ?? {
+		name: "shell",
+		command: "exec bash",
+	};
+	const legacySession: devboxPublicApi.BlueprintSession = session;
 	const environmentValue: sdkPublicApi.EnvironmentVariableValue = blueprint.definition.environment?.API_TOKEN ?? "";
 	const environment: devboxPublicApi.EnvironmentVariables = { API_TOKEN: environmentValue };
 	const labels: Record<string, string> = directDevbox.info.labels;
@@ -442,6 +449,8 @@ async function testDevboxClient() {
 	client.devboxes.create({ name: "invalid", image: "node:22", imageName: "builtin:agents" });
 	// @ts-expect-error Blueprint creation does not accept inline size overrides.
 	client.devboxes.create({ name: "invalid", blueprint: "typescript", size: "s" });
+	// @ts-expect-error Blueprint creation inherits sessions and does not accept session overrides.
+	client.devboxes.create({ name: "invalid", blueprint: "typescript", sessions: [{ name: "shell", command: "bash" }] });
 	// @ts-expect-error repository and versionControl are mutually exclusive.
 	client.devboxes.create({ name: "invalid", repository: "https://github.com/namespacelabs/typescript-sdk", versionControl: {} });
 	// @ts-expect-error Even an empty repository cannot be combined with versionControl.

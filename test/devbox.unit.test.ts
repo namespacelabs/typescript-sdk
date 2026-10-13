@@ -53,6 +53,10 @@ test("blueprint conversion preserves native SDK fields", () => {
 		networkPolicy: { allowedDomains: ["registry.npmjs.org"] },
 		busyTimeoutMs: 30_000,
 		initScript: "npm install",
+		sessions: [
+			{ name: "server", command: "npm run dev" },
+			{ name: "shell", command: "exec bash" },
+		],
 		versionControl: {
 			repositories: [
 				{ repository: "github.com/example/frontend", ref: "feature/ui" },
@@ -91,6 +95,14 @@ test("blueprint conversion preserves native SDK fields", () => {
 	);
 	assert.equal(converted.definition.busyTimeoutMs, 30_000);
 	assert.equal(converted.definition.initScript, "npm install");
+	assert.deepEqual(spec.sessions.map(({ name, command }) => ({ name, command })), [
+		{ name: "server", command: "npm run dev" },
+		{ name: "shell", command: "exec bash" },
+	]);
+	assert.deepEqual(converted.definition.sessions, [
+		{ name: "server", command: "npm run dev" },
+		{ name: "shell", command: "exec bash" },
+	]);
 	assert.deepEqual(converted.definition.versionControl, {
 		repositories: [
 			{ repository: "github.com/example/frontend", ref: "feature/ui", checkoutMethod: undefined },
@@ -259,6 +271,31 @@ test("devbox creation serializes literal and secret environment values", async (
 	assert.deepEqual(requestEnvironment, [
 		{ name: "EMPTY", value: "" },
 		{ name: "API_TOKEN", fromSecretId: "sec_api" },
+	]);
+});
+
+test("devbox creation serializes sessions", async () => {
+	let requestSessions: Array<{ name: string; command: string }> | undefined;
+	const rpc = {
+		create: async (request: { sessions?: typeof requestSessions }) => {
+			requestSessions = request.sessions;
+			return { devbox: create(DevBoxSchema, { id: "devbox_123", name: "test" }) };
+		},
+	} as never;
+	const { devboxes } = createResources(rpc, {} as ConnectionManager);
+
+	await devboxes.create({
+		name: "sessions",
+		start: false,
+		sessions: [
+			{ name: "server", command: "npm run dev" },
+			{ name: "shell", command: "exec bash" },
+		],
+	});
+
+	assert.deepEqual(requestSessions, [
+		{ name: "server", command: "npm run dev" },
+		{ name: "shell", command: "exec bash" },
 	]);
 });
 

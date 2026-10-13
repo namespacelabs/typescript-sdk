@@ -22,6 +22,7 @@ import {
 	optionalDuration,
 	positiveBigInt,
 	serializeEnvironment,
+	serializeSessions,
 	toProtoAccessMode,
 	toProtoInstanceEventCallback,
 	toProtoNetworkPolicy,
@@ -101,6 +102,7 @@ class DevboxResources implements DevboxController, DevboxResource {
 				features: input.features ? { enabled: input.features } : undefined,
 				networkPolicy: toProtoNetworkPolicy(input.networkPolicy),
 				instanceEventCallback: toProtoInstanceEventCallback(input.instanceEventCallback),
+				sessions: serializeSessions(input.sessions),
 				activate: shouldStart,
 			}, options);
 

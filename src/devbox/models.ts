@@ -135,6 +135,7 @@ export type CreateDevboxInput = CreateDevboxInputBase & ({
 	features?: never;
 	networkPolicy?: never;
 	instanceEventCallback?: never;
+	sessions?: never;
 } | {
 	blueprint?: never;
 	/**
@@ -154,6 +155,7 @@ export type CreateDevboxInput = CreateDevboxInputBase & ({
 	privileged?: boolean;
 	features?: string[];
 	networkPolicy?: NetworkPolicy;
+	sessions?: Session[];
 	/**
 	 * Receives lifecycle events for every compute instance backing this devbox.
 	 * The callback is immutable after creation.
@@ -667,11 +669,15 @@ export interface BlueprintScript {
 
 export type BlueprintOperation = BlueprintCommand | BlueprintScript;
 
-export interface BlueprintSession {
+export interface Session {
 	name: string;
 	command: string;
-	emoji?: string;
 }
+
+/** @deprecated Use `Session`. */
+export type BlueprintSession = Session & {
+	emoji?: string;
+};
 
 export interface BlueprintDefinition {
 	image: string;
@@ -688,6 +694,7 @@ export interface BlueprintDefinition {
 	busyTimeoutMs?: number;
 	initScript?: string;
 	versionControl?: VersionControlSpec;
+	sessions?: Session[];
 }
 
 export interface ImageMetadata {
