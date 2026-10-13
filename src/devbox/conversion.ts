@@ -34,6 +34,7 @@ import type {
 	DevboxInstanceEventCallback,
 	DevboxLabelPredicate,
 	DevboxInfo,
+	EnvironmentVariables,
 	Image,
 	ImageMetadata,
 	ImageSelector,
@@ -326,7 +327,7 @@ export function blueprintSpec(name: string, definition: BlueprintDefinition): De
 		// The server requires blueprints to carry an explicit access mode;
 		// default to private, matching the web console's default.
 		accessMode: toProtoAccessMode(definition.access ?? "private"),
-		environment: Object.entries(definition.environment ?? {}).map(([envName, value]) => ({ name: envName, value })),
+		environment: serializeEnvironment(definition.environment),
 		busyEnsureMinimumDuration: optionalDuration(definition.busyTimeoutMs),
 		volumeSizeGb: positiveBigInt(definition.volumeSizeGB, "volumeSizeGB"),
 		ephemeral: definition.ephemeral ? {
@@ -382,7 +383,10 @@ export function blueprint(proto: ProtoBlueprint): Blueprint {
 			site: spec.site,
 			description: spec.description || undefined,
 			access: fromProtoAccessMode(spec.accessMode),
-			environment: Object.fromEntries(spec.environment.filter((entry) => !entry.fromSecretId).map((entry) => [entry.name, entry.value])),
+			environment: Object.fromEntries(spec.environment.map((entry) => [
+				entry.name,
+				entry.fromSecretId ? { secretId: entry.fromSecretId } : entry.value,
+			])),
 			volumeSizeGB: safeNumber(spec.volumeSizeGb, "blueprint volume size"),
 			ephemeral: spec.ephemeral ? {
 				stoppedRetentionMs: milliseconds(spec.ephemeral.stoppedRetentionDuration),
@@ -394,6 +398,18 @@ export function blueprint(proto: ProtoBlueprint): Blueprint {
 			versionControl: deserializeVersionControl(spec.versionControl),
 		},
 	};
+}
+
+export function serializeEnvironment(environment?: EnvironmentVariables) {
+	return Object.entries(environment ?? {}).map(([name, value]) => {
+		if (typeof value !== "string" && !value.secretId) {
+			throw new TypeError(`environment secret for ${name} must not be empty`);
+		}
+		return {
+			name,
+			...(typeof value === "string" ? { value } : { fromSecretId: value.secretId }),
+		};
+	});
 }
 
 export function image(proto: ProtoImage): Image {

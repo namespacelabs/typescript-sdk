@@ -160,15 +160,21 @@ async function testDevboxClient() {
 	const blueprint = await client.blueprints.create("typescript", {
 		image: "node:22",
 		size: "m",
-		environment: { NODE_ENV: "development" },
+		environment: {
+			NODE_ENV: "development",
+			API_TOKEN: { secretId: "sec_api" },
+		},
 		initScript: "npm install",
 	});
 	const directDevbox = await client.devboxes.create({
 		name: "direct-sdk-test",
 		image: "node:22",
 		size: "s",
+		environment: { API_TOKEN: { secretId: "sec_api" } },
 		labels: { environment: "test", team: "sdk" },
 	});
+	const environmentValue: sdkPublicApi.EnvironmentVariableValue = blueprint.definition.environment?.API_TOKEN ?? "";
+	const environment: devboxPublicApi.EnvironmentVariables = { API_TOKEN: environmentValue };
 	const labels: Record<string, string> = directDevbox.info.labels;
 
 	const callback: sdkPublicApi.DevboxInstanceEventCallback = {
