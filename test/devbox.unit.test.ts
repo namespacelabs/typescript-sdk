@@ -99,6 +99,28 @@ test("blueprint conversion preserves native SDK fields", () => {
 	});
 });
 
+test("blueprint conversion treats built-in images as image names", () => {
+	const spec = blueprintSpec("default", { image: "builtin:default" });
+
+	assert.equal(spec.instance?.linux?.imageName, "builtin:default");
+	assert.equal(spec.instance?.linux?.imageRef, "");
+
+	const converted = blueprint(create(DevboxTemplateSchema, {
+		id: "blueprint_123",
+		version: 1n,
+		spec,
+	}));
+	assert.equal(converted.definition.image, "builtin:default");
+
+	const roundTripped = blueprintSpec(converted.name, converted.definition);
+	assert.equal(roundTripped.instance?.linux?.imageName, "builtin:default");
+	assert.equal(roundTripped.instance?.linux?.imageRef, "");
+
+	const containerSpec = blueprintSpec("node", { image: "node:22" });
+	assert.equal(containerSpec.instance?.linux?.imageName, "");
+	assert.equal(containerSpec.instance?.linux?.imageRef, "node:22");
+});
+
 test("version control conversion normalizes legacy reads without collapsing multiple repositories", () => {
 	assert.deepEqual(deserializeVersionControl(serializeVersionControl({
 		gitRepository: "github.com/example/legacy",

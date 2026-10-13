@@ -158,7 +158,7 @@ const client = createDevboxClient();
 //   createDevboxClient({ tokenSource: loadUserToken })
 
 const blueprint = await client.blueprints.create("typescript", {
-	image: "node:22",
+	image: "builtin:default",
 	size: "m",
 	environment: { NODE_ENV: "development" },
 });

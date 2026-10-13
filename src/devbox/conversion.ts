@@ -316,7 +316,9 @@ function operationToProto(operation: BlueprintOperation): BlueprintSpec["onCreat
 }
 
 export function blueprintSpec(name: string, definition: BlueprintDefinition): DevboxTemplateSpec {
-	const linux = definition.image.includes("@") || definition.image.includes("/") || definition.image.includes(":")
+	const isImageRef = !definition.image.startsWith("builtin:")
+		&& (definition.image.includes("@") || definition.image.includes("/") || definition.image.includes(":"));
+	const linux = isImageRef
 		? { imageRef: definition.image }
 		: { imageName: definition.image };
 	return create(DevboxTemplateSpecSchema, {
