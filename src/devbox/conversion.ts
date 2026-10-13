@@ -37,6 +37,7 @@ import type {
 	DevboxLabelPredicate,
 	DevboxInfo,
 	EnvironmentVariables,
+	ExposedPort,
 	Image,
 	ImageMetadata,
 	ImageSelector,
@@ -332,17 +333,33 @@ function deserializeSessions(sessions: DevboxTemplateSpec["sessions"]): Session[
 	}));
 }
 
-export function serializePortForwards(portForwards?: PortForward[]) {
-	return (portForwards ?? []).map((portForward) => ({
-		name: portForward.name ?? "",
-		number: portForward.number,
-		kind: PortSpec_Kind.PORT_FORWARD,
-	}));
+export function serializePorts(portForwards?: PortForward[], exposedPorts?: ExposedPort[]) {
+	return [
+		...(portForwards ?? []).map((portForward) => ({
+			name: portForward.name ?? "",
+			number: portForward.number,
+			kind: PortSpec_Kind.PORT_FORWARD,
+		})),
+		...(exposedPorts ?? []).map((exposedPort) => ({
+			name: exposedPort.name ?? "",
+			number: exposedPort.number,
+			kind: PortSpec_Kind.HTTP_INGRESS,
+		})),
+	];
 }
 
 function deserializePortForwards(ports: DevboxTemplateSpec["ports"]): PortForward[] {
 	return ports
 		.filter((port) => port.kind === PortSpec_Kind.PORT_FORWARD)
+		.map((port) => ({
+			name: port.name || undefined,
+			number: port.number,
+		}));
+}
+
+function deserializeExposedPorts(ports: DevboxTemplateSpec["ports"]): ExposedPort[] {
+	return ports
+		.filter((port) => port.kind === PortSpec_Kind.HTTP_INGRESS)
 		.map((port) => ({
 			name: port.name || undefined,
 			number: port.number,
@@ -376,7 +393,7 @@ export function blueprintSpec(name: string, definition: BlueprintDefinition): De
 		initScript: definition.initScript ?? "",
 		versionControl: serializeVersionControl(definition.versionControl),
 		sessions: serializeSessions(definition.sessions),
-		ports: serializePortForwards(definition.portForwards),
+		ports: serializePorts(definition.portForwards, definition.exposedPorts),
 	});
 }
 
@@ -432,6 +449,7 @@ export function blueprint(proto: ProtoBlueprint): Blueprint {
 			versionControl: deserializeVersionControl(spec.versionControl),
 			sessions: deserializeSessions(spec.sessions),
 			portForwards: deserializePortForwards(spec.ports),
+			exposedPorts: deserializeExposedPorts(spec.ports),
 		},
 	};
 }

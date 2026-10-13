@@ -137,6 +137,7 @@ export type CreateDevboxInput = CreateDevboxInputBase & ({
 	instanceEventCallback?: never;
 	sessions?: never;
 	portForwards?: never;
+	exposedPorts?: never;
 } | {
 	blueprint?: never;
 	/**
@@ -158,6 +159,7 @@ export type CreateDevboxInput = CreateDevboxInputBase & ({
 	networkPolicy?: NetworkPolicy;
 	sessions?: Session[];
 	portForwards?: PortForward[];
+	exposedPorts?: ExposedPort[];
 	/**
 	 * Receives lifecycle events for every compute instance backing this devbox.
 	 * The callback is immutable after creation.
@@ -686,6 +688,11 @@ export interface PortForward {
 	number: number;
 }
 
+export interface ExposedPort {
+	name?: string;
+	number: number;
+}
+
 export interface BlueprintDefinition {
 	image: string;
 	size?: MachineSize;
@@ -703,6 +710,7 @@ export interface BlueprintDefinition {
 	versionControl?: VersionControlSpec;
 	sessions?: Session[];
 	portForwards?: PortForward[];
+	exposedPorts?: ExposedPort[];
 }
 
 export interface ImageMetadata {
