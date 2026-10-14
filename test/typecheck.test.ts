@@ -410,6 +410,28 @@ async function testDevboxClient() {
 	// @ts-expect-error Services are scoped to a running Devbox handle.
 	client.services;
 
+	// Runtime HTTP-exposed port management.
+	const exposedPorts: devboxPublicApi.ExposedPortResource = devbox.exposedPorts;
+	const managedExposedPort: sdkPublicApi.ExposedPortInfo = await exposedPorts.create({
+		name: "web",
+		number: 3000,
+	});
+	const exposedPortUrl: string = managedExposedPort.url;
+	const exposedPortOwner: "user" | "namespace" | "unknown" = managedExposedPort.owner;
+	await exposedPorts.get({ id: managedExposedPort.id });
+	await exposedPorts.get({ name: "web" });
+	await exposedPorts.get({ number: 3000 });
+	const listedExposedPorts: devboxPublicApi.ExposedPortInfo[] = await exposedPorts.list();
+	await exposedPorts.delete({ number: managedExposedPort.number });
+	// @ts-expect-error Explicit selector objects distinguish IDs, names, and port numbers.
+	await exposedPorts.get("web");
+	// @ts-expect-error Exactly one selector must be supplied.
+	await exposedPorts.get({ name: "web", number: 3000 });
+	// @ts-expect-error The protocol port kind is internal; exposed ports are always HTTP ingress.
+	await exposedPorts.create({ number: 3000, kind: "http-ingress" });
+	// @ts-expect-error Exposed ports are scoped to a running Devbox handle.
+	client.exposedPorts;
+
 	const terminal = await devbox.terminal.open({ columns: 120, rows: 40 });
 	terminal.write("pwd\n");
 	terminal.resize(160, 50);

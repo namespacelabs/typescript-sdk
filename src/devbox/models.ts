@@ -419,6 +419,38 @@ export interface ServiceResource {
 	logs(ref: string, options?: OperationOptions): AsyncIterableIterator<ExecutionLogChunk>;
 }
 
+export interface PortForward {
+	name?: string;
+	number: number;
+}
+
+export interface ExposedPort {
+	name?: string;
+	number: number;
+}
+
+export interface ExposedPortInfo extends ExposedPort {
+	id: string;
+	url: string;
+	owner: "user" | "namespace" | "unknown";
+}
+
+export type ExposedPortSelector =
+	| { id: string; name?: never; number?: never }
+	| { id?: never; name: string; number?: never }
+	| { id?: never; name?: never; number: number };
+
+export interface ExposedPortResource {
+	/** Expose an HTTP port and return its devbox.so URL. Activates a stopped devbox. */
+	create(input: ExposedPort, options?: OperationOptions): Promise<ExposedPortInfo>;
+	/** Look up an exposed port by exact ID, name, or number. Activates a stopped devbox. */
+	get(selector: ExposedPortSelector, options?: OperationOptions): Promise<ExposedPortInfo>;
+	/** List user- and Namespace-owned HTTP-exposed ports from the current devbox agent. */
+	list(options?: OperationOptions): Promise<ExposedPortInfo[]>;
+	/** Stop exposing a port selected by exact ID, name, or number. */
+	delete(selector: ExposedPortSelector, options?: OperationOptions): Promise<void>;
+}
+
 export interface TerminalOpenOptions extends OperationOptions {
 	columns?: number;
 	rows?: number;
@@ -590,6 +622,8 @@ export interface Devbox {
 	readonly executions: DevboxExecutions;
 	/** Durable supervised services. Connection-backed: using it on a stopped devbox activates it first. */
 	readonly services: ServiceResource;
+	/** HTTP-exposed ports. Connection-backed: using it on a stopped devbox activates it first. */
+	readonly exposedPorts: ExposedPortResource;
 	/**
 	 * Run a command on the devbox and collect its output.
 	 *
@@ -682,16 +716,6 @@ export interface Session {
 export type BlueprintSession = Session & {
 	emoji?: string;
 };
-
-export interface PortForward {
-	name?: string;
-	number: number;
-}
-
-export interface ExposedPort {
-	name?: string;
-	number: number;
-}
 
 export interface BlueprintDefinition {
 	image: string;

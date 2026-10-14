@@ -12,7 +12,9 @@ import {
 	AgentService,
 	StartExecRequestSchema,
 	StopExecRequest_Mode,
+	type CreatePortRequest,
 	type CreateServiceRequest,
+	type ListPortsRequest,
 	type StartExecRequest,
 	type StopServiceRequest,
 } from "../proto/namespace/private/devbox/wire/wire_pb.js";
@@ -229,6 +231,18 @@ export class AgentConnection {
 
 	async deleteService(ref: string, options: OperationOptions): Promise<void> {
 		await this.client.deleteService({ idOrName: ref }, options);
+	}
+
+	async createPort(request: CreatePortRequest, options: OperationOptions) {
+		return this.client.createPort(request, options);
+	}
+
+	async listPorts(request: ListPortsRequest, options: OperationOptions) {
+		return this.client.listPorts(request, options);
+	}
+
+	async deletePort(id: string, options: OperationOptions): Promise<void> {
+		await this.client.deletePort({ id }, options);
 	}
 
 	async exec(argv: readonly string[], options: ExecOptions = {}): Promise<ExecResult> {

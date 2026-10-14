@@ -1,3 +1,5 @@
+import type { ExposedPortSelector } from "./models.js";
+
 /**
  * Typed errors thrown by the Devbox client.
  *
@@ -67,9 +69,22 @@ export class ServiceNotFoundError extends DevboxError {
 	}
 }
 
+/** The devbox agent has no HTTP-exposed port matching the supplied selector. */
+export class ExposedPortNotFoundError extends DevboxError {
+	constructor(readonly selector: ExposedPortSelector) {
+		super(`devbox exposed port ${formatExposedPortSelector(selector)} was not found`);
+	}
+}
+
 /** The service has no retained supervised run whose output can be read. */
 export class ServiceLogsNotFoundError extends DevboxError {
 	constructor(readonly serviceId: string) {
 		super(`devbox service ${serviceId} has no retained logs`);
 	}
+}
+
+function formatExposedPortSelector(selector: ExposedPortSelector): string {
+	if (selector.id !== undefined) return `with ID ${selector.id}`;
+	if (selector.name !== undefined) return `named ${selector.name}`;
+	return `on port ${selector.number}`;
 }
