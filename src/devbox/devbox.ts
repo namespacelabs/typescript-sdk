@@ -1,4 +1,6 @@
 import { Readable } from "node:stream";
+import { create } from "@bufbuild/protobuf";
+import { Code, ConnectError } from "@connectrpc/connect";
 
 // ssh2 is CommonJS; Node's ESM named-export detection does not surface
 // `utils`, so import the default export and destructure.
@@ -9,8 +11,21 @@ import type {
 	SFTPWrapper,
 	Stats,
 } from "ssh2";
+import {
+	CreatePortRequestSchema,
+	ListPortsRequestSchema,
+	Port_Owner,
+	PortSpec_Kind,
+	type Port as ProtoPort,
+} from "../proto/namespace/private/devbox/wire/wire_pb.js";
 import { collectExec, ConnectionManager, operationDeadline, withDeadline } from "./connection.js";
-import { DevboxTimeoutError, ExecutionNotFoundError } from "./errors.js";
+import type { AgentConnection } from "./connection.js";
+import {
+	DevboxTimeoutError,
+	ExecutionNotFoundError,
+	ExposedPortNotFoundError,
+	IncompleteResponseError,
+} from "./errors.js";
 import type {
 	ClickOptions,
 	CopyOptions,
@@ -27,6 +42,10 @@ import type {
 	ExecutionWaitOptions,
 	ExecOptions,
 	ExecResult,
+	ExposedPort,
+	ExposedPortInfo,
+	ExposedPortResource,
+	ExposedPortSelector,
 	MkdirOptions,
 	OperationOptions,
 	ReadOptions,
@@ -62,6 +81,7 @@ export class DevboxHandle implements DevboxModel {
 	readonly display: DevboxDisplay;
 	readonly executions: DevboxExecutions;
 	readonly services: ServiceResource;
+	readonly exposedPorts: ExposedPortResource;
 
 	constructor(
 		private currentInfo: DevboxInfo,
@@ -81,6 +101,12 @@ export class DevboxHandle implements DevboxModel {
 			list: (options) => this.listExecutions(options),
 		};
 		this.services = new ServiceResources(this.id, connections);
+		this.exposedPorts = {
+			create: (input, options) => this.createExposedPort(input, options),
+			get: (selector, options) => this.getExposedPort(selector, options),
+			list: (options) => this.listExposedPorts(options),
+			delete: (selector, options) => this.deleteExposedPort(selector, options),
+		};
 	}
 
 	get id(): string {
@@ -136,6 +162,66 @@ export class DevboxHandle implements DevboxModel {
 		const connection = await this.connections.getAgent(this.id, withDeadline(options, deadline));
 		const actions = await connection.listExecutions(withDeadline(options, deadline));
 		return actions.map((action) => new ExecutionHandle(action.id, this.id, this.connections));
+	}
+
+	private async createExposedPort(
+		input: ExposedPort,
+		options: OperationOptions = {},
+	): Promise<ExposedPortInfo> {
+		validateExposedPort(input);
+
+		const request = create(CreatePortRequestSchema, {
+			spec: {
+				name: input.name ?? "",
+				number: input.number,
+				kind: PortSpec_Kind.HTTP_INGRESS,
+			},
+		});
+		const deadline = operationDeadline(options);
+		const agent = await this.connections.getAgent(this.id, withDeadline(options, deadline));
+		const response = await agent.createPort(request, withDeadline(options, deadline));
+		return exposedPort(required(response.port, "create exposed port response"), this.id);
+	}
+
+	private async getExposedPort(
+		selector: ExposedPortSelector,
+		options: OperationOptions = {},
+	): Promise<ExposedPortInfo> {
+		validateExposedPortSelector(selector);
+		const deadline = operationDeadline(options);
+		const agent = await this.connections.getAgent(this.id, withDeadline(options, deadline));
+		return resolveExposedPort(
+			await listExposedPorts(agent, this.id, withDeadline(options, deadline)),
+			selector,
+		);
+	}
+
+	private async listExposedPorts(options: OperationOptions = {}): Promise<ExposedPortInfo[]> {
+		const deadline = operationDeadline(options);
+		const agent = await this.connections.getAgent(this.id, withDeadline(options, deadline));
+		return listExposedPorts(agent, this.id, withDeadline(options, deadline));
+	}
+
+	private async deleteExposedPort(
+		selector: ExposedPortSelector,
+		options: OperationOptions = {},
+	): Promise<void> {
+		validateExposedPortSelector(selector);
+		const deadline = operationDeadline(options);
+		const agent = await this.connections.getAgent(this.id, withDeadline(options, deadline));
+		const selected = resolveExposedPort(
+			await listExposedPorts(agent, this.id, withDeadline(options, deadline)),
+			selector,
+		);
+
+		try {
+			await agent.deletePort(selected.id, withDeadline(options, deadline));
+		} catch (error) {
+			if (error instanceof ConnectError && error.code === Code.NotFound) {
+				throw new ExposedPortNotFoundError(selector);
+			}
+			throw error;
+		}
 	}
 
 	async start(options?: OperationOptions): Promise<this> {
@@ -229,6 +315,105 @@ class ExecutionHandle implements DevboxExecution {
 	wait(options: ExecutionWaitOptions = {}): Promise<ExecResult> {
 		return collectExec(this.logs(options), { ...options, maxOutputBytes: options.maxOutputBytes ?? 10 * 1024 * 1024 });
 	}
+}
+
+async function listExposedPorts(
+	agent: AgentConnection,
+	devboxId: string,
+	options: OperationOptions,
+): Promise<ExposedPortInfo[]> {
+	const response = await agent.listPorts(create(ListPortsRequestSchema, {
+		kinds: [PortSpec_Kind.HTTP_INGRESS],
+	}), options);
+
+	return response.ports.map((entry) => {
+		return exposedPort(required(entry.port, "list exposed ports response"), devboxId);
+	});
+}
+
+function resolveExposedPort(ports: ExposedPortInfo[], selector: ExposedPortSelector): ExposedPortInfo {
+	const selected = selector.id !== undefined
+		? ports.find((candidate) => candidate.id === selector.id)
+		: selector.name !== undefined
+			? ports.find((candidate) => candidate.name === selector.name)
+			: ports.find((candidate) => candidate.number === selector.number);
+
+	if (!selected) {
+		throw new ExposedPortNotFoundError(selector);
+	}
+
+	return selected;
+}
+
+function exposedPort(proto: ProtoPort, devboxId: string): ExposedPortInfo {
+	if (
+		!proto.id ||
+		!proto.spec ||
+		!validPortNumber(proto.spec.number) ||
+		proto.spec.kind !== PortSpec_Kind.HTTP_INGRESS
+	) {
+		throw new IncompleteResponseError("devbox exposed port response");
+	}
+
+	return {
+		id: proto.id,
+		name: proto.spec.name || undefined,
+		number: proto.spec.number,
+		url: `https://dbx${devboxId}-p${proto.spec.number}.devbox.so/`,
+		owner: exposedPortOwner(proto.owner),
+	};
+}
+
+function exposedPortOwner(value: Port_Owner): ExposedPortInfo["owner"] {
+	switch (value) {
+		case Port_Owner.USER:
+			return "user";
+		case Port_Owner.NAMESPACE:
+			return "namespace";
+		default:
+			return "unknown";
+	}
+}
+
+function validateExposedPort(input: ExposedPort): void {
+	if (!validPortNumber(input.number)) {
+		throw new RangeError("exposed port number must be an integer between 1 and 65535");
+	}
+	if (input.name !== undefined && !input.name.trim()) {
+		throw new TypeError("exposed port name must not be empty");
+	}
+}
+
+function validateExposedPortSelector(selector: ExposedPortSelector): void {
+	if (!selector || typeof selector !== "object") {
+		throw new TypeError("exposed port selector must specify exactly one of id, name, or number");
+	}
+
+	const specified = [selector.id, selector.name, selector.number].filter((value) => value !== undefined);
+	if (specified.length !== 1) {
+		throw new TypeError("exposed port selector must specify exactly one of id, name, or number");
+	}
+	if (selector.id !== undefined && !selector.id) {
+		throw new TypeError("exposed port id must not be empty");
+	}
+	if (selector.name !== undefined && !selector.name.trim()) {
+		throw new TypeError("exposed port name must not be empty");
+	}
+	if (selector.number !== undefined && !validPortNumber(selector.number)) {
+		throw new RangeError("exposed port number must be an integer between 1 and 65535");
+	}
+}
+
+function validPortNumber(value: number): boolean {
+	return Number.isInteger(value) && value >= 1 && value <= 65535;
+}
+
+function required<T>(value: T | undefined, context: string): T {
+	if (value === undefined) {
+		throw new IncompleteResponseError(context);
+	}
+
+	return value;
 }
 
 class RemoteFileSystem implements DevboxFileSystem {
