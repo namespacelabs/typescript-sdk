@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file proto/namespace/private/git/snapshots.proto.
  */
 export const file_proto_namespace_private_git_snapshots: GenFile = /*@__PURE__*/
-  fileDesc("Citwcm90by9uYW1lc3BhY2UvcHJpdmF0ZS9naXQvc25hcHNob3RzLnByb3RvEhxuYW1lc3BhY2UucHJpdmF0ZS5naXQudjFiZXRhItUBChZQcmVwYXJlU25hcHNob3RSZXF1ZXN0EhYKDnJlcG9zaXRvcnlfdXJsGAEgASgJEgsKA3JlZhgCIAEoCRI4CgRraW5kGAMgASgOMioubmFtZXNwYWNlLnByaXZhdGUuZ2l0LnYxYmV0YS5TbmFwc2hvdEtpbmQSFwoPYWRkaXRpb25hbF9yZWZzGAUgAygJEkMKDnJlZl9yZXNvbHV0aW9uGAYgASgOMisubmFtZXNwYWNlLnByaXZhdGUuZ2l0LnYxYmV0YS5SZWZSZXNvbHV0aW9uIsgBChdQcmVwYXJlU25hcHNob3RSZXNwb25zZRILCgN1cmwYASABKAkSEgoKc2l6ZV9ieXRlcxgCIAEoAxIXCg9yZXNvbHZlZF9jb21taXQYAyABKAkSOAoEa2luZBgEIAEoDjIqLm5hbWVzcGFjZS5wcml2YXRlLmdpdC52MWJldGEuU25hcHNob3RLaW5kEiMKG3Jlc29sdmVkX2FkZGl0aW9uYWxfY29tbWl0cxgFIAMoCRIUCgxyZXNvbHZlZF9yZWYYBiABKAki/wIKHFByZXBhcmVTbmFwc2hvdFJlc3BvbnNlQ2h1bmsSRwoIc25hcHNob3QYASABKAsyNS5uYW1lc3BhY2UucHJpdmF0ZS5naXQudjFiZXRhLlByZXBhcmVTbmFwc2hvdFJlc3BvbnNlElEKBnN0YXR1cxgCIAEoDjJBLm5hbWVzcGFjZS5wcml2YXRlLmdpdC52MWJldGEuUHJlcGFyZVNuYXBzaG90UmVzcG9uc2VDaHVuay5TdGF0dXMSDwoHbWVzc2FnZRgDIAEoCSKxAQoGU3RhdHVzEhYKElNUQVRVU19VTlNQRUNJRklFRBAAEiAKHFNUQVRVU19TRVRUSU5HX1VQX1JFUE9TSVRPUlkQARIdChlTVEFUVVNfRkVUQ0hJTkdfUkVGRVJFTkNFEAISHQoZU1RBVFVTX1BSRVBBUklOR19TTkFQU0hPVBADEh0KGVNUQVRVU19VUExPQURJTkdfU05BUFNIT1QQBBIQCgxTVEFUVVNfUkVBRFkQBSphCgxTbmFwc2hvdEtpbmQSHQoZU05BUFNIT1RfS0lORF9VTlNQRUNJRklFRBAAEhYKElNOQVBTSE9UX0tJTkRfQkFSRRABEhoKFlNOQVBTSE9UX0tJTkRfQ09NUExFVEUQAipkCg1SZWZSZXNvbHV0aW9uEh4KGlJFRl9SRVNPTFVUSU9OX1VOU1BFQ0lGSUVEEAASGAoUUkVGX1JFU09MVVRJT05fRVhBQ1QQARIZChVSRUZfUkVTT0xVVElPTl9SRUNFTlQQAjKcAQoSR2l0U25hcHNob3RTZXJ2aWNlEoUBCg9QcmVwYXJlU25hcHNob3QSNC5uYW1lc3BhY2UucHJpdmF0ZS5naXQudjFiZXRhLlByZXBhcmVTbmFwc2hvdFJlcXVlc3QaOi5uYW1lc3BhY2UucHJpdmF0ZS5naXQudjFiZXRhLlByZXBhcmVTbmFwc2hvdFJlc3BvbnNlQ2h1bmswAUJNWktuYW1lc3BhY2VsYWJzLmRldi9pbnRlcm5hbC9wdWJsaWMvZ2VuL3Byb3RvL25hbWVzcGFjZS9wcml2YXRlL2dpdDtnaXR2MWJldGFiBnByb3RvMw");
+  fileDesc("Citwcm90by9uYW1lc3BhY2UvcHJpdmF0ZS9naXQvc25hcHNob3RzLnByb3RvEhxuYW1lc3BhY2UucHJpdmF0ZS5naXQudjFiZXRhIqkCChZQcmVwYXJlU25hcHNob3RSZXF1ZXN0EhYKDnJlcG9zaXRvcnlfdXJsGAEgASgJEgsKA3JlZhgCIAEoCRI4CgRraW5kGAMgASgOMioubmFtZXNwYWNlLnByaXZhdGUuZ2l0LnYxYmV0YS5TbmFwc2hvdEtpbmQSFwoPYWRkaXRpb25hbF9yZWZzGAUgAygJEkMKDnJlZl9yZXNvbHV0aW9uGAYgASgOMisubmFtZXNwYWNlLnByaXZhdGUuZ2l0LnYxYmV0YS5SZWZSZXNvbHV0aW9uEkMKD3N1cHBvcnRlZF9raW5kcxgHIAMoDjIqLm5hbWVzcGFjZS5wcml2YXRlLmdpdC52MWJldGEuU25hcHNob3RLaW5kEg0KBWRlcHRoGAggASgFIskCChdQcmVwYXJlU25hcHNob3RSZXNwb25zZRILCgN1cmwYASABKAkSEgoKc2l6ZV9ieXRlcxgCIAEoAxIXCg9yZXNvbHZlZF9jb21taXQYAyABKAkSOAoEa2luZBgEIAEoDjIqLm5hbWVzcGFjZS5wcml2YXRlLmdpdC52MWJldGEuU25hcHNob3RLaW5kEiMKG3Jlc29sdmVkX2FkZGl0aW9uYWxfY29tbWl0cxgFIAMoCRIUCgxyZXNvbHZlZF9yZWYYBiABKAkSDwoHZ2l0X3VybBgHIAEoCRIPCgdnaXRfcmVmGAggASgJEk4KFGdpdF9odHRwX2NyZWRlbnRpYWxzGAkgASgLMjAubmFtZXNwYWNlLnByaXZhdGUuZ2l0LnYxYmV0YS5HaXRIdHRwQ3JlZGVudGlhbHMSDQoFZGVwdGgYCiABKAUiZQoSR2l0SHR0cENyZWRlbnRpYWxzEhEKCXVybF9zY29wZRgBIAEoCRI8CgdoZWFkZXJzGAIgAygLMisubmFtZXNwYWNlLnByaXZhdGUuZ2l0LnYxYmV0YS5HaXRIdHRwSGVhZGVyIiwKDUdpdEh0dHBIZWFkZXISDAoEbmFtZRgBIAEoCRINCgV2YWx1ZRgCIAEoCSL/AgocUHJlcGFyZVNuYXBzaG90UmVzcG9uc2VDaHVuaxJHCghzbmFwc2hvdBgBIAEoCzI1Lm5hbWVzcGFjZS5wcml2YXRlLmdpdC52MWJldGEuUHJlcGFyZVNuYXBzaG90UmVzcG9uc2USUQoGc3RhdHVzGAIgASgOMkEubmFtZXNwYWNlLnByaXZhdGUuZ2l0LnYxYmV0YS5QcmVwYXJlU25hcHNob3RSZXNwb25zZUNodW5rLlN0YXR1cxIPCgdtZXNzYWdlGAMgASgJIrEBCgZTdGF0dXMSFgoSU1RBVFVTX1VOU1BFQ0lGSUVEEAASIAocU1RBVFVTX1NFVFRJTkdfVVBfUkVQT1NJVE9SWRABEh0KGVNUQVRVU19GRVRDSElOR19SRUZFUkVOQ0UQAhIdChlTVEFUVVNfUFJFUEFSSU5HX1NOQVBTSE9UEAMSHQoZU1RBVFVTX1VQTE9BRElOR19TTkFQU0hPVBAEEhAKDFNUQVRVU19SRUFEWRAFKpoBCgxTbmFwc2hvdEtpbmQSHQoZU05BUFNIT1RfS0lORF9VTlNQRUNJRklFRBAAEhYKElNOQVBTSE9UX0tJTkRfQkFSRRABEhoKFlNOQVBTSE9UX0tJTkRfQ09NUExFVEUQAhIXChNTTkFQU0hPVF9LSU5EX0NMT05FEAMSHgoaU05BUFNIT1RfS0lORF9DTE9ORV9PUklHSU4QBCpkCg1SZWZSZXNvbHV0aW9uEh4KGlJFRl9SRVNPTFVUSU9OX1VOU1BFQ0lGSUVEEAASGAoUUkVGX1JFU09MVVRJT05fRVhBQ1QQARIZChVSRUZfUkVTT0xVVElPTl9SRUNFTlQQAjKcAQoSR2l0U25hcHNob3RTZXJ2aWNlEoUBCg9QcmVwYXJlU25hcHNob3QSNC5uYW1lc3BhY2UucHJpdmF0ZS5naXQudjFiZXRhLlByZXBhcmVTbmFwc2hvdFJlcXVlc3QaOi5uYW1lc3BhY2UucHJpdmF0ZS5naXQudjFiZXRhLlByZXBhcmVTbmFwc2hvdFJlc3BvbnNlQ2h1bmswAUJNWktuYW1lc3BhY2VsYWJzLmRldi9pbnRlcm5hbC9wdWJsaWMvZ2VuL3Byb3RvL25hbWVzcGFjZS9wcml2YXRlL2dpdDtnaXR2MWJldGFiBnByb3RvMw");
 
 /**
  * @generated from message namespace.private.git.v1beta.PrepareSnapshotRequest
@@ -32,6 +32,9 @@ export type PrepareSnapshotRequest = Message<"namespace.private.git.v1beta.Prepa
   ref: string;
 
   /**
+   * Desired snapshot representation. Servers use this when supported_kinds is
+   * empty, including for clients that predate representation negotiation.
+   *
    * @generated from field: namespace.private.git.v1beta.SnapshotKind kind = 3;
    */
   kind: SnapshotKind;
@@ -51,6 +54,22 @@ export type PrepareSnapshotRequest = Message<"namespace.private.git.v1beta.Prepa
    * @generated from field: namespace.private.git.v1beta.RefResolution ref_resolution = 6;
    */
   refResolution: RefResolution;
+
+  /**
+   * Representations the client can materialize. When non-empty, the server
+   * selects one and reports it in PrepareSnapshotResponse.kind.
+   *
+   * @generated from field: repeated namespace.private.git.v1beta.SnapshotKind supported_kinds = 7;
+   */
+  supportedKinds: SnapshotKind[];
+
+  /**
+   * 0 preserves full history; 1 includes only the requested commits and their
+   * trees. Nonzero depth requires the BARE or COMPLETE representation.
+   *
+   * @generated from field: int32 depth = 8;
+   */
+  depth: number;
 };
 
 /**
@@ -83,6 +102,8 @@ export type PrepareSnapshotResponse = Message<"namespace.private.git.v1beta.Prep
   resolvedCommit: string;
 
   /**
+   * Representation selected by the server.
+   *
    * @generated from field: namespace.private.git.v1beta.SnapshotKind kind = 4;
    */
   kind: SnapshotKind;
@@ -96,6 +117,34 @@ export type PrepareSnapshotResponse = Message<"namespace.private.git.v1beta.Prep
    * @generated from field: string resolved_ref = 6;
    */
   resolvedRef: string;
+
+  /**
+   * Smart HTTP Git URL used for CLONE and CLONE_ORIGIN. This may point to the
+   * snapshot service's mirror or to an external origin.
+   *
+   * @generated from field: string git_url = 7;
+   */
+  gitUrl: string;
+
+  /**
+   * @generated from field: string git_ref = 8;
+   */
+  gitRef: string;
+
+  /**
+   * Short-lived credentials scoped to git_url. Empty for the snapshot service's mirror.
+   *
+   * @generated from field: namespace.private.git.v1beta.GitHttpCredentials git_http_credentials = 9;
+   */
+  gitHttpCredentials?: GitHttpCredentials;
+
+  /**
+   * Applied history depth. Clients must check this before accepting a shallow
+   * snapshot from servers that may predate depth support.
+   *
+   * @generated from field: int32 depth = 10;
+   */
+  depth: number;
 };
 
 /**
@@ -104,6 +153,50 @@ export type PrepareSnapshotResponse = Message<"namespace.private.git.v1beta.Prep
  */
 export const PrepareSnapshotResponseSchema: GenMessage<PrepareSnapshotResponse> = /*@__PURE__*/
   messageDesc(file_proto_namespace_private_git_snapshots, 1);
+
+/**
+ * @generated from message namespace.private.git.v1beta.GitHttpCredentials
+ */
+export type GitHttpCredentials = Message<"namespace.private.git.v1beta.GitHttpCredentials"> & {
+  /**
+   * @generated from field: string url_scope = 1;
+   */
+  urlScope: string;
+
+  /**
+   * @generated from field: repeated namespace.private.git.v1beta.GitHttpHeader headers = 2;
+   */
+  headers: GitHttpHeader[];
+};
+
+/**
+ * Describes the message namespace.private.git.v1beta.GitHttpCredentials.
+ * Use `create(GitHttpCredentialsSchema)` to create a new message.
+ */
+export const GitHttpCredentialsSchema: GenMessage<GitHttpCredentials> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_private_git_snapshots, 2);
+
+/**
+ * @generated from message namespace.private.git.v1beta.GitHttpHeader
+ */
+export type GitHttpHeader = Message<"namespace.private.git.v1beta.GitHttpHeader"> & {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name: string;
+
+  /**
+   * @generated from field: string value = 2;
+   */
+  value: string;
+};
+
+/**
+ * Describes the message namespace.private.git.v1beta.GitHttpHeader.
+ * Use `create(GitHttpHeaderSchema)` to create a new message.
+ */
+export const GitHttpHeaderSchema: GenMessage<GitHttpHeader> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_private_git_snapshots, 3);
 
 /**
  * @generated from message namespace.private.git.v1beta.PrepareSnapshotResponseChunk
@@ -130,7 +223,7 @@ export type PrepareSnapshotResponseChunk = Message<"namespace.private.git.v1beta
  * Use `create(PrepareSnapshotResponseChunkSchema)` to create a new message.
  */
 export const PrepareSnapshotResponseChunkSchema: GenMessage<PrepareSnapshotResponseChunk> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_private_git_snapshots, 2);
+  messageDesc(file_proto_namespace_private_git_snapshots, 4);
 
 /**
  * @generated from enum namespace.private.git.v1beta.PrepareSnapshotResponseChunk.Status
@@ -171,7 +264,7 @@ export enum PrepareSnapshotResponseChunk_Status {
  * Describes the enum namespace.private.git.v1beta.PrepareSnapshotResponseChunk.Status.
  */
 export const PrepareSnapshotResponseChunk_StatusSchema: GenEnum<PrepareSnapshotResponseChunk_Status> = /*@__PURE__*/
-  enumDesc(file_proto_namespace_private_git_snapshots, 2, 0);
+  enumDesc(file_proto_namespace_private_git_snapshots, 4, 0);
 
 /**
  * @generated from enum namespace.private.git.v1beta.SnapshotKind
@@ -191,6 +284,20 @@ export enum SnapshotKind {
    * @generated from enum value: SNAPSHOT_KIND_COMPLETE = 2;
    */
   COMPLETE = 2,
+
+  /**
+   * @generated from enum value: SNAPSHOT_KIND_CLONE = 3;
+   */
+  CLONE = 3,
+
+  /**
+   * Credential-only origin checkout. git_url and git_ref identify the origin
+   * and requested ref; the client resolves that ref and additional_refs itself.
+   * The server does not populate resolved_commit or resolved_additional_commits.
+   *
+   * @generated from enum value: SNAPSHOT_KIND_CLONE_ORIGIN = 4;
+   */
+  CLONE_ORIGIN = 4,
 }
 
 /**

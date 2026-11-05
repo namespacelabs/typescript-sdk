@@ -4,13 +4,15 @@
 
 import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
 import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
+import type { EmptySchema } from "@bufbuild/protobuf/wkt";
+import { file_google_protobuf_empty } from "@bufbuild/protobuf/wkt";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file proto/namespace/cloud/iam/v1beta/tenant_membership.proto.
  */
 export const file_proto_namespace_cloud_iam_v1beta_tenant_membership: GenFile = /*@__PURE__*/
-  fileDesc("Cjhwcm90by9uYW1lc3BhY2UvY2xvdWQvaWFtL3YxYmV0YS90ZW5hbnRfbWVtYmVyc2hpcC5wcm90bxIabmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEiGgoYTGlzdFRlbmFudE1lbWJlcnNSZXF1ZXN0IlYKGUxpc3RUZW5hbnRNZW1iZXJzUmVzcG9uc2USOQoHbWVtYmVycxgBIAMoCzIoLm5hbWVzcGFjZS5jbG91ZC5pYW0udjFiZXRhLlRlbmFudE1lbWJlciKRAQoMVGVuYW50TWVtYmVyEg8KB3VzZXJfaWQYASABKAkSEgoKZmlyc3RfbmFtZRgCIAEoCRIRCglsYXN0X25hbWUYAyABKAkSDQoFZW1haWwYBCABKAkSOgoEcm9sZRgFIAEoDjIsLm5hbWVzcGFjZS5jbG91ZC5pYW0udjFiZXRhLlRlbmFudE1lbWJlclJvbGUq0wEKEFRlbmFudE1lbWJlclJvbGUSIgoeVEVOQU5UX01FTUJFUl9ST0xFX1VOU1BFQ0lGSUVEEAASHAoYVEVOQU5UX01FTUJFUl9ST0xFX09XTkVSEAESHQoZVEVOQU5UX01FTUJFUl9ST0xFX0VESVRPUhACEhwKGFRFTkFOVF9NRU1CRVJfUk9MRV9BRE1JThADEh0KGVRFTkFOVF9NRU1CRVJfUk9MRV9SRUFERVIQBBIhCh1URU5BTlRfTUVNQkVSX1JPTEVfQUNDT1VOVEFOVBAFMpwBChdUZW5hbnRNZW1iZXJzaGlwU2VydmljZRKAAQoRTGlzdFRlbmFudE1lbWJlcnMSNC5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5MaXN0VGVuYW50TWVtYmVyc1JlcXVlc3QaNS5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5MaXN0VGVuYW50TWVtYmVyc1Jlc3BvbnNlQlJaUG5hbWVzcGFjZWxhYnMuZGV2L2ludGVybmFsL3B1YmxpYy9nZW4vcHJvdG8vbmFtZXNwYWNlL2Nsb3VkL2lhbS92MWJldGE7aWFtdjFiZXRhYgZwcm90bzM");
+  fileDesc("Cjhwcm90by9uYW1lc3BhY2UvY2xvdWQvaWFtL3YxYmV0YS90ZW5hbnRfbWVtYmVyc2hpcC5wcm90bxIabmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEiGgoYTGlzdFRlbmFudE1lbWJlcnNSZXF1ZXN0IlYKGUxpc3RUZW5hbnRNZW1iZXJzUmVzcG9uc2USOQoHbWVtYmVycxgBIAMoCzIoLm5hbWVzcGFjZS5jbG91ZC5pYW0udjFiZXRhLlRlbmFudE1lbWJlciIsChlSZW1vdmVUZW5hbnRNZW1iZXJSZXF1ZXN0Eg8KB3VzZXJfaWQYASABKAkikQEKDFRlbmFudE1lbWJlchIPCgd1c2VyX2lkGAEgASgJEhIKCmZpcnN0X25hbWUYAiABKAkSEQoJbGFzdF9uYW1lGAMgASgJEg0KBWVtYWlsGAQgASgJEjoKBHJvbGUYBSABKA4yLC5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5UZW5hbnRNZW1iZXJSb2xlKtMBChBUZW5hbnRNZW1iZXJSb2xlEiIKHlRFTkFOVF9NRU1CRVJfUk9MRV9VTlNQRUNJRklFRBAAEhwKGFRFTkFOVF9NRU1CRVJfUk9MRV9PV05FUhABEh0KGVRFTkFOVF9NRU1CRVJfUk9MRV9FRElUT1IQAhIcChhURU5BTlRfTUVNQkVSX1JPTEVfQURNSU4QAxIdChlURU5BTlRfTUVNQkVSX1JPTEVfUkVBREVSEAQSIQodVEVOQU5UX01FTUJFUl9ST0xFX0FDQ09VTlRBTlQQBTKBAgoXVGVuYW50TWVtYmVyc2hpcFNlcnZpY2USgAEKEUxpc3RUZW5hbnRNZW1iZXJzEjQubmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEuTGlzdFRlbmFudE1lbWJlcnNSZXF1ZXN0GjUubmFtZXNwYWNlLmNsb3VkLmlhbS52MWJldGEuTGlzdFRlbmFudE1lbWJlcnNSZXNwb25zZRJjChJSZW1vdmVUZW5hbnRNZW1iZXISNS5uYW1lc3BhY2UuY2xvdWQuaWFtLnYxYmV0YS5SZW1vdmVUZW5hbnRNZW1iZXJSZXF1ZXN0GhYuZ29vZ2xlLnByb3RvYnVmLkVtcHR5QlJaUG5hbWVzcGFjZWxhYnMuZGV2L2ludGVybmFsL3B1YmxpYy9nZW4vcHJvdG8vbmFtZXNwYWNlL2Nsb3VkL2lhbS92MWJldGE7aWFtdjFiZXRhYgZwcm90bzM", [file_google_protobuf_empty]);
 
 /**
  * @generated from message namespace.cloud.iam.v1beta.ListTenantMembersRequest
@@ -41,6 +43,25 @@ export type ListTenantMembersResponse = Message<"namespace.cloud.iam.v1beta.List
  */
 export const ListTenantMembersResponseSchema: GenMessage<ListTenantMembersResponse> = /*@__PURE__*/
   messageDesc(file_proto_namespace_cloud_iam_v1beta_tenant_membership, 1);
+
+/**
+ * @generated from message namespace.cloud.iam.v1beta.RemoveTenantMemberRequest
+ */
+export type RemoveTenantMemberRequest = Message<"namespace.cloud.iam.v1beta.RemoveTenantMemberRequest"> & {
+  /**
+   * The ID of the user to remove.
+   *
+   * @generated from field: string user_id = 1;
+   */
+  userId: string;
+};
+
+/**
+ * Describes the message namespace.cloud.iam.v1beta.RemoveTenantMemberRequest.
+ * Use `create(RemoveTenantMemberRequestSchema)` to create a new message.
+ */
+export const RemoveTenantMemberRequestSchema: GenMessage<RemoveTenantMemberRequest> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_iam_v1beta_tenant_membership, 2);
 
 /**
  * @generated from message namespace.cloud.iam.v1beta.TenantMember
@@ -87,7 +108,7 @@ export type TenantMember = Message<"namespace.cloud.iam.v1beta.TenantMember"> & 
  * Use `create(TenantMemberSchema)` to create a new message.
  */
 export const TenantMemberSchema: GenMessage<TenantMember> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_iam_v1beta_tenant_membership, 2);
+  messageDesc(file_proto_namespace_cloud_iam_v1beta_tenant_membership, 3);
 
 /**
  * @generated from enum namespace.cloud.iam.v1beta.TenantMemberRole
@@ -173,6 +194,19 @@ export const TenantMembershipService: GenService<{
     methodKind: "unary";
     input: typeof ListTenantMembersRequestSchema;
     output: typeof ListTenantMembersResponseSchema;
+  },
+  /**
+   * Removes a non-owner member from the authenticated tenant.
+   *
+   * ### Authentication
+   * Requires a tenant token with the {"tenant/member", "remove"} action permission.
+   *
+   * @generated from rpc namespace.cloud.iam.v1beta.TenantMembershipService.RemoveTenantMember
+   */
+  removeTenantMember: {
+    methodKind: "unary";
+    input: typeof RemoveTenantMemberRequestSchema;
+    output: typeof EmptySchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_proto_namespace_cloud_iam_v1beta_tenant_membership, 0);

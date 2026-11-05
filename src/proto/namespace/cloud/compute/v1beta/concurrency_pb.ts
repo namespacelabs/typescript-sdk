@@ -32,6 +32,8 @@ export const GetConcurrencyRequestSchema: GenMessage<GetConcurrencyRequest> = /*
  */
 export type GetConcurrencyResponse = Message<"namespace.cloud.compute.v1beta.GetConcurrencyResponse"> & {
   /**
+   * Current usage and limits for each concurrency pool.
+   *
    * @generated from field: repeated namespace.cloud.compute.v1beta.PlatformConcurrency concurrency = 1;
    */
   concurrency: PlatformConcurrency[];
@@ -56,7 +58,7 @@ export type PlatformConcurrency = Message<"namespace.cloud.compute.v1beta.Platfo
   name: string;
 
   /**
-   * e.g "linux/amd64"
+   * Platforms covered by this pool, e.g. "linux/amd64". Empty means all enabled platforms.
    *
    * @generated from field: repeated string platforms = 2;
    */

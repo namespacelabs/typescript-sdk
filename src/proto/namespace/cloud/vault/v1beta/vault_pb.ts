@@ -45,7 +45,9 @@ export type CreateObjectRequest = Message<"namespace.cloud.vault.v1beta.CreateOb
   /**
    * You can specify additional context to attach to an object. Labels are
    * immutable and are shared across all versions. Objects can be listed based
-   * on label constraints.
+   * on label constraints. Label names are limited to 63 bytes and values to
+   * 255 bytes. The combined size of all label names and values cannot exceed
+   * 4 KiB.
    *
    * @generated from field: repeated namespace.stdlib.Label labels = 4;
    */

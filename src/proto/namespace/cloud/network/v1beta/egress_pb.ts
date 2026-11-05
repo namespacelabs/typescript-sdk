@@ -4,13 +4,15 @@
 
 import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
 import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
+import type { HttpHeader } from "../../../stdlib/callback_pb.js";
+import { file_proto_namespace_stdlib_callback } from "../../../stdlib/callback_pb.js";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file proto/namespace/cloud/network/v1beta/egress.proto.
  */
 export const file_proto_namespace_cloud_network_v1beta_egress: GenFile = /*@__PURE__*/
-  fileDesc("CjFwcm90by9uYW1lc3BhY2UvY2xvdWQvbmV0d29yay92MWJldGEvZWdyZXNzLnByb3RvEh5uYW1lc3BhY2UuY2xvdWQubmV0d29yay52MWJldGEiWQoZQ3JlYXRlRWdyZXNzUG9saWN5UmVxdWVzdBI8CgZwb2xpY3kYASABKAsyLC5uYW1lc3BhY2UuY2xvdWQubmV0d29yay52MWJldGEuRWdyZXNzUG9saWN5Ii4KGkNyZWF0ZUVncmVzc1BvbGljeVJlc3BvbnNlEhAKCHJldmlzaW9uGAEgASgDInEKGVVwZGF0ZUVncmVzc1BvbGljeVJlcXVlc3QSPAoGcG9saWN5GAEgASgLMiwubmFtZXNwYWNlLmNsb3VkLm5ldHdvcmsudjFiZXRhLkVncmVzc1BvbGljeRIWCg5tYXRjaF9yZXZpc2lvbhgCIAEoAyIuChpVcGRhdGVFZ3Jlc3NQb2xpY3lSZXNwb25zZRIQCghyZXZpc2lvbhgBIAEoAyIlChZHZXRFZ3Jlc3NQb2xpY3lSZXF1ZXN0EgsKA3RhZxgBIAEoCSJpChdHZXRFZ3Jlc3NQb2xpY3lSZXNwb25zZRI8CgZwb2xpY3kYASABKAsyLC5uYW1lc3BhY2UuY2xvdWQubmV0d29yay52MWJldGEuRWdyZXNzUG9saWN5EhAKCHJldmlzaW9uGAIgASgDIhsKGUxpc3RFZ3Jlc3NQb2xpY2llc1JlcXVlc3Qi4QEKGkxpc3RFZ3Jlc3NQb2xpY2llc1Jlc3BvbnNlEl4KCHBvbGljaWVzGAEgAygLMkwubmFtZXNwYWNlLmNsb3VkLm5ldHdvcmsudjFiZXRhLkxpc3RFZ3Jlc3NQb2xpY2llc1Jlc3BvbnNlLkVncmVzc1BvbGljeUVudHJ5GmMKEUVncmVzc1BvbGljeUVudHJ5EjwKBnBvbGljeRgBIAEoCzIsLm5hbWVzcGFjZS5jbG91ZC5uZXR3b3JrLnYxYmV0YS5FZ3Jlc3NQb2xpY3kSEAoIcmV2aXNpb24YAiABKAMiiAcKDEVncmVzc1BvbGljeRILCgN0YWcYASABKAkSEwoLZGVzY3JpcHRpb24YAiABKAkSPwoEbW9kZRgDIAEoDjIxLm5hbWVzcGFjZS5jbG91ZC5uZXR3b3JrLnYxYmV0YS5FZ3Jlc3NQb2xpY3kuTW9kZRIeChZkZWVwX3BhY2tldF9pbnNwZWN0aW9uGAQgASgIEkAKBXJ1bGVzGAUgAygLMjEubmFtZXNwYWNlLmNsb3VkLm5ldHdvcmsudjFiZXRhLkVncmVzc1BvbGljeS5SdWxlEhsKE2FkZGl0aW9uYWxfcnVsZXNldHMYBiADKAkaqwMKBFJ1bGUSRAoCb3AYASABKA4yOC5uYW1lc3BhY2UuY2xvdWQubmV0d29yay52MWJldGEuRWdyZXNzUG9saWN5LlJ1bGUuUnVsZU9wEkUKB21hdGNoZXIYAiABKAsyNC5uYW1lc3BhY2UuY2xvdWQubmV0d29yay52MWJldGEuRWdyZXNzUG9saWN5Lk1hdGNoZXISRQoFYWxsb3cYAyABKAsyNi5uYW1lc3BhY2UuY2xvdWQubmV0d29yay52MWJldGEuRWdyZXNzUG9saWN5LkFsbG93T3B0cxJFCgVwcm94eRgEIAEoCzI2Lm5hbWVzcGFjZS5jbG91ZC5uZXR3b3JrLnYxYmV0YS5FZ3Jlc3NQb2xpY3kuUHJveHlPcHRzEkcKBmluamVjdBgFIAEoCzI3Lm5hbWVzcGFjZS5jbG91ZC5uZXR3b3JrLnYxYmV0YS5FZ3Jlc3NQb2xpY3kuSW5qZWN0T3B0cyI/CgZSdWxlT3ASEwoPUlVMRV9PUF9VTktOT1dOEAASCQoFQUxMT1cQARIJCgVQUk9YWRACEgoKBklOSkVDVBADGiAKB01hdGNoZXISFQoNbWF0Y2hfZG9tYWlucxgBIAMoCRoLCglBbGxvd09wdHMaHwoJUHJveHlPcHRzEhIKCnZpYV9kb21haW4YASABKAkaSAoKSW5qZWN0T3B0cxITCgtoZWFkZXJfbmFtZRgBIAEoCRIWCg5mcm9tX3NlY3JldF9pZBgCIAEoCRINCgV2YWx1ZRgDIAEoCSJOCgRNb2RlEhAKDE1PREVfVU5LTk9XThAAEgwKCERJU0FCTEVEEAESDQoJQUxMT1dfQUxMEAISDAoIQURWSVNPUlkQAxIJCgVCTE9DSxAEMsQEChNFZ3Jlc3NQb2xpY3lTZXJ2aWNlEosBChJDcmVhdGVFZ3Jlc3NQb2xpY3kSOS5uYW1lc3BhY2UuY2xvdWQubmV0d29yay52MWJldGEuQ3JlYXRlRWdyZXNzUG9saWN5UmVxdWVzdBo6Lm5hbWVzcGFjZS5jbG91ZC5uZXR3b3JrLnYxYmV0YS5DcmVhdGVFZ3Jlc3NQb2xpY3lSZXNwb25zZRKLAQoSVXBkYXRlRWdyZXNzUG9saWN5EjkubmFtZXNwYWNlLmNsb3VkLm5ldHdvcmsudjFiZXRhLlVwZGF0ZUVncmVzc1BvbGljeVJlcXVlc3QaOi5uYW1lc3BhY2UuY2xvdWQubmV0d29yay52MWJldGEuVXBkYXRlRWdyZXNzUG9saWN5UmVzcG9uc2USggEKD0dldEVncmVzc1BvbGljeRI2Lm5hbWVzcGFjZS5jbG91ZC5uZXR3b3JrLnYxYmV0YS5HZXRFZ3Jlc3NQb2xpY3lSZXF1ZXN0GjcubmFtZXNwYWNlLmNsb3VkLm5ldHdvcmsudjFiZXRhLkdldEVncmVzc1BvbGljeVJlc3BvbnNlEosBChJMaXN0RWdyZXNzUG9saWNpZXMSOS5uYW1lc3BhY2UuY2xvdWQubmV0d29yay52MWJldGEuTGlzdEVncmVzc1BvbGljaWVzUmVxdWVzdBo6Lm5hbWVzcGFjZS5jbG91ZC5uZXR3b3JrLnYxYmV0YS5MaXN0RWdyZXNzUG9saWNpZXNSZXNwb25zZUJaWlhuYW1lc3BhY2VsYWJzLmRldi9pbnRlcm5hbC9wdWJsaWMvZ2VuL3Byb3RvL25hbWVzcGFjZS9jbG91ZC9uZXR3b3JrL3YxYmV0YTtuZXR3b3JrdjFiZXRhYgZwcm90bzM");
+  fileDesc("CjFwcm90by9uYW1lc3BhY2UvY2xvdWQvbmV0d29yay92MWJldGEvZWdyZXNzLnByb3RvEh5uYW1lc3BhY2UuY2xvdWQubmV0d29yay52MWJldGEiWQoZQ3JlYXRlRWdyZXNzUG9saWN5UmVxdWVzdBI8CgZwb2xpY3kYASABKAsyLC5uYW1lc3BhY2UuY2xvdWQubmV0d29yay52MWJldGEuRWdyZXNzUG9saWN5Ii4KGkNyZWF0ZUVncmVzc1BvbGljeVJlc3BvbnNlEhAKCHJldmlzaW9uGAEgASgDInEKGVVwZGF0ZUVncmVzc1BvbGljeVJlcXVlc3QSPAoGcG9saWN5GAEgASgLMiwubmFtZXNwYWNlLmNsb3VkLm5ldHdvcmsudjFiZXRhLkVncmVzc1BvbGljeRIWCg5tYXRjaF9yZXZpc2lvbhgCIAEoAyIuChpVcGRhdGVFZ3Jlc3NQb2xpY3lSZXNwb25zZRIQCghyZXZpc2lvbhgBIAEoAyIlChZHZXRFZ3Jlc3NQb2xpY3lSZXF1ZXN0EgsKA3RhZxgBIAEoCSJpChdHZXRFZ3Jlc3NQb2xpY3lSZXNwb25zZRI8CgZwb2xpY3kYASABKAsyLC5uYW1lc3BhY2UuY2xvdWQubmV0d29yay52MWJldGEuRWdyZXNzUG9saWN5EhAKCHJldmlzaW9uGAIgASgDIhsKGUxpc3RFZ3Jlc3NQb2xpY2llc1JlcXVlc3Qi4QEKGkxpc3RFZ3Jlc3NQb2xpY2llc1Jlc3BvbnNlEl4KCHBvbGljaWVzGAEgAygLMkwubmFtZXNwYWNlLmNsb3VkLm5ldHdvcmsudjFiZXRhLkxpc3RFZ3Jlc3NQb2xpY2llc1Jlc3BvbnNlLkVncmVzc1BvbGljeUVudHJ5GmMKEUVncmVzc1BvbGljeUVudHJ5EjwKBnBvbGljeRgBIAEoCzIsLm5hbWVzcGFjZS5jbG91ZC5uZXR3b3JrLnYxYmV0YS5FZ3Jlc3NQb2xpY3kSEAoIcmV2aXNpb24YAiABKAMicAoMRWdyZXNzUG9saWN5EgsKA3RhZxgBIAEoCRITCgtkZXNjcmlwdGlvbhgCIAEoCRI+CgRzcGVjGAMgASgLMjAubmFtZXNwYWNlLmNsb3VkLm5ldHdvcmsudjFiZXRhLkVncmVzc1BvbGljeVNwZWMisgoKEEVncmVzc1BvbGljeVNwZWMSQwoEbW9kZRgCIAEoDjI1Lm5hbWVzcGFjZS5jbG91ZC5uZXR3b3JrLnYxYmV0YS5FZ3Jlc3NQb2xpY3lTcGVjLk1vZGUSHgoWZGVlcF9wYWNrZXRfaW5zcGVjdGlvbhgDIAEoCBJECgVydWxlcxgEIAMoCzI1Lm5hbWVzcGFjZS5jbG91ZC5uZXR3b3JrLnYxYmV0YS5FZ3Jlc3NQb2xpY3lTcGVjLlJ1bGUSGwoTYWRkaXRpb25hbF9ydWxlc2V0cxgFIAMoCRIiChZhbGxvd2VkX2VncmVzc19kb21haW5zGAEgAygJQgIYARq/AwoEUnVsZRJICgJvcBgBIAEoDjI8Lm5hbWVzcGFjZS5jbG91ZC5uZXR3b3JrLnYxYmV0YS5FZ3Jlc3NQb2xpY3lTcGVjLlJ1bGUuUnVsZU9wEkkKB21hdGNoZXIYAiABKAsyOC5uYW1lc3BhY2UuY2xvdWQubmV0d29yay52MWJldGEuRWdyZXNzUG9saWN5U3BlYy5NYXRjaGVyEkkKBWFsbG93GAMgASgLMjoubmFtZXNwYWNlLmNsb3VkLm5ldHdvcmsudjFiZXRhLkVncmVzc1BvbGljeVNwZWMuQWxsb3dPcHRzEkkKBXByb3h5GAQgASgLMjoubmFtZXNwYWNlLmNsb3VkLm5ldHdvcmsudjFiZXRhLkVncmVzc1BvbGljeVNwZWMuUHJveHlPcHRzEksKBmluamVjdBgFIAEoCzI7Lm5hbWVzcGFjZS5jbG91ZC5uZXR3b3JrLnYxYmV0YS5FZ3Jlc3NQb2xpY3lTcGVjLkluamVjdE9wdHMiPwoGUnVsZU9wEhMKD1JVTEVfT1BfVU5LTk9XThAAEgkKBUFMTE9XEAESCQoFUFJPWFkQAhIKCgZJTkpFQ1QQAxogCgdNYXRjaGVyEhUKDW1hdGNoX2RvbWFpbnMYASADKAkaCwoJQWxsb3dPcHRzGh8KCVByb3h5T3B0cxISCgp2aWFfZG9tYWluGAEgASgJGs8DCgpJbmplY3RPcHRzEhMKC2hlYWRlcl9uYW1lGAEgASgJEhYKDmZyb21fc2VjcmV0X2lkGAIgASgJEg0KBXZhbHVlGAMgASgJEl8KDWZyb21fZW5kcG9pbnQYBCABKAsySC5uYW1lc3BhY2UuY2xvdWQubmV0d29yay52MWJldGEuRWdyZXNzUG9saWN5U3BlYy5JbmplY3RPcHRzLkZyb21FbmRwb2ludBJnChFyZXNvbHV0aW9uX3BvbGljeRgFIAEoDjJMLm5hbWVzcGFjZS5jbG91ZC5uZXR3b3JrLnYxYmV0YS5FZ3Jlc3NQb2xpY3lTcGVjLkluamVjdE9wdHMuUmVzb2x1dGlvblBvbGljeRpKCgxGcm9tRW5kcG9pbnQSCwoDdXJsGAEgASgJEi0KB2hlYWRlcnMYAiADKAsyHC5uYW1lc3BhY2Uuc3RkbGliLkh0dHBIZWFkZXIibwoQUmVzb2x1dGlvblBvbGljeRIdChlSRVNPTFVUSU9OX1BPTElDWV9VTktOT1dOEAASGgoWUkVTT0xVVElPTl9QT0xJQ1lfT05DRRABEiAKHFJFU09MVVRJT05fUE9MSUNZX1dIRU5fU1RBTEUQAiJOCgRNb2RlEhAKDE1PREVfVU5LTk9XThAAEgwKCERJU0FCTEVEEAESDQoJQUxMT1dfQUxMEAISDAoIQURWSVNPUlkQAxIJCgVCTE9DSxAEMsQEChNFZ3Jlc3NQb2xpY3lTZXJ2aWNlEosBChJDcmVhdGVFZ3Jlc3NQb2xpY3kSOS5uYW1lc3BhY2UuY2xvdWQubmV0d29yay52MWJldGEuQ3JlYXRlRWdyZXNzUG9saWN5UmVxdWVzdBo6Lm5hbWVzcGFjZS5jbG91ZC5uZXR3b3JrLnYxYmV0YS5DcmVhdGVFZ3Jlc3NQb2xpY3lSZXNwb25zZRKLAQoSVXBkYXRlRWdyZXNzUG9saWN5EjkubmFtZXNwYWNlLmNsb3VkLm5ldHdvcmsudjFiZXRhLlVwZGF0ZUVncmVzc1BvbGljeVJlcXVlc3QaOi5uYW1lc3BhY2UuY2xvdWQubmV0d29yay52MWJldGEuVXBkYXRlRWdyZXNzUG9saWN5UmVzcG9uc2USggEKD0dldEVncmVzc1BvbGljeRI2Lm5hbWVzcGFjZS5jbG91ZC5uZXR3b3JrLnYxYmV0YS5HZXRFZ3Jlc3NQb2xpY3lSZXF1ZXN0GjcubmFtZXNwYWNlLmNsb3VkLm5ldHdvcmsudjFiZXRhLkdldEVncmVzc1BvbGljeVJlc3BvbnNlEosBChJMaXN0RWdyZXNzUG9saWNpZXMSOS5uYW1lc3BhY2UuY2xvdWQubmV0d29yay52MWJldGEuTGlzdEVncmVzc1BvbGljaWVzUmVxdWVzdBo6Lm5hbWVzcGFjZS5jbG91ZC5uZXR3b3JrLnYxYmV0YS5MaXN0RWdyZXNzUG9saWNpZXNSZXNwb25zZUJaWlhuYW1lc3BhY2VsYWJzLmRldi9pbnRlcm5hbC9wdWJsaWMvZ2VuL3Byb3RvL25hbWVzcGFjZS9jbG91ZC9uZXR3b3JrL3YxYmV0YTtuZXR3b3JrdjFiZXRhYgZwcm90bzM", [file_proto_namespace_stdlib_callback]);
 
 /**
  * @generated from message namespace.cloud.network.v1beta.CreateEgressPolicyRequest
@@ -204,30 +206,9 @@ export type EgressPolicy = Message<"namespace.cloud.network.v1beta.EgressPolicy"
   description: string;
 
   /**
-   * @generated from field: namespace.cloud.network.v1beta.EgressPolicy.Mode mode = 3;
+   * @generated from field: namespace.cloud.network.v1beta.EgressPolicySpec spec = 3;
    */
-  mode: EgressPolicy_Mode;
-
-  /**
-   * Enables HTTP and HTTPS interception for PROXY and INJECT rules.
-   *
-   * @generated from field: bool deep_packet_inspection = 4;
-   */
-  deepPacketInspection: boolean;
-
-  /**
-   * Rules applied in order to outbound connections.
-   *
-   * @generated from field: repeated namespace.cloud.network.v1beta.EgressPolicy.Rule rules = 5;
-   */
-  rules: EgressPolicy_Rule[];
-
-  /**
-   * Tags of Namespace-managed egress rulesets appended to rules.
-   *
-   * @generated from field: repeated string additional_rulesets = 6;
-   */
-  additionalRulesets: string[];
+  spec?: EgressPolicySpec;
 };
 
 /**
@@ -238,46 +219,93 @@ export const EgressPolicySchema: GenMessage<EgressPolicy> = /*@__PURE__*/
   messageDesc(file_proto_namespace_cloud_network_v1beta_egress, 8);
 
 /**
- * @generated from message namespace.cloud.network.v1beta.EgressPolicy.Rule
+ * @generated from message namespace.cloud.network.v1beta.EgressPolicySpec
  */
-export type EgressPolicy_Rule = Message<"namespace.cloud.network.v1beta.EgressPolicy.Rule"> & {
+export type EgressPolicySpec = Message<"namespace.cloud.network.v1beta.EgressPolicySpec"> & {
   /**
-   * @generated from field: namespace.cloud.network.v1beta.EgressPolicy.Rule.RuleOp op = 1;
+   * @generated from field: namespace.cloud.network.v1beta.EgressPolicySpec.Mode mode = 2;
    */
-  op: EgressPolicy_Rule_RuleOp;
+  mode: EgressPolicySpec_Mode;
 
   /**
-   * @generated from field: namespace.cloud.network.v1beta.EgressPolicy.Matcher matcher = 2;
+   * Enables HTTP and HTTPS interception for PROXY and INJECT rules.
+   *
+   * @generated from field: bool deep_packet_inspection = 3;
    */
-  matcher?: EgressPolicy_Matcher;
+  deepPacketInspection: boolean;
 
   /**
-   * @generated from field: namespace.cloud.network.v1beta.EgressPolicy.AllowOpts allow = 3;
+   * Rules applied in order to outbound connections.
+   *
+   * @generated from field: repeated namespace.cloud.network.v1beta.EgressPolicySpec.Rule rules = 4;
    */
-  allow?: EgressPolicy_AllowOpts;
+  rules: EgressPolicySpec_Rule[];
 
   /**
-   * @generated from field: namespace.cloud.network.v1beta.EgressPolicy.ProxyOpts proxy = 4;
+   * Tags of Namespace-managed egress rulesets appended to rules.
+   *
+   * @generated from field: repeated string additional_rulesets = 5;
    */
-  proxy?: EgressPolicy_ProxyOpts;
+  additionalRulesets: string[];
 
   /**
-   * @generated from field: namespace.cloud.network.v1beta.EgressPolicy.InjectOpts inject = 5;
+   * Deprecated. Only supported in inline egress policies during instance
+   * creation. Use `ALLOW` rules instead.
+   *
+   * @generated from field: repeated string allowed_egress_domains = 1 [deprecated = true];
+   * @deprecated
    */
-  inject?: EgressPolicy_InjectOpts;
+  allowedEgressDomains: string[];
 };
 
 /**
- * Describes the message namespace.cloud.network.v1beta.EgressPolicy.Rule.
- * Use `create(EgressPolicy_RuleSchema)` to create a new message.
+ * Describes the message namespace.cloud.network.v1beta.EgressPolicySpec.
+ * Use `create(EgressPolicySpecSchema)` to create a new message.
  */
-export const EgressPolicy_RuleSchema: GenMessage<EgressPolicy_Rule> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_network_v1beta_egress, 8, 0);
+export const EgressPolicySpecSchema: GenMessage<EgressPolicySpec> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_network_v1beta_egress, 9);
 
 /**
- * @generated from enum namespace.cloud.network.v1beta.EgressPolicy.Rule.RuleOp
+ * @generated from message namespace.cloud.network.v1beta.EgressPolicySpec.Rule
  */
-export enum EgressPolicy_Rule_RuleOp {
+export type EgressPolicySpec_Rule = Message<"namespace.cloud.network.v1beta.EgressPolicySpec.Rule"> & {
+  /**
+   * @generated from field: namespace.cloud.network.v1beta.EgressPolicySpec.Rule.RuleOp op = 1;
+   */
+  op: EgressPolicySpec_Rule_RuleOp;
+
+  /**
+   * @generated from field: namespace.cloud.network.v1beta.EgressPolicySpec.Matcher matcher = 2;
+   */
+  matcher?: EgressPolicySpec_Matcher;
+
+  /**
+   * @generated from field: namespace.cloud.network.v1beta.EgressPolicySpec.AllowOpts allow = 3;
+   */
+  allow?: EgressPolicySpec_AllowOpts;
+
+  /**
+   * @generated from field: namespace.cloud.network.v1beta.EgressPolicySpec.ProxyOpts proxy = 4;
+   */
+  proxy?: EgressPolicySpec_ProxyOpts;
+
+  /**
+   * @generated from field: namespace.cloud.network.v1beta.EgressPolicySpec.InjectOpts inject = 5;
+   */
+  inject?: EgressPolicySpec_InjectOpts;
+};
+
+/**
+ * Describes the message namespace.cloud.network.v1beta.EgressPolicySpec.Rule.
+ * Use `create(EgressPolicySpec_RuleSchema)` to create a new message.
+ */
+export const EgressPolicySpec_RuleSchema: GenMessage<EgressPolicySpec_Rule> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_network_v1beta_egress, 9, 0);
+
+/**
+ * @generated from enum namespace.cloud.network.v1beta.EgressPolicySpec.Rule.RuleOp
+ */
+export enum EgressPolicySpec_Rule_RuleOp {
   /**
    * @generated from enum value: RULE_OP_UNKNOWN = 0;
    */
@@ -300,15 +328,15 @@ export enum EgressPolicy_Rule_RuleOp {
 }
 
 /**
- * Describes the enum namespace.cloud.network.v1beta.EgressPolicy.Rule.RuleOp.
+ * Describes the enum namespace.cloud.network.v1beta.EgressPolicySpec.Rule.RuleOp.
  */
-export const EgressPolicy_Rule_RuleOpSchema: GenEnum<EgressPolicy_Rule_RuleOp> = /*@__PURE__*/
-  enumDesc(file_proto_namespace_cloud_network_v1beta_egress, 8, 0, 0);
+export const EgressPolicySpec_Rule_RuleOpSchema: GenEnum<EgressPolicySpec_Rule_RuleOp> = /*@__PURE__*/
+  enumDesc(file_proto_namespace_cloud_network_v1beta_egress, 9, 0, 0);
 
 /**
- * @generated from message namespace.cloud.network.v1beta.EgressPolicy.Matcher
+ * @generated from message namespace.cloud.network.v1beta.EgressPolicySpec.Matcher
  */
-export type EgressPolicy_Matcher = Message<"namespace.cloud.network.v1beta.EgressPolicy.Matcher"> & {
+export type EgressPolicySpec_Matcher = Message<"namespace.cloud.network.v1beta.EgressPolicySpec.Matcher"> & {
   /**
    * @generated from field: repeated string match_domains = 1;
    */
@@ -316,29 +344,29 @@ export type EgressPolicy_Matcher = Message<"namespace.cloud.network.v1beta.Egres
 };
 
 /**
- * Describes the message namespace.cloud.network.v1beta.EgressPolicy.Matcher.
- * Use `create(EgressPolicy_MatcherSchema)` to create a new message.
+ * Describes the message namespace.cloud.network.v1beta.EgressPolicySpec.Matcher.
+ * Use `create(EgressPolicySpec_MatcherSchema)` to create a new message.
  */
-export const EgressPolicy_MatcherSchema: GenMessage<EgressPolicy_Matcher> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_network_v1beta_egress, 8, 1);
+export const EgressPolicySpec_MatcherSchema: GenMessage<EgressPolicySpec_Matcher> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_network_v1beta_egress, 9, 1);
 
 /**
- * @generated from message namespace.cloud.network.v1beta.EgressPolicy.AllowOpts
+ * @generated from message namespace.cloud.network.v1beta.EgressPolicySpec.AllowOpts
  */
-export type EgressPolicy_AllowOpts = Message<"namespace.cloud.network.v1beta.EgressPolicy.AllowOpts"> & {
+export type EgressPolicySpec_AllowOpts = Message<"namespace.cloud.network.v1beta.EgressPolicySpec.AllowOpts"> & {
 };
 
 /**
- * Describes the message namespace.cloud.network.v1beta.EgressPolicy.AllowOpts.
- * Use `create(EgressPolicy_AllowOptsSchema)` to create a new message.
+ * Describes the message namespace.cloud.network.v1beta.EgressPolicySpec.AllowOpts.
+ * Use `create(EgressPolicySpec_AllowOptsSchema)` to create a new message.
  */
-export const EgressPolicy_AllowOptsSchema: GenMessage<EgressPolicy_AllowOpts> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_network_v1beta_egress, 8, 2);
+export const EgressPolicySpec_AllowOptsSchema: GenMessage<EgressPolicySpec_AllowOpts> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_network_v1beta_egress, 9, 2);
 
 /**
- * @generated from message namespace.cloud.network.v1beta.EgressPolicy.ProxyOpts
+ * @generated from message namespace.cloud.network.v1beta.EgressPolicySpec.ProxyOpts
  */
-export type EgressPolicy_ProxyOpts = Message<"namespace.cloud.network.v1beta.EgressPolicy.ProxyOpts"> & {
+export type EgressPolicySpec_ProxyOpts = Message<"namespace.cloud.network.v1beta.EgressPolicySpec.ProxyOpts"> & {
   /**
    * @generated from field: string via_domain = 1;
    */
@@ -346,46 +374,115 @@ export type EgressPolicy_ProxyOpts = Message<"namespace.cloud.network.v1beta.Egr
 };
 
 /**
- * Describes the message namespace.cloud.network.v1beta.EgressPolicy.ProxyOpts.
- * Use `create(EgressPolicy_ProxyOptsSchema)` to create a new message.
+ * Describes the message namespace.cloud.network.v1beta.EgressPolicySpec.ProxyOpts.
+ * Use `create(EgressPolicySpec_ProxyOptsSchema)` to create a new message.
  */
-export const EgressPolicy_ProxyOptsSchema: GenMessage<EgressPolicy_ProxyOpts> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_network_v1beta_egress, 8, 3);
+export const EgressPolicySpec_ProxyOptsSchema: GenMessage<EgressPolicySpec_ProxyOpts> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_network_v1beta_egress, 9, 3);
 
 /**
- * @generated from message namespace.cloud.network.v1beta.EgressPolicy.InjectOpts
+ * @generated from message namespace.cloud.network.v1beta.EgressPolicySpec.InjectOpts
  */
-export type EgressPolicy_InjectOpts = Message<"namespace.cloud.network.v1beta.EgressPolicy.InjectOpts"> & {
+export type EgressPolicySpec_InjectOpts = Message<"namespace.cloud.network.v1beta.EgressPolicySpec.InjectOpts"> & {
   /**
    * @generated from field: string header_name = 1;
    */
   headerName: string;
 
   /**
-   * The header value to inject. Exactly one of `from_secret_id`
-   * or `value` must be set.
+   * Exactly one value source must be set.
+   *
+   * References a Vault secret.
    *
    * @generated from field: string from_secret_id = 2;
    */
   fromSecretId: string;
 
   /**
+   * Plaintext value.
+   *
    * @generated from field: string value = 3;
    */
   value: string;
+
+  /**
+   * Fetches the value to inject from an HTTP endpoint using GET.
+   *
+   * @generated from field: namespace.cloud.network.v1beta.EgressPolicySpec.InjectOpts.FromEndpoint from_endpoint = 4;
+   */
+  fromEndpoint?: EgressPolicySpec_InjectOpts_FromEndpoint;
+
+  /**
+   * @generated from field: namespace.cloud.network.v1beta.EgressPolicySpec.InjectOpts.ResolutionPolicy resolution_policy = 5;
+   */
+  resolutionPolicy: EgressPolicySpec_InjectOpts_ResolutionPolicy;
 };
 
 /**
- * Describes the message namespace.cloud.network.v1beta.EgressPolicy.InjectOpts.
- * Use `create(EgressPolicy_InjectOptsSchema)` to create a new message.
+ * Describes the message namespace.cloud.network.v1beta.EgressPolicySpec.InjectOpts.
+ * Use `create(EgressPolicySpec_InjectOptsSchema)` to create a new message.
  */
-export const EgressPolicy_InjectOptsSchema: GenMessage<EgressPolicy_InjectOpts> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_network_v1beta_egress, 8, 4);
+export const EgressPolicySpec_InjectOptsSchema: GenMessage<EgressPolicySpec_InjectOpts> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_network_v1beta_egress, 9, 4);
 
 /**
- * @generated from enum namespace.cloud.network.v1beta.EgressPolicy.Mode
+ * @generated from message namespace.cloud.network.v1beta.EgressPolicySpec.InjectOpts.FromEndpoint
  */
-export enum EgressPolicy_Mode {
+export type EgressPolicySpec_InjectOpts_FromEndpoint = Message<"namespace.cloud.network.v1beta.EgressPolicySpec.InjectOpts.FromEndpoint"> & {
+  /**
+   * @generated from field: string url = 1;
+   */
+  url: string;
+
+  /**
+   * @generated from field: repeated namespace.stdlib.HttpHeader headers = 2;
+   */
+  headers: HttpHeader[];
+};
+
+/**
+ * Describes the message namespace.cloud.network.v1beta.EgressPolicySpec.InjectOpts.FromEndpoint.
+ * Use `create(EgressPolicySpec_InjectOpts_FromEndpointSchema)` to create a new message.
+ */
+export const EgressPolicySpec_InjectOpts_FromEndpointSchema: GenMessage<EgressPolicySpec_InjectOpts_FromEndpoint> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_network_v1beta_egress, 9, 4, 0);
+
+/**
+ * @generated from enum namespace.cloud.network.v1beta.EgressPolicySpec.InjectOpts.ResolutionPolicy
+ */
+export enum EgressPolicySpec_InjectOpts_ResolutionPolicy {
+  /**
+   * Default to once.
+   *
+   * @generated from enum value: RESOLUTION_POLICY_UNKNOWN = 0;
+   */
+  UNKNOWN = 0,
+
+  /**
+   * Resolve once and keep using that value.
+   *
+   * @generated from enum value: RESOLUTION_POLICY_ONCE = 1;
+   */
+  ONCE = 1,
+
+  /**
+   * Cache until stale, then refresh. Staleness follows the Cache-Control: max-age returned by from_endpoint, with a minimum of 10s. Requires from_endpoint.
+   *
+   * @generated from enum value: RESOLUTION_POLICY_WHEN_STALE = 2;
+   */
+  WHEN_STALE = 2,
+}
+
+/**
+ * Describes the enum namespace.cloud.network.v1beta.EgressPolicySpec.InjectOpts.ResolutionPolicy.
+ */
+export const EgressPolicySpec_InjectOpts_ResolutionPolicySchema: GenEnum<EgressPolicySpec_InjectOpts_ResolutionPolicy> = /*@__PURE__*/
+  enumDesc(file_proto_namespace_cloud_network_v1beta_egress, 9, 4, 0);
+
+/**
+ * @generated from enum namespace.cloud.network.v1beta.EgressPolicySpec.Mode
+ */
+export enum EgressPolicySpec_Mode {
   /**
    * @generated from enum value: MODE_UNKNOWN = 0;
    */
@@ -413,10 +510,10 @@ export enum EgressPolicy_Mode {
 }
 
 /**
- * Describes the enum namespace.cloud.network.v1beta.EgressPolicy.Mode.
+ * Describes the enum namespace.cloud.network.v1beta.EgressPolicySpec.Mode.
  */
-export const EgressPolicy_ModeSchema: GenEnum<EgressPolicy_Mode> = /*@__PURE__*/
-  enumDesc(file_proto_namespace_cloud_network_v1beta_egress, 8, 0);
+export const EgressPolicySpec_ModeSchema: GenEnum<EgressPolicySpec_Mode> = /*@__PURE__*/
+  enumDesc(file_proto_namespace_cloud_network_v1beta_egress, 9, 0);
 
 /**
  * EgressPolicyService manages workspace-wide egress policies that can be
