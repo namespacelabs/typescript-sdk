@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file proto/namespace/cloud/compute/v1beta/observability.proto.
  */
 export const file_proto_namespace_cloud_compute_v1beta_observability: GenFile = /*@__PURE__*/
-  fileDesc("Cjhwcm90by9uYW1lc3BhY2UvY2xvdWQvY29tcHV0ZS92MWJldGEvb2JzZXJ2YWJpbGl0eS5wcm90bxIebmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhIoABChlTdHJlYW1JbnN0YW5jZUxvZ3NSZXF1ZXN0EhMKC2luc3RhbmNlX2lkGAEgASgJEg4KBmZvbGxvdxgCIAEoCBI+ChVtYXRjaF9jb250YWluZXJfbmFtZXMYAyABKAsyHy5uYW1lc3BhY2Uuc3RkbGliLlN0cmluZ01hdGNoZXIilQIKCExvZ0Jsb2NrEkQKBmxhYmVscxgBIAMoCzI0Lm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5Mb2dCbG9jay5MYWJlbHNFbnRyeRI8CgVsaW5lcxgCIAMoCzItLm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5Mb2dCbG9jay5MaW5lGi0KC0xhYmVsc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAEaVgoETGluZRItCgl0aW1lc3RhbXAYASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEg8KB2NvbnRlbnQYAiABKAkSDgoGc3RyZWFtGAMgASgJIoUCChhGZXRjaEluc3RhbmNlTG9nc1JlcXVlc3QSGQoRcGFnaW5hdGlvbl9jdXJzb3IYASABKAwSFgoObGluZXNfcGVyX3BhZ2UYAiABKAUSOwoSbWF0Y2hfaW5zdGFuY2VfaWRzGAMgASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyEjkKD3RpbWVzdGFtcF9yYW5nZRgEIAEoCzIgLm5hbWVzcGFjZS5zdGRsaWIuVGltZXN0YW1wUmFuZ2USPgoVbWF0Y2hfY29udGFpbmVyX25hbWVzGAUgASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyIokBChlGZXRjaEluc3RhbmNlTG9nc1Jlc3BvbnNlEhkKEXBhZ2luYXRpb25fY3Vyc29yGAEgASgMEjkKCGxvZ19saW5lGAIgAygLMicubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkxvZ0xpbmUSFgoOcmV0ZW50aW9uX2RheXMYAyABKAUi3QEKB0xvZ0xpbmUSLQoJdGltZXN0YW1wGAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIPCgdjb250ZW50GAIgASgJEg4KBnN0cmVhbRgDIAEoCRJDCgZsYWJlbHMYBCADKAsyMy5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuTG9nTGluZS5MYWJlbHNFbnRyeRIOCgZzb3VyY2UYBSABKAkaLQoLTGFiZWxzRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASKWAQoaRmV0Y2hJbnN0YW5jZUVncmVzc1JlcXVlc3QSEwoLaW5zdGFuY2VfaWQYASABKAkSOQoPdGltZXN0YW1wX3JhbmdlGAIgASgLMiAubmFtZXNwYWNlLnN0ZGxpYi5UaW1lc3RhbXBSYW5nZRINCgVsaW1pdBgDIAEoBRIZChFwYWdpbmF0aW9uX2N1cnNvchgEIAEoDCJ3ChtGZXRjaEluc3RhbmNlRWdyZXNzUmVzcG9uc2USPQoHcmVjb3JkcxgBIAMoCzIsLm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5FZ3Jlc3NSZWNvcmQSGQoRcGFnaW5hdGlvbl9jdXJzb3IYAiABKAwiswEKDEVncmVzc1JlY29yZBItCgl0aW1lc3RhbXAYASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEg4KBmRvbWFpbhgCIAEoCRISCgpydWxlX21hdGNoGAMgASgJEjwKBmFjdGlvbhgEIAEoDjIsLm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5FZ3Jlc3NBY3Rpb24SEgoKYW5zd2VyX2lwcxgFIAMoCSpKCgxFZ3Jlc3NBY3Rpb24SEgoOQUNUSU9OX1VOS05PV04QABIJCgVBTExPVxABEggKBERFTlkQAhIRCg1BRFZJU09SWV9ERU5ZEAMyrwMKFE9ic2VydmFiaWxpdHlTZXJ2aWNlEnsKElN0cmVhbUluc3RhbmNlTG9ncxI5Lm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5TdHJlYW1JbnN0YW5jZUxvZ3NSZXF1ZXN0GigubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkxvZ0Jsb2NrMAESiAEKEUZldGNoSW5zdGFuY2VMb2dzEjgubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkZldGNoSW5zdGFuY2VMb2dzUmVxdWVzdBo5Lm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5GZXRjaEluc3RhbmNlTG9nc1Jlc3BvbnNlEo4BChNGZXRjaEluc3RhbmNlRWdyZXNzEjoubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkZldGNoSW5zdGFuY2VFZ3Jlc3NSZXF1ZXN0GjsubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkZldGNoSW5zdGFuY2VFZ3Jlc3NSZXNwb25zZUJaWlhuYW1lc3BhY2VsYWJzLmRldi9pbnRlcm5hbC9wdWJsaWMvZ2VuL3Byb3RvL25hbWVzcGFjZS9jbG91ZC9jb21wdXRlL3YxYmV0YTtjb21wdXRldjFiZXRhYgZwcm90bzM", [file_google_protobuf_timestamp, file_proto_namespace_stdlib_matchers]);
+  fileDesc("Cjhwcm90by9uYW1lc3BhY2UvY2xvdWQvY29tcHV0ZS92MWJldGEvb2JzZXJ2YWJpbGl0eS5wcm90bxIebmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhIoABChlTdHJlYW1JbnN0YW5jZUxvZ3NSZXF1ZXN0EhMKC2luc3RhbmNlX2lkGAEgASgJEg4KBmZvbGxvdxgCIAEoCBI+ChVtYXRjaF9jb250YWluZXJfbmFtZXMYAyABKAsyHy5uYW1lc3BhY2Uuc3RkbGliLlN0cmluZ01hdGNoZXIilQIKCExvZ0Jsb2NrEkQKBmxhYmVscxgBIAMoCzI0Lm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5Mb2dCbG9jay5MYWJlbHNFbnRyeRI8CgVsaW5lcxgCIAMoCzItLm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5Mb2dCbG9jay5MaW5lGi0KC0xhYmVsc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAEaVgoETGluZRItCgl0aW1lc3RhbXAYASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEg8KB2NvbnRlbnQYAiABKAkSDgoGc3RyZWFtGAMgASgJIrMDChhGZXRjaEluc3RhbmNlTG9nc1JlcXVlc3QSGQoRcGFnaW5hdGlvbl9jdXJzb3IYASABKAwSFgoObGluZXNfcGVyX3BhZ2UYAiABKAUSOwoSbWF0Y2hfaW5zdGFuY2VfaWRzGAMgASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyEjkKD3RpbWVzdGFtcF9yYW5nZRgEIAEoCzIgLm5hbWVzcGFjZS5zdGRsaWIuVGltZXN0YW1wUmFuZ2USPgoVbWF0Y2hfY29udGFpbmVyX25hbWVzGAUgASgLMh8ubmFtZXNwYWNlLnN0ZGxpYi5TdHJpbmdNYXRjaGVyElUKCWRpcmVjdGlvbhgGIAEoDjJCLm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5GZXRjaEluc3RhbmNlTG9nc1JlcXVlc3QuRGlyZWN0aW9uIlUKCURpcmVjdGlvbhIZChVESVJFQ1RJT05fVU5TUEVDSUZJRUQQABIVChFESVJFQ1RJT05fRk9SV0FSRBABEhYKEkRJUkVDVElPTl9CQUNLV0FSRBACIokBChlGZXRjaEluc3RhbmNlTG9nc1Jlc3BvbnNlEhkKEXBhZ2luYXRpb25fY3Vyc29yGAEgASgMEjkKCGxvZ19saW5lGAIgAygLMicubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkxvZ0xpbmUSFgoOcmV0ZW50aW9uX2RheXMYAyABKAUi3QEKB0xvZ0xpbmUSLQoJdGltZXN0YW1wGAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIPCgdjb250ZW50GAIgASgJEg4KBnN0cmVhbRgDIAEoCRJDCgZsYWJlbHMYBCADKAsyMy5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuTG9nTGluZS5MYWJlbHNFbnRyeRIOCgZzb3VyY2UYBSABKAkaLQoLTGFiZWxzRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASI2Ch9GZXRjaEluc3RhbmNlRGlhZ25vc3RpY3NSZXF1ZXN0EhMKC2luc3RhbmNlX2lkGAEgASgJImoKIEZldGNoSW5zdGFuY2VEaWFnbm9zdGljc1Jlc3BvbnNlEkYKFG91dF9vZl9tZW1vcnlfZXZlbnRzGAEgAygLMigubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLk9PTUV2ZW50IkoKCE9PTUV2ZW50Ei0KCXRpbWVzdGFtcBgBIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDwoHbWVzc2FnZRgCIAEoCSKWAQoaRmV0Y2hJbnN0YW5jZUVncmVzc1JlcXVlc3QSEwoLaW5zdGFuY2VfaWQYASABKAkSOQoPdGltZXN0YW1wX3JhbmdlGAIgASgLMiAubmFtZXNwYWNlLnN0ZGxpYi5UaW1lc3RhbXBSYW5nZRINCgVsaW1pdBgDIAEoBRIZChFwYWdpbmF0aW9uX2N1cnNvchgEIAEoDCJ3ChtGZXRjaEluc3RhbmNlRWdyZXNzUmVzcG9uc2USPQoHcmVjb3JkcxgBIAMoCzIsLm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5FZ3Jlc3NSZWNvcmQSGQoRcGFnaW5hdGlvbl9jdXJzb3IYAiABKAwiswEKDEVncmVzc1JlY29yZBItCgl0aW1lc3RhbXAYASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEg4KBmRvbWFpbhgCIAEoCRISCgpydWxlX21hdGNoGAMgASgJEjwKBmFjdGlvbhgEIAEoDjIsLm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5FZ3Jlc3NBY3Rpb24SEgoKYW5zd2VyX2lwcxgFIAMoCSpKCgxFZ3Jlc3NBY3Rpb24SEgoOQUNUSU9OX1VOS05PV04QABIJCgVBTExPVxABEggKBERFTlkQAhIRCg1BRFZJU09SWV9ERU5ZEAMyzwQKFE9ic2VydmFiaWxpdHlTZXJ2aWNlEnsKElN0cmVhbUluc3RhbmNlTG9ncxI5Lm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5TdHJlYW1JbnN0YW5jZUxvZ3NSZXF1ZXN0GigubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkxvZ0Jsb2NrMAESiAEKEUZldGNoSW5zdGFuY2VMb2dzEjgubmFtZXNwYWNlLmNsb3VkLmNvbXB1dGUudjFiZXRhLkZldGNoSW5zdGFuY2VMb2dzUmVxdWVzdBo5Lm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5GZXRjaEluc3RhbmNlTG9nc1Jlc3BvbnNlEp0BChhGZXRjaEluc3RhbmNlRGlhZ25vc3RpY3MSPy5uYW1lc3BhY2UuY2xvdWQuY29tcHV0ZS52MWJldGEuRmV0Y2hJbnN0YW5jZURpYWdub3N0aWNzUmVxdWVzdBpALm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5GZXRjaEluc3RhbmNlRGlhZ25vc3RpY3NSZXNwb25zZRKOAQoTRmV0Y2hJbnN0YW5jZUVncmVzcxI6Lm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5GZXRjaEluc3RhbmNlRWdyZXNzUmVxdWVzdBo7Lm5hbWVzcGFjZS5jbG91ZC5jb21wdXRlLnYxYmV0YS5GZXRjaEluc3RhbmNlRWdyZXNzUmVzcG9uc2VCWlpYbmFtZXNwYWNlbGFicy5kZXYvaW50ZXJuYWwvcHVibGljL2dlbi9wcm90by9uYW1lc3BhY2UvY2xvdWQvY29tcHV0ZS92MWJldGE7Y29tcHV0ZXYxYmV0YWIGcHJvdG8z", [file_google_protobuf_timestamp, file_proto_namespace_stdlib_matchers]);
 
 /**
  * @generated from message namespace.cloud.compute.v1beta.StreamInstanceLogsRequest
@@ -127,6 +127,13 @@ export type FetchInstanceLogsRequest = Message<"namespace.cloud.compute.v1beta.F
    * @generated from field: namespace.stdlib.StringMatcher match_container_names = 5;
    */
   matchContainerNames?: StringMatcher;
+
+  /**
+   * Orders log lines by timestamp. A pagination cursor preserves the direction of the first request.
+   *
+   * @generated from field: namespace.cloud.compute.v1beta.FetchInstanceLogsRequest.Direction direction = 6;
+   */
+  direction: FetchInstanceLogsRequest_Direction;
 };
 
 /**
@@ -135,6 +142,38 @@ export type FetchInstanceLogsRequest = Message<"namespace.cloud.compute.v1beta.F
  */
 export const FetchInstanceLogsRequestSchema: GenMessage<FetchInstanceLogsRequest> = /*@__PURE__*/
   messageDesc(file_proto_namespace_cloud_compute_v1beta_observability, 2);
+
+/**
+ * @generated from enum namespace.cloud.compute.v1beta.FetchInstanceLogsRequest.Direction
+ */
+export enum FetchInstanceLogsRequest_Direction {
+  /**
+   * Defaults to BACKWARD.
+   *
+   * @generated from enum value: DIRECTION_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * Oldest to newest.
+   *
+   * @generated from enum value: DIRECTION_FORWARD = 1;
+   */
+  FORWARD = 1,
+
+  /**
+   * Newest to oldest.
+   *
+   * @generated from enum value: DIRECTION_BACKWARD = 2;
+   */
+  BACKWARD = 2,
+}
+
+/**
+ * Describes the enum namespace.cloud.compute.v1beta.FetchInstanceLogsRequest.Direction.
+ */
+export const FetchInstanceLogsRequest_DirectionSchema: GenEnum<FetchInstanceLogsRequest_Direction> = /*@__PURE__*/
+  enumDesc(file_proto_namespace_cloud_compute_v1beta_observability, 2, 0);
 
 /**
  * @generated from message namespace.cloud.compute.v1beta.FetchInstanceLogsResponse
@@ -205,6 +244,66 @@ export const LogLineSchema: GenMessage<LogLine> = /*@__PURE__*/
   messageDesc(file_proto_namespace_cloud_compute_v1beta_observability, 4);
 
 /**
+ * @generated from message namespace.cloud.compute.v1beta.FetchInstanceDiagnosticsRequest
+ */
+export type FetchInstanceDiagnosticsRequest = Message<"namespace.cloud.compute.v1beta.FetchInstanceDiagnosticsRequest"> & {
+  /**
+   * @generated from field: string instance_id = 1;
+   */
+  instanceId: string;
+};
+
+/**
+ * Describes the message namespace.cloud.compute.v1beta.FetchInstanceDiagnosticsRequest.
+ * Use `create(FetchInstanceDiagnosticsRequestSchema)` to create a new message.
+ */
+export const FetchInstanceDiagnosticsRequestSchema: GenMessage<FetchInstanceDiagnosticsRequest> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_observability, 5);
+
+/**
+ * @generated from message namespace.cloud.compute.v1beta.FetchInstanceDiagnosticsResponse
+ */
+export type FetchInstanceDiagnosticsResponse = Message<"namespace.cloud.compute.v1beta.FetchInstanceDiagnosticsResponse"> & {
+  /**
+   * @generated from field: repeated namespace.cloud.compute.v1beta.OOMEvent out_of_memory_events = 1;
+   */
+  outOfMemoryEvents: OOMEvent[];
+};
+
+/**
+ * Describes the message namespace.cloud.compute.v1beta.FetchInstanceDiagnosticsResponse.
+ * Use `create(FetchInstanceDiagnosticsResponseSchema)` to create a new message.
+ */
+export const FetchInstanceDiagnosticsResponseSchema: GenMessage<FetchInstanceDiagnosticsResponse> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_observability, 6);
+
+/**
+ * @generated from message namespace.cloud.compute.v1beta.OOMEvent
+ */
+export type OOMEvent = Message<"namespace.cloud.compute.v1beta.OOMEvent"> & {
+  /**
+   * When the out-of-memory kill was detected.
+   *
+   * @generated from field: google.protobuf.Timestamp timestamp = 1;
+   */
+  timestamp?: Timestamp;
+
+  /**
+   * Diagnostic information about the process that was killed.
+   *
+   * @generated from field: string message = 2;
+   */
+  message: string;
+};
+
+/**
+ * Describes the message namespace.cloud.compute.v1beta.OOMEvent.
+ * Use `create(OOMEventSchema)` to create a new message.
+ */
+export const OOMEventSchema: GenMessage<OOMEvent> = /*@__PURE__*/
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_observability, 7);
+
+/**
  * @generated from message namespace.cloud.compute.v1beta.FetchInstanceEgressRequest
  */
 export type FetchInstanceEgressRequest = Message<"namespace.cloud.compute.v1beta.FetchInstanceEgressRequest"> & {
@@ -238,7 +337,7 @@ export type FetchInstanceEgressRequest = Message<"namespace.cloud.compute.v1beta
  * Use `create(FetchInstanceEgressRequestSchema)` to create a new message.
  */
 export const FetchInstanceEgressRequestSchema: GenMessage<FetchInstanceEgressRequest> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_compute_v1beta_observability, 5);
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_observability, 8);
 
 /**
  * @generated from message namespace.cloud.compute.v1beta.FetchInstanceEgressResponse
@@ -260,7 +359,7 @@ export type FetchInstanceEgressResponse = Message<"namespace.cloud.compute.v1bet
  * Use `create(FetchInstanceEgressResponseSchema)` to create a new message.
  */
 export const FetchInstanceEgressResponseSchema: GenMessage<FetchInstanceEgressResponse> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_compute_v1beta_observability, 6);
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_observability, 9);
 
 /**
  * @generated from message namespace.cloud.compute.v1beta.EgressRecord
@@ -299,7 +398,7 @@ export type EgressRecord = Message<"namespace.cloud.compute.v1beta.EgressRecord"
  * Use `create(EgressRecordSchema)` to create a new message.
  */
 export const EgressRecordSchema: GenMessage<EgressRecord> = /*@__PURE__*/
-  messageDesc(file_proto_namespace_cloud_compute_v1beta_observability, 7);
+  messageDesc(file_proto_namespace_cloud_compute_v1beta_observability, 10);
 
 /**
  * @generated from enum namespace.cloud.compute.v1beta.EgressAction
@@ -397,6 +496,20 @@ export const ObservabilityService: GenService<{
     methodKind: "unary";
     input: typeof FetchInstanceLogsRequestSchema;
     output: typeof FetchInstanceLogsResponseSchema;
+  },
+  /**
+   * Fetches diagnostic findings for a particular instance.
+   * Requires the {"instance/o11y/oom", "list"} permission for the instance.
+   *
+   * ### Errors
+   * - If no instance id is provided, an `InvalidArgument` status is returned.
+   *
+   * @generated from rpc namespace.cloud.compute.v1beta.ObservabilityService.FetchInstanceDiagnostics
+   */
+  fetchInstanceDiagnostics: {
+    methodKind: "unary";
+    input: typeof FetchInstanceDiagnosticsRequestSchema;
+    output: typeof FetchInstanceDiagnosticsResponseSchema;
   },
   /**
    * @generated from rpc namespace.cloud.compute.v1beta.ObservabilityService.FetchInstanceEgress
