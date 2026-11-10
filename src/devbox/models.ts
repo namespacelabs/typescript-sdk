@@ -722,8 +722,11 @@ export type BlueprintSession = Session & {
 	emoji?: string;
 };
 
-export interface BlueprintDefinition {
-	image: string;
+export interface BlueprintDefinitionInput {
+	/** Linux container image reference or registered image name; omit for macOS/Windows. */
+	image?: string;
+	/** Defaults to Linux on create; updates retain the stored platform. */
+	os?: "linux" | "macos" | "windows";
 	size?: MachineSize;
 	site?: string;
 	description?: string;
@@ -740,6 +743,11 @@ export interface BlueprintDefinition {
 	sessions?: Session[];
 	portForwards?: PortForward[];
 	exposedPorts?: ExposedPort[];
+}
+
+export interface BlueprintDefinition extends BlueprintDefinitionInput {
+	/** Linux image configuration; empty for managed macOS/Windows images. */
+	image: string;
 }
 
 export interface ImageMetadata {
@@ -773,8 +781,9 @@ export interface BlueprintResource {
 	/**
 	 * Create a named blueprint. Access defaults to `"private"`; machine size
 	 * is resolved client-side, so only the known size names are supported.
+	 * macOS/Windows default to size `"m"`; Windows requires explicit ephemeral intent.
 	 */
-	create(name: string, definition: BlueprintDefinition, options?: OperationOptions): Promise<Blueprint>;
+	create(name: string, definition: BlueprintDefinitionInput, options?: OperationOptions): Promise<Blueprint>;
 	/** Fetch a blueprint by name. */
 	get(name: string, options?: OperationOptions): Promise<Blueprint>;
 	/** List blueprints, one page at a time. */
@@ -784,11 +793,13 @@ export interface BlueprintResource {
 	/**
 	 * Replace a blueprint's definition.
 	 *
-	 * The definition passed here replaces the stored one wholesale
-	 * (last-write-wins). There is no compare-and-swap: a concurrent update
+	 * Supplied SDK fields replace their stored values; the platform and
+	 * configuration not exposed by the SDK are retained. A managed platform's
+	 * machine shape is retained when size is omitted. Changing OS is not supported.
+	 * There is no compare-and-swap: a concurrent update
 	 * between your read and this call is silently overwritten.
 	 */
-	update(name: string, definition: BlueprintDefinition, options?: OperationOptions): Promise<Blueprint>;
+	update(name: string, definition: BlueprintDefinitionInput, options?: OperationOptions): Promise<Blueprint>;
 	/** Delete a blueprint by name. */
 	delete(name: string, options?: OperationOptions): Promise<void>;
 }

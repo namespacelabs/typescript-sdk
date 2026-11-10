@@ -245,8 +245,7 @@ select another executable, such as `cmd.exe`. Commands and services accept Windo
 absolute working directories, while relative paths resolve beneath the workspace.
 Filesystem operations support Windows paths, including recursive directory creation.
 Copy and recursive removal use Git's `cp.exe` and `rm.exe` supplied on PATH by the
-managed Windows image. Windows blueprint authoring, resize, and desktop access are
-outside this early-access scope.
+managed Windows image. Resize and desktop access are outside this early-access scope.
 
 The [Windows tour](examples/devbox/windows-tour.ts) exercises commands, services,
 filesystem, and terminals against a real devbox and deletes it afterward. The display
@@ -254,6 +253,35 @@ section notes that it is not yet available. It skips stop/start because stopped
 ephemeral devboxes can expire immediately under the effective cleanup policy.
 Build the SDK first, then run `npx tsx examples/devbox/windows-tour.ts` using your
 existing credentials.
+
+### macOS and Windows blueprints
+
+Blueprints accept `os`, just like direct devbox creation. macOS and Windows use
+the platform's default managed image and default to size `"m"`; omit `image`.
+Windows requires `ephemeral: true` (or a retention object) and does not support
+persistent-volume settings.
+
+```typescript
+const macosBlueprint = await client.blueprints.create("macos-development", {
+	os: "macos",
+});
+const windowsBlueprint = await client.blueprints.create("windows-development", {
+	os: "windows",
+	ephemeral: true,
+	initScript: "Write-Output 'Ready'", // Windows init scripts use PowerShell.
+});
+const windows = await client.devboxes.create({
+	name: "from-blueprint",
+	blueprint: windowsBlueprint.name,
+});
+```
+
+Returned definitions include `os`; `image` remains a string and is empty for
+managed images. Updates replace the SDK-exposed settings, while retaining the
+platform and server configuration not exposed by the SDK, including managed-image
+selectors. Omitting `size` on a managed-platform update retains its current shape.
+Changing a blueprint's OS is not supported. Named managed-image selection is not
+part of this API.
 
 ### Asynchronous execution
 
