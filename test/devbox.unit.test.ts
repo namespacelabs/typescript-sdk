@@ -6,7 +6,11 @@ import {
 	CreateRequestSchema,
 	DevBoxSchema,
 	DevboxTemplateSchema,
+	DevboxTemplateSpecSchema,
+	DevboxTemplateSpec_Type,
+	PersistenceMode,
 	PortSpec_Kind,
+	type DevboxTemplateSpec,
 } from "../src/proto/namespace/private/devbox/devbox_pb.js";
 import {
 	blueprint,
@@ -159,6 +163,112 @@ test("blueprint conversion treats built-in images as image names", () => {
 	const containerSpec = blueprintSpec("node", { image: "node:22" });
 	assert.equal(containerSpec.instance?.linux?.imageName, "");
 	assert.equal(containerSpec.instance?.linux?.imageRef, "node:22");
+});
+
+test("managed blueprints use platform defaults and roundtrip through resource methods", async () => {
+	for (const os of ["macos", "windows"] as const) {
+		let stored = create(DevboxTemplateSchema, { id: "blueprint", version: 1n });
+		const { blueprints } = createResources({
+			createTemplate: async ({ spec }: { spec: DevboxTemplateSpec }) => {
+				stored.spec = spec;
+				return { template: stored };
+			},
+			fetchTemplate: async () => ({ template: stored }),
+			listTemplates: async () => ({ templates: [stored], paginationCursor: new Uint8Array() }),
+			updateTemplate: async ({ spec }: { spec: DevboxTemplateSpec }) => {
+				stored = create(DevboxTemplateSchema, { id: stored.id, version: stored.version + 1n, spec });
+				return { template: stored };
+			},
+		} as never, {} as ConnectionManager);
+		const created = await blueprints.create(os, { os, ephemeral: true });
+		assert.equal(stored.spec?.instance?.shape?.os, os);
+		assert.equal(stored.spec?.instance?.shape?.machineArch, os === "macos" ? "arm64" : "amd64");
+		assert.equal(stored.spec?.instance?.shape?.virtualCpu, os === "macos" ? 6 : 8);
+		assert.equal(stored.spec?.instance?.linux, undefined);
+		assert.ok(stored.spec?.ephemeral);
+		assert.equal(created.definition.image, "");
+		assert.equal(created.definition.os, os);
+		assert.equal((await blueprints.get(os)).definition.size, "m");
+		assert.equal((await blueprints.list()).items[0].definition.os, os);
+		for await (const item of blueprints.iterate()) {
+			assert.equal(item.definition.os, os);
+		}
+		const updated = await blueprints.update(os, { ...created.definition, description: "updated" });
+		assert.equal(updated.definition.os, os);
+		assert.equal(updated.definition.description, "updated");
+		assert.equal(stored.spec?.instance?.linux, undefined);
+	}
+});
+
+test("blueprint updates retain managed shape selectors and nonstandard sizes without exposing selectors", async () => {
+	for (const os of ["macos", "windows"]) {
+		const original = create(DevboxTemplateSpecSchema, {
+			name: "managed", ephemeral: {}, type: DevboxTemplateSpec_Type.GENERAL,
+			persistenceMode: os === "macos" ? PersistenceMode.WHOLE_SYSTEM : PersistenceMode.UNSPECIFIED,
+			privileged: true,
+			environment: [{ name: "OLD", value: "clear me" }],
+			instance: { shape: {
+				os, machineArch: os === "macos" ? "arm64" : "amd64",
+				virtualCpu: 7, memoryMegabytes: 19_456,
+				selectors: [{ name: "image.with", value: "tools" }, { name: "image.with", value: "extra" }],
+			} },
+		});
+		let stored = create(DevboxTemplateSchema, { id: "blueprint", spec: original });
+		const { blueprints } = createResources({
+			fetchTemplate: async () => ({ template: stored }),
+			updateTemplate: async ({ spec }: { spec: DevboxTemplateSpec }) => {
+				stored = create(DevboxTemplateSchema, { id: stored.id, spec });
+				return { template: stored };
+			},
+		} as never, {} as ConnectionManager);
+		const fetched = await blueprints.get("managed");
+		assert.equal(fetched.definition.size, undefined);
+		assert.equal("selectors" in fetched.definition, false);
+		await blueprints.update("managed", { ...fetched.definition, description: "metadata-only" });
+		assert.deepEqual(stored.spec?.instance?.shape, original.instance?.shape);
+		assert.equal(stored.spec?.type, original.type);
+		assert.equal(stored.spec?.persistenceMode, original.persistenceMode);
+		assert.equal(stored.spec?.privileged, true);
+		await blueprints.update("managed", { ...fetched.definition, size: "l" });
+		assert.equal(stored.spec?.instance?.shape?.virtualCpu, os === "macos" ? 12 : 16);
+		assert.deepEqual(stored.spec?.instance?.shape?.selectors, original.instance?.shape?.selectors);
+		await blueprints.update("managed", { ephemeral: true });
+		assert.equal(stored.spec?.instance?.shape?.os, os);
+		assert.equal(stored.spec?.instance?.shape?.virtualCpu, os === "macos" ? 12 : 16);
+		assert.deepEqual(stored.spec?.environment, []);
+		assert.equal(stored.spec?.description, "");
+		assert.equal(original.instance?.shape?.virtualCpu, 7);
+		assert.equal(original.description, "");
+		await assert.rejects(blueprints.update("managed", {
+			...fetched.definition, os: "linux", image: "node:22",
+		}), /cannot change the operating system/);
+		assert.equal(stored.spec?.instance?.shape?.os, os);
+	}
+});
+
+test("managed blueprint validation matches platform creation constraints", async () => {
+	const { blueprints } = createResources({} as never, {} as ConnectionManager);
+	await assert.rejects(blueprints.create("linux", {}), /Linux blueprints require "image"/);
+	for (const os of ["macos", "windows"] as const) {
+		await assert.rejects(blueprints.create("custom", { os, ephemeral: true, image: "custom" }), /"image"/);
+	}
+	for (const ephemeral of [undefined, false]) {
+		await assert.rejects(blueprints.create("windows", { os: "windows", ephemeral }), /require "ephemeral"/);
+	}
+	await assert.rejects(blueprints.create("windows", {
+		os: "windows", ephemeral: true, volumeSizeGB: 1,
+	}), /"volumeSizeGB"/);
+	await assert.rejects(blueprints.create("macos", { os: "macos", size: "s" }), /machine size "s"/);
+	const spec = blueprintSpec("windows", {
+		os: "windows", size: "s", image: "", volumeSizeGB: 0,
+		ephemeral: { stoppedRetentionMs: 60_000 }, initScript: "Write-Output 'hello'",
+	});
+	assert.equal(spec.instance?.shape?.virtualCpu, 4);
+	assert.equal(spec.instance?.shape?.memoryMegabytes, 8192);
+	assert.equal(spec.initScript, "Write-Output 'hello'");
+	assert.equal(spec.ephemeral?.stoppedRetentionDuration?.seconds, 60n);
+	assert.equal(blueprintSpec("linux", { image: "node:22" }).instance?.shape, undefined);
+	assert.equal(blueprintSpec("legacy-empty", { image: "" }).instance?.linux?.imageName, "");
 });
 
 test("version control conversion normalizes legacy reads without collapsing multiple repositories", () => {

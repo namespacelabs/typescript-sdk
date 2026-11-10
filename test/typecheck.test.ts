@@ -38,6 +38,12 @@ async function testWindowsDevboxClient(os: "linux" | "macos") {
 	const blueprint = await client.blueprints.get("typescript");
 	const blueprintImage: string = blueprint.definition.image;
 	await client.blueprints.update("typescript", blueprint.definition);
+	const legacyDefinition: devboxPublicApi.BlueprintDefinition = { image: "node:22", size: "m" };
+	await client.blueprints.create("legacy", legacyDefinition);
+	await client.blueprints.update("legacy", legacyDefinition);
+	await client.blueprints.create("macos", { os: "macos" });
+	await client.blueprints.create("windows", { os: "windows", ephemeral: true });
+	await client.blueprints.update("windows", { os: "windows", ephemeral: true });
 	// @ts-expect-error A blueprint owns its platform.
 	await client.devboxes.create({ name: "windows", blueprint: "typescript", os: "windows", size: "m", ephemeral: true });
 	// @ts-expect-error Windows still forbids conflicting checkout inputs.

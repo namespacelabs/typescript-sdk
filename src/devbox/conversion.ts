@@ -30,7 +30,7 @@ import {
 import type {
 	AccessMode,
 	Blueprint,
-	BlueprintDefinition,
+	BlueprintDefinitionInput,
 	BlueprintOperation,
 	CheckoutMethod,
 	DevboxInstanceEventCallback,
@@ -376,15 +376,47 @@ function deserializeExposedPorts(ports: DevboxTemplateSpec["ports"]): ExposedPor
 		}));
 }
 
-export function blueprintSpec(name: string, definition: BlueprintDefinition): DevboxTemplateSpec {
-	const isImageRef = !definition.image.startsWith("builtin:")
-		&& (definition.image.includes("@") || definition.image.includes("/") || definition.image.includes(":"));
-	const linux = isImageRef
-		? { imageRef: definition.image }
-		: { imageName: definition.image };
+export function blueprintSpec(
+	name: string,
+	definition: BlueprintDefinitionInput,
+	previous?: DevboxTemplateSpec,
+): DevboxTemplateSpec {
+	const previousShape = previous?.instance?.shape;
+	const previousOs = previousShape?.os || "linux";
+	const os = definition.os ?? previousOs;
+	if (previous && os !== previousOs) {
+		throw new TypeError("blueprint updates cannot change the operating system");
+	}
+	const managed = os === "macos" || os === "windows";
+	const volumeSizeGb = positiveBigInt(definition.volumeSizeGB, "volumeSizeGB");
+	if (managed && (definition.image || previous?.instance?.linux?.imageRef || previous?.instance?.linux?.imageName)) {
+		throw new TypeError(`blueprint option "image" cannot be used with os "${os}"`);
+	}
+	if (!managed && definition.image === undefined) {
+		throw new TypeError('Linux blueprints require "image"');
+	}
+	if (os === "windows") {
+		if (definition.ephemeral !== true && (!definition.ephemeral || typeof definition.ephemeral !== "object")) {
+			throw new TypeError('Windows blueprints require "ephemeral": true or a retention object');
+		}
+		if (volumeSizeGb !== 0n) {
+			throw new TypeError('blueprint option "volumeSizeGB" cannot be used with os "windows"');
+		}
+	}
+	const image = definition.image ?? "";
+	const isImageRef = !image.startsWith("builtin:")
+		&& (image.includes("@") || image.includes("/") || image.includes(":"));
+	const linux = managed ? undefined : isImageRef ? { imageRef: image } : { imageName: image };
+	let shape = toProtoShape(definition.size ?? (managed ? "m" : undefined), os);
+	if (managed && previousShape) {
+		// Image selectors are server configuration, not public SDK inputs.
+		shape = definition.size ? { ...shape, selectors: previousShape.selectors } : previousShape;
+	}
+	const { $typeName, ...retained } = previous ?? {};
 	return create(DevboxTemplateSpecSchema, {
+		...retained,
 		name,
-		instance: { shape: toProtoShape(definition.size), linux },
+		instance: { shape, linux },
 		site: definition.site ?? DEFAULT_SITE,
 		description: definition.description ?? "",
 		// The server requires blueprints to carry an explicit access mode;
@@ -392,7 +424,7 @@ export function blueprintSpec(name: string, definition: BlueprintDefinition): De
 		accessMode: toProtoAccessMode(definition.access ?? "private"),
 		environment: serializeEnvironment(definition.environment),
 		busyEnsureMinimumDuration: optionalDuration(definition.busyTimeoutMs),
-		volumeSizeGb: positiveBigInt(definition.volumeSizeGB, "volumeSizeGB"),
+		volumeSizeGb,
 		ephemeral: definition.ephemeral ? {
 			stoppedRetentionDuration: typeof definition.ephemeral === "object"
 				? optionalDuration(definition.ephemeral.stoppedRetentionMs)
@@ -435,6 +467,8 @@ export function blueprint(proto: ProtoBlueprint): Blueprint {
 		updatedAt: date(proto.updatedAt),
 		definition: {
 			image,
+			os: imageSpec?.shape?.os === "macos" ? "macos"
+				: imageSpec?.shape?.os === "windows" ? "windows" : "linux",
 			size: machineSize(imageSpec?.shape ? {
 				vCPUs: imageSpec.shape.virtualCpu,
 				memoryMB: imageSpec.shape.memoryMegabytes,

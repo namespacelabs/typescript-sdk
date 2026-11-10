@@ -34,7 +34,7 @@ import { ImageOptimizationError, IncompleteResponseError } from "./errors.js";
 import { DevboxHandle, type DevboxController } from "./devbox.js";
 import type {
 	Blueprint,
-	BlueprintDefinition,
+	BlueprintDefinitionInput,
 	BlueprintResource,
 	CreateDevboxInput,
 	Devbox,
@@ -260,7 +260,7 @@ class BlueprintResources implements BlueprintResource {
 
 	async create(
 		name: string,
-		definition: BlueprintDefinition,
+		definition: BlueprintDefinitionInput,
 		options: OperationOptions = {},
 	): Promise<Blueprint> {
 		const response = await this.rpc.createTemplate({ spec: blueprintSpec(name, definition) }, options);
@@ -290,13 +290,15 @@ class BlueprintResources implements BlueprintResource {
 
 	async update(
 		name: string,
-		definition: BlueprintDefinition,
+		definition: BlueprintDefinitionInput,
 		options: OperationOptions = {},
 	): Promise<Blueprint> {
-		const current = await this.get(name, options);
+		const fetched = await this.rpc.fetchTemplate({ name }, options);
+		const current = required(fetched.template, "get blueprint response");
+		const previous = required(current.spec, "blueprint definition");
 		const response = await this.rpc.updateTemplate({
 			id: current.id,
-			spec: blueprintSpec(current.name, definition),
+			spec: blueprintSpec(previous.name, definition, previous),
 		}, options);
 		return blueprint(required(response.template, "update blueprint response"));
 	}
