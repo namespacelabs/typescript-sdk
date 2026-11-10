@@ -1,3 +1,4 @@
+import { win32 } from "node:path";
 import { Readable } from "node:stream";
 import { create } from "@bufbuild/protobuf";
 import { Code, ConnectError } from "@connectrpc/connect";
@@ -147,7 +148,14 @@ export class DevboxHandle implements DevboxModel {
 	}
 
 	private async startShell(script: string, options: StartShellOptions = {}): Promise<DevboxExecution> {
-		return this.startExec([options.shell ?? this.currentInfo.shell ?? "/bin/sh", "-lc", script], options);
+		const deadline = operationDeadline(options);
+		const connection = await this.connections.getAgent(this.id, withDeadline(options, deadline));
+		this.markRunning(connection.instanceId);
+		const id = await connection.startShell(script, {
+			...withDeadline(options, deadline),
+			shell: options.shell ?? this.currentInfo.shell,
+		});
+		return new ExecutionHandle(id, this.id, this.connections);
 	}
 
 	private async getExecution(id: string, options: OperationOptions = {}): Promise<DevboxExecution> {
@@ -549,7 +557,7 @@ class RemoteFileSystem implements DevboxFileSystem {
 				await sftpCall<void>(operationOptions, (callback) => sftp.mkdir(remotePath, attributes, callback));
 				return;
 			}
-			for (const prefix of directoryPrefixes(remotePath)) {
+			for (const prefix of directoryPrefixes(remotePath, this.devbox.info.shape?.os === "windows")) {
 				try {
 					await sftpCall<void>(operationOptions, (callback) => sftp.mkdir(prefix, attributes, callback));
 				} catch (error) {
@@ -679,7 +687,20 @@ function isNoSuchFile(error: unknown): boolean {
 		&& (error as Error & { code?: unknown }).code === sshUtils.sftp.STATUS_CODE.NO_SUCH_FILE;
 }
 
-function directoryPrefixes(remotePath: string): string[] {
+function directoryPrefixes(remotePath: string, windows: boolean): string[] {
+	if (windows) {
+		// SFTP also accepts /C:/...; parse the drive rather than a slash root.
+		const path = remotePath.replace(/^\/(?=[a-z]:[\\/])/i, "");
+		const root = win32.parse(path).root;
+		const parts = path.slice(root.length).split(/[\\/]/).filter((part) => part !== "" && part !== ".");
+		const prefixes: string[] = [];
+		let current = root;
+		for (const part of parts) {
+			current += (current === root ? "" : "\\") + part;
+			prefixes.push(current);
+		}
+		return prefixes.length > 0 ? prefixes : [remotePath];
+	}
 	const isAbsolute = remotePath.startsWith("/");
 	const parts = remotePath.split("/").filter((part) => part !== "" && part !== ".");
 	const prefixes: string[] = [];

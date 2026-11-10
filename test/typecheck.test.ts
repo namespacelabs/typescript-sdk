@@ -20,6 +20,31 @@ import type { TokenSource } from "../src/auth/types.js";
 import { create } from "@bufbuild/protobuf";
 import { timestampNow } from "@bufbuild/protobuf/wkt";
 
+// Test: Windows is additive; existing union-valued Linux/macOS inputs remain accepted.
+async function testWindowsDevboxClient(os: "linux" | "macos") {
+	const client = createDevboxClient();
+	await client.devboxes.create({ name: "legacy", os, size: "m" });
+	await client.devboxes.create({ name: "legacy-image", os, image: "node:22" });
+	await client.devboxes.create({ name: "legacy-defaults" });
+	await client.devboxes.create({ name: "legacy-blueprint", blueprint: "typescript" });
+	const windows = await client.devboxes.create({
+		name: "windows", os: "windows", ephemeral: true,
+	});
+	await client.devboxes.create({
+		name: "windows-retention", os: "windows", size: "s",
+		ephemeral: { stoppedRetentionMs: 60_000 }, versionControl: {},
+	});
+	const image: string = windows.info.image;
+	const blueprint = await client.blueprints.get("typescript");
+	const blueprintImage: string = blueprint.definition.image;
+	await client.blueprints.update("typescript", blueprint.definition);
+	// @ts-expect-error A blueprint owns its platform.
+	await client.devboxes.create({ name: "windows", blueprint: "typescript", os: "windows", size: "m", ephemeral: true });
+	// @ts-expect-error Windows still forbids conflicting checkout inputs.
+	await client.devboxes.create({ name: "windows", os: "windows", size: "m", ephemeral: true, repository: "repo", versionControl: {} });
+	client.close();
+}
+
 // Test: Authentication token loading
 async function testAuthTokenLoading() {
 	// Should return TokenSource

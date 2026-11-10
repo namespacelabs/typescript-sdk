@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import test from "node:test";
-import { create } from "@bufbuild/protobuf";
+import { create, type MessageInitShape } from "@bufbuild/protobuf";
 import {
+	CreateRequestSchema,
 	DevBoxSchema,
 	DevboxTemplateSchema,
 	PortSpec_Kind,
@@ -24,8 +25,12 @@ import { createResources } from "../src/devbox/resources.js";
 import { createDevboxClient, type CreateDevboxInput } from "../src/devbox/index.js";
 import { fromBearerToken } from "../src/auth/index.js";
 import { EventEmitter, once } from "node:events";
+import { posix, win32 } from "node:path";
 import { Readable } from "node:stream";
+import type { SFTPWrapper, Stats } from "ssh2";
+import { Code, ConnectError } from "@connectrpc/connect";
 import {
+	AgentConnection,
 	buildExecRequest,
 	collectExec,
 	ConnectionManager,
@@ -34,7 +39,7 @@ import {
 	withDeadline,
 } from "../src/devbox/connection.js";
 import { DevboxHandle } from "../src/devbox/devbox.js";
-import { ExecLogChunkSchema, type ExecLogChunk } from "../src/proto/namespace/private/devbox/wire/wire_pb.js";
+import { ExecLogChunkSchema, type ExecLogChunk, type StartExecRequest } from "../src/proto/namespace/private/devbox/wire/wire_pb.js";
 import { cachingTokenSource } from "../src/auth/caching.js";
 
 test("blueprint conversion preserves native SDK fields", () => {
@@ -269,6 +274,77 @@ test("devbox creation forwards explicit image names", async () => {
 	assert.equal(requests[1]?.imageName, undefined);
 	assert.equal(requests[2]?.imageName, "node-22");
 	assert.equal(requests[2]?.imageRef, undefined);
+});
+
+test("Windows creation uses managed ephemeral amd64 shapes and reads back sizes", async () => {
+	let request = create(CreateRequestSchema);
+	const rpc = {
+		create: async (input: MessageInitShape<typeof CreateRequestSchema>) => {
+			request = create(CreateRequestSchema, input);
+			return {
+				devbox: create(DevBoxSchema, {
+					id: "windows_123",
+					name: request.name,
+					instanceShape: request.instanceShape,
+					ephemeral: request.ephemeral,
+				}),
+				instanceId: request.activate ? "instance_123" : "",
+			};
+		},
+	} as never;
+	const { devboxes } = createResources(rpc, {} as ConnectionManager);
+	const shapes = [
+		{ size: "s", vCPUs: 4, memoryMB: 8192 },
+		{ size: "m", vCPUs: 8, memoryMB: 16384 },
+		{ size: "l", vCPUs: 16, memoryMB: 32768 },
+		{ size: "xl", vCPUs: 32, memoryMB: 65536 },
+	] as const;
+	for (const { size, vCPUs, memoryMB } of shapes) {
+		const devbox = await devboxes.create({
+			name: `windows-${size}`, os: "windows", size, ephemeral: true, start: false,
+		});
+		assert.equal(request.instanceShape?.os, "windows");
+		assert.equal(request.instanceShape?.machineArch, "amd64");
+		assert.equal(request.instanceShape?.virtualCpu, vCPUs);
+		assert.equal(request.instanceShape?.memoryMegabytes, memoryMB);
+		assert.deepEqual(request.instanceShape?.selectors, []);
+		assert.equal(request.imageName, "");
+		assert.equal(request.imageRef, "");
+		assert.ok(request.ephemeral);
+		assert.equal(request.activate, false);
+		assert.equal(devbox.info.state, "stopped");
+		assert.equal(devbox.info.size, size);
+		assert.equal(devbox.info.ephemeral, true);
+		assert.equal(devbox.info.image, "");
+		assert.deepEqual(devbox.info.shape, { vCPUs, memoryMB, architecture: "amd64", os: "windows" });
+	}
+
+	const devbox = await devboxes.create({
+		name: "windows-retention", os: "windows",
+		ephemeral: { stoppedRetentionMs: 91_234 },
+	});
+	assert.deepEqual(devbox.info.shape, { vCPUs: 8, memoryMB: 16384, architecture: "amd64", os: "windows" });
+	assert.equal(devbox.info.size, "m");
+	assert.equal(devbox.info.state, "running");
+	assert.equal(devbox.info.instanceId, "instance_123");
+	assert.equal(request.ephemeral?.stoppedRetentionDuration?.seconds, 91n);
+	assert.equal(request.ephemeral?.stoppedRetentionDuration?.nanos, 234_000_000);
+});
+
+test("Windows creation rejects unsupported inputs before making RPCs", async () => {
+	const { devboxes } = createResources({} as never, {} as ConnectionManager);
+	const windows = { name: "windows", os: "windows", size: "m", ephemeral: true };
+	for (const [options, message] of [
+		[{ size: "xxl" }, /machine size/],
+		[{ ephemeral: undefined }, /ephemeral/],
+		[{ ephemeral: false }, /ephemeral/],
+		[{ image: "node:22" }, /image/],
+		[{ imageName: "windows-2022" }, /imageName/],
+		[{ volumeSizeGB: 50 }, /volumeSizeGB/],
+		[{ privileged: true }, /privileged/],
+	] as const) {
+		await assert.rejects(devboxes.create({ ...windows, ...options } as never), message);
+	}
 });
 
 test("devbox creation serializes literal and secret environment values", async () => {
@@ -872,11 +948,13 @@ test("sftp cache is invalidated on channel close and failed open", async () => {
 });
 
 function devboxWithSftp(sftp: {
-	createReadStream: (path: string, options: { start?: number; end?: number }) => Readable;
-}) {
+	createReadStream?: (path: string, options: { start?: number; end?: number }) => Readable;
+	mkdir?: SFTPWrapper["mkdir"];
+	stat?: SFTPWrapper["stat"];
+}, os?: "windows" | "linux" | "macos") {
 	let connections = 0;
 	const box = new DevboxHandle(
-		{ id: "devbox", name: "devbox", state: "running", ephemeral: false } as never,
+		{ id: "devbox", name: "devbox", state: "running", ephemeral: false, shape: { os } } as never,
 		{
 			get: async () => {
 				connections += 1;
@@ -887,6 +965,67 @@ function devboxWithSftp(sftp: {
 	);
 	return { box, connectionCount: () => connections };
 }
+
+test("filesystem recursive mkdir creates guest directories without changing path semantics", async (t) => {
+	for (const os of ["windows", "linux", "macos", undefined] as const) {
+		await t.test(os ?? "unknown OS", async () => {
+			const paths = os === "windows" ? win32 : posix;
+			const workspace = os === "windows" ? "C:\\workspace" : "/workspace";
+			const resolve = (value: string) => paths.resolve(workspace,
+				os === "windows" ? value.replace(/^\/([a-z]:)/i, "$1") : value);
+			const directories = new Map<string, number | undefined>([
+				[paths.parse(workspace).root, undefined],
+				[workspace, undefined],
+				["\\\\server\\share\\", undefined],
+			]);
+			const file = resolve("file");
+			const missing = () => Object.assign(new Error("missing parent"), { code: 2 });
+			const { box } = devboxWithSftp({
+				mkdir: ((value: string, attrs: { mode?: number }, callback: (error?: Error) => void) => {
+					const path = resolve(value);
+					if (directories.has(path) || path === file) {
+						callback(new Error("already exists"));
+					} else if (!directories.has(paths.dirname(path))) {
+						callback(missing());
+					} else {
+						directories.set(path, attrs.mode);
+						callback();
+					}
+				}) as SFTPWrapper["mkdir"],
+				stat: (value, callback) => {
+					const path = resolve(value);
+					if (directories.has(path) || path === file) {
+						callback(undefined, { isDirectory: () => directories.has(path) } as Stats);
+					} else {
+						callback(missing(), undefined as never);
+					}
+				},
+			}, os);
+			const cases = os === "windows" ? [
+				"C:\\native\\one\\two", "C:/forward/one/two", "relative\\one\\two",
+				"mixed/one\\two", "C:drive\\child", "\\\\server\\share\\one\\two",
+				"\\rooted\\child", "/C:/sftp/one/two", "C:\\", "\\\\server\\share\\",
+				"dots\\.\\child\\..\\sibling",
+			] : [
+				"/absolute/one/two", "relative/one/two", "literal\\backslash/child",
+				"C:\\literal/child", "/", "dots/./child/../sibling",
+			];
+			for (const path of cases) {
+				await box.fs.mkdir(path, { recursive: true, mode: 0o750 });
+				assert.equal(await box.fs.exists(path), true, path);
+				await box.fs.mkdir(path, { recursive: true });
+			}
+			assert.equal(directories.get(resolve(cases[0])), 0o750);
+			await assert.rejects(box.fs.mkdir("file/child", { recursive: true }), /already exists/);
+			await assert.rejects(box.fs.mkdir("missing/child"), /missing parent/);
+			assert.equal(await box.fs.exists("missing"), false);
+			await assert.rejects(box.fs.mkdir("cancelled", {
+				recursive: true, signal: AbortSignal.abort(),
+			}));
+			assert.equal(await box.fs.exists("cancelled"), false);
+		});
+	}
+});
 
 function devboxWithFile(contents: Uint8Array) {
 	const ranges: Array<{ start?: number; end?: number }> = [];
@@ -1016,6 +1155,110 @@ test("terminal wait resolves on exit and preserves onExit listeners", async () =
 	// wait() after exit resolves immediately with the same result.
 	assert.deepEqual(await terminal.wait(), { exitCode: 3, signal: null });
 	assert.deepEqual(exits, [{ exitCode: 3, signal: null }]);
+});
+
+test("foreground and detached shells honor guest platform and shell overrides", async () => {
+	const cases: Array<{ os?: string; reported?: string; configured?: string; override?: string; executable: string; flags: string[] }> = [
+		{ os: "windows", executable: "powershell.exe", flags: ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command"] },
+		{ os: "windows", configured: "C:\\Windows\\PowerShell.EXE", executable: "C:\\Windows\\PowerShell.EXE", flags: ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command"] },
+		{ os: "windows", reported: "cmd.exe", configured: "powershell.exe", executable: "cmd.exe", flags: ["/d", "/c"] },
+		{ os: "windows", reported: "cmd.exe", override: "C:/tools/PWSH.exe", executable: "C:/tools/PWSH.exe", flags: ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command"] },
+		{ os: "windows", override: "C:\\Windows\\CMD.EXE", executable: "C:\\Windows\\CMD.EXE", flags: ["/d", "/c"] },
+		{ os: "windows", override: "sh", executable: "sh", flags: ["-lc"] },
+		{ os: "windows", reported: "pwsh", executable: "pwsh", flags: ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command"] },
+		{ os: "linux", executable: "/bin/sh", flags: ["-lc"] },
+		{ os: "macos", reported: "/bin/zsh", executable: "/bin/zsh", flags: ["-lc"] },
+		{ os: "linux", override: "pwsh", executable: "pwsh", flags: ["-lc"] },
+		{ reported: "/bin/bash", executable: "/bin/bash", flags: ["-lc"] },
+		{ override: "cmd", executable: "cmd", flags: ["-lc"] },
+	];
+	const script = 'echo "quotes, $variables, and \\paths";\necho Ω; exit 7';
+	for (const { os, reported, configured, override, executable, flags } of cases) {
+		const requests: StartExecRequest[] = [];
+		const agent = new AgentConnection("instance", {} as never, os, configured);
+		Object.assign(agent, { client: {
+			runExec: (request: StartExecRequest) => {
+				requests.push(request);
+				return execChunks({ stdout: new TextEncoder().encode("out"), result: { exitCode: 7 } });
+			},
+			startExec: async (request: StartExecRequest) => {
+				requests.push(request);
+				return { execId: "execution" };
+			},
+			streamExecLogs: () => execChunks({ stdout: new TextEncoder().encode("out"), result: { exitCode: 7 } }),
+		} });
+		const box = new DevboxHandle(
+			{ id: "devbox", name: "test", state: "running", image: "", labels: {}, ephemeral: true, shell: reported },
+			{ getAgent: async () => agent } as never,
+			{} as never,
+		);
+		const cwd = os === "windows" ? "C:\\work dir" : "src";
+		const options = { shell: override, env: { VALUE: "literal $value" }, stdin: "caller input", cwd };
+		const result = await box.shell(script, options);
+		const detached = await box.executions.startShell(script, options);
+		assert.deepEqual(await detached.wait(), result);
+		assert.equal(result.exitCode, 7);
+		assert.equal(result.stdout, "out");
+		for (const request of requests) {
+			assert.equal(request.command?.command, executable);
+			assert.deepEqual(request.command?.args, [...flags, script]);
+			assert.equal(request.command?.cwd?.absolute, os === "windows" ? cwd : "");
+			assert.equal(request.command?.cwd?.workspaceRelative, os === "windows" ? "" : cwd);
+			assert.equal(request.command?.additionalEnvironment[0]?.value, "literal $value");
+			assert.deepEqual(request.command?.stdin?.value, new TextEncoder().encode("caller input"));
+		}
+	}
+});
+
+test("retained Windows devboxes restart while expired metadata preserves errors and the last snapshot", async () => {
+	const proto = create(DevBoxSchema, { id: "devbox", name: "test", ephemeral: {}, instanceShape: { os: "windows" } });
+	const missing = new ConnectError("devbox expired", Code.NotFound, { "x-request-id": "request-123" });
+	let expired = false;
+	const { devboxes } = createResources({
+		fetch: async () => {
+			if (expired) {
+				throw missing;
+			}
+			return { devbox: proto };
+		},
+		stop: async () => ({ devbox: proto }),
+		activate: async () => {
+			if (expired) {
+				throw missing;
+			}
+			return { devbox: proto, instanceId: "new-instance" };
+		},
+	} as never, { invalidate: () => {} } as never);
+	const box = await devboxes.get("devbox");
+	await box.stop();
+	await box.refresh();
+	assert.equal(box.info.state, "stopped");
+	assert.equal(box.info.instanceId, undefined);
+	await box.start();
+	assert.equal(box.id, "devbox");
+	assert.equal(box.info.instanceId, "new-instance");
+	assert.equal(box.info.state, "running");
+	const snapshot = { ...box.info };
+	expired = true;
+	await assert.rejects(box.refresh(), (error) => error === missing);
+	await assert.rejects(box.start(), (error) => error === missing);
+	assert.deepEqual(box.info, snapshot);
+});
+
+test("exec cwd uses the guest OS without rewriting paths", () => {
+	for (const path of ["C:\\work dir\\repo", "C:/work/repo", "\\\\server\\share\\repo", "\\rooted"]) {
+		const windows = buildExecRequest(["tool", "$literal;arg"], { cwd: path }, "windows");
+		assert.equal(windows.command?.cwd?.absolute, path);
+		assert.deepEqual(windows.command?.args, ["$literal;arg"]);
+		for (const os of ["linux", "macos", undefined]) {
+			assert.equal(buildExecRequest(["tool"], { cwd: path }, os).command?.cwd?.workspaceRelative, path);
+		}
+	}
+	for (const path of ["src\\repo", "C:relative", "src/repo"]) {
+		assert.equal(buildExecRequest(["tool"], { cwd: path }, "windows").command?.cwd?.workspaceRelative, path);
+	}
+	assert.equal(buildExecRequest(["tool"], { cwd: "/work" }, "windows").command?.cwd?.absolute, "/work");
+	assert.equal(buildExecRequest(["tool"], {}, "windows").command?.cwd, undefined);
 });
 
 test("exec requests carry argv, cwd, env, and stdin structurally", () => {

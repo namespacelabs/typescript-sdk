@@ -105,6 +105,32 @@ test("service creation preserves declarative inputs and all three initial states
 	});
 });
 
+test("service cwd uses Windows paths only for Windows guests", async () => {
+	for (const os of ["windows", "linux", "macos", undefined]) {
+		let request: CreateServiceRequest | undefined;
+		const services = resources({
+			os,
+			createService: async (input: CreateServiceRequest) => {
+				request = input;
+				return { service: create(ServiceSchema, { id: "service", spec: input.spec }) };
+			},
+		});
+		for (const cwd of ["C:\\work dir\\repo", "C:/work/repo", "\\\\server\\share\\repo", "\\rooted"]) {
+			const service = await services.create({ name: "test", command: "tool", args: ["$literal;arg"], cwd });
+			assert.equal(service.cwd, cwd);
+			assert.deepEqual(service.args, ["$literal;arg"]);
+			assert.equal(request?.spec?.command?.cwd?.absolute, os === "windows" ? cwd : "");
+			assert.equal(request?.spec?.command?.cwd?.workspaceRelative, os === "windows" ? "" : cwd);
+		}
+		for (const cwd of ["src\\repo", "C:relative", "src/repo"]) {
+			await services.create({ name: "test", command: "tool", cwd });
+			assert.equal(request?.spec?.command?.cwd?.workspaceRelative, cwd);
+		}
+		await services.create({ name: "test", command: "tool" });
+		assert.equal(request?.spec?.command?.cwd, undefined);
+	}
+});
+
 test("service list converts complete snapshots and get resolves ID before user-owned name", async () => {
 	const namespace = protoService({
 		id: "namespace-service",

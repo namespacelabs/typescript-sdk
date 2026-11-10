@@ -148,8 +148,13 @@ export type CreateDevboxInput = CreateDevboxInputBase & ({
 	 * `os: "macos"`. Sizes
 	 * `"m"` (6 vCPUs, 14 GB) and `"l"` (12 vCPUs, 28 GB) are supported, and the
 	 * size defaults to `"m"` when unset.
+	 *
+	 * Windows devboxes boot a Namespace-managed amd64 image and require
+	 * ephemeral configuration. Sizes `"s"`, `"m"`, `"l"`, and `"xl"` are supported;
+	 * the size defaults to `"m"` (8 vCPUs, 16 GB) when unset. Container images,
+	 * persistent volumes, and privileged mode cannot be combined with `os: "windows"`.
 	 */
-	os?: "linux" | "macos";
+	os?: "linux" | "macos" | "windows";
 	size?: MachineSize;
 	volumeSizeGB?: number;
 	environment?: EnvironmentVariables;

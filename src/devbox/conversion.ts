@@ -68,6 +68,14 @@ const macosMachineShapes: Record<"m" | "l", InstanceShape> = {
 	l: { vCPUs: 12, memoryMB: 28 * 1024, architecture: "arm64", os: "macos" },
 };
 
+/** Windows uses the same standard CPU/memory sizes as Linux, on managed amd64 VMs. */
+const windowsMachineShapes: Record<"s" | "m" | "l" | "xl", InstanceShape> = {
+	s: { ...machineShapes.s, os: "windows" },
+	m: { ...machineShapes.m, os: "windows" },
+	l: { ...machineShapes.l, os: "windows" },
+	xl: { ...machineShapes.xl, os: "windows" },
+};
+
 export function cursorToBytes(cursor?: string): Uint8Array {
 	return cursor ? Buffer.from(cursor, "base64url") : new Uint8Array();
 }
@@ -96,7 +104,8 @@ function fromProtoAccessMode(access: ProtoAccessMode): AccessMode | undefined {
 
 export function toProtoShape(size?: MachineSize, os?: string): MessageInitShape<typeof InstanceShapeSchema> | undefined {
 	if (!size) return undefined;
-	const table: Record<string, InstanceShape | undefined> = os === "macos" ? macosMachineShapes : machineShapes;
+	const table: Record<string, InstanceShape | undefined> = os === "macos" ? macosMachineShapes
+		: os === "windows" ? windowsMachineShapes : machineShapes;
 	const shape = table[size];
 	if (!shape) {
 		throw new TypeError(
@@ -114,7 +123,8 @@ export function toProtoShape(size?: MachineSize, os?: string): MessageInitShape<
 
 function machineSize(shape?: InstanceShape): MachineSize | undefined {
 	if (!shape) return undefined;
-	const table = shape.os === "macos" ? macosMachineShapes : machineShapes;
+	const table = shape.os === "macos" ? macosMachineShapes
+		: shape.os === "windows" ? windowsMachineShapes : machineShapes;
 	return (Object.entries(table) as [MachineSize, InstanceShape][]).find(([, candidate]) =>
 		candidate.vCPUs === shape.vCPUs &&
 		candidate.memoryMB === shape.memoryMB &&

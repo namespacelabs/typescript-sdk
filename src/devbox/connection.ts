@@ -1,3 +1,4 @@
+import { win32 } from "node:path";
 import { Duplex } from "node:stream";
 import { create } from "@bufbuild/protobuf";
 import { timestampDate } from "@bufbuild/protobuf/wkt";
@@ -37,6 +38,7 @@ import type {
 	OperationOptions,
 	ShellOptions,
 	StartExecOptions,
+	StartShellOptions,
 	TerminalOpenOptions,
 	TerminalSession,
 } from "./models.js";
@@ -185,6 +187,8 @@ export class AgentConnection {
 	constructor(
 		readonly instanceId: string,
 		private readonly socket: GatewaySocket,
+		readonly os?: string,
+		private readonly defaultShell?: string,
 	) {
 		let consumed = false;
 		const transport = createGrpcTransport({
@@ -247,19 +251,35 @@ export class AgentConnection {
 
 	async exec(argv: readonly string[], options: ExecOptions = {}): Promise<ExecResult> {
 		const deadline = operationDeadline(options);
-		return this.run(buildExecRequest(argv, options), options, deadline);
+		return this.run(buildExecRequest(argv, options, this.os), options, deadline);
 	}
 
 	async shell(script: string, options: ShellOptions = {}): Promise<ExecResult> {
-		const deadline = operationDeadline(options);
-		const shell = options.shell ?? "/bin/sh";
-		return this.run(buildExecRequest([shell, "-lc", script], options), options, deadline);
+		return this.exec(this.shellCommand(script, options.shell), options);
+	}
+
+	async startShell(script: string, options: StartShellOptions): Promise<string> {
+		return this.startExec(this.shellCommand(script, options.shell), options);
+	}
+
+	private shellCommand(script: string, override?: string): string[] {
+		const shell = override ?? this.defaultShell ?? (this.os === "windows" ? "powershell.exe" : "/bin/sh");
+		if (this.os === "windows") {
+			switch (win32.basename(shell).toLowerCase().replace(/\.exe$/, "")) {
+				case "powershell":
+				case "pwsh":
+					return [shell, "-NoLogo", "-NoProfile", "-NonInteractive", "-Command", script];
+				case "cmd":
+					return [shell, "/d", "/c", script];
+			}
+		}
+		return [shell, "-lc", script];
 	}
 
 	async startExec(argv: readonly string[], options: StartExecOptions): Promise<string> {
 		checkExecutionTimeout(options);
 		try {
-			const response = await this.client.startExec(buildExecRequest(argv, options), options);
+			const response = await this.client.startExec(buildExecRequest(argv, options, this.os), options);
 			if (!response.execId) throw new IncompleteResponseError("devbox start exec response");
 			return response.execId;
 		} catch (error) {
@@ -373,6 +393,7 @@ function executionError(error: unknown, options: OperationOptions): unknown {
 export function buildExecRequest(
 	argv: readonly string[],
 	options: Pick<ExecOptions, "cwd" | "env" | "stdin"> = {},
+	os?: string,
 ): StartExecRequest {
 	if (argv.length === 0) throw new TypeError("exec requires at least one argument");
 	const environment = Object.entries(options.env ?? {});
@@ -383,15 +404,21 @@ export function buildExecRequest(
 		command: {
 			command: argv[0],
 			args: argv.slice(1),
-			cwd: options.cwd === undefined ? undefined : options.cwd.startsWith("/")
-				? { absolute: options.cwd }
-				: { workspaceRelative: options.cwd },
+			cwd: buildCwd(options.cwd, os),
 			additionalEnvironment: environment.map(([name, value]) => ({ name, value })),
 			stdin: options.stdin === undefined ? undefined : {
 				value: typeof options.stdin === "string" ? new TextEncoder().encode(options.stdin) : options.stdin,
 			},
 		},
 	});
+}
+
+export function buildCwd(value?: string, os?: string) {
+	if (value === undefined) {
+		return undefined;
+	}
+	const absolute = os === "windows" ? win32.isAbsolute(value) : value.startsWith("/");
+	return absolute ? { absolute: value } : { workspaceRelative: value };
 }
 
 /**
@@ -638,6 +665,8 @@ export class ConnectionManager {
 
 		return connectAgent({
 			instanceId: activation.instanceId,
+			os: activation.devbox?.instanceShape?.os || undefined,
+			shell: activation.devbox?.spec?.shell || undefined,
 			ingressDomain,
 			token: await this.issueGatewayToken(signal, deadline),
 			signal,
@@ -723,6 +752,8 @@ async function connectSsh(options: ConnectSshOptions): Promise<SshConnection> {
 
 interface ConnectAgentOptions {
 	instanceId: string;
+	os?: string;
+	shell?: string;
 	ingressDomain: string;
 	token: string;
 	signal: AbortSignal;
@@ -732,7 +763,7 @@ interface ConnectAgentOptions {
 async function connectAgent(options: ConnectAgentOptions): Promise<AgentConnection> {
 	return connectWithRetry(options, async (remainingMs) => {
 		const socket = await openGatewaySocket({ ...options, socketName: "agent" }, remainingMs);
-		return new AgentConnection(options.instanceId, socket);
+		return new AgentConnection(options.instanceId, socket, options.os, options.shell);
 	});
 }
 
