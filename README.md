@@ -215,6 +215,46 @@ terminal.close();
 client.close();
 ```
 
+### Windows devboxes (early access)
+
+Windows devboxes use a Namespace-managed amd64 image and require ephemeral
+configuration. Sizes `"s"`, `"m"`, `"l"`, and `"xl"` are supported, defaulting to
+`"m"` (8 vCPUs, 16 GB) when unset:
+
+```typescript
+const windows = await client.devboxes.create({
+	name: "my-windows-devbox",
+	os: "windows",
+	size: "m",
+	ephemeral: true,
+});
+const result = await windows.exec(["whoami.exe"]);
+```
+
+The workspace must have Windows devboxes enabled. Stopping a Windows devbox destroys
+its disk; starting it creates a fresh VM if the stopped devbox metadata is still
+retained. An `ephemeral: { stoppedRetentionMs }` override controls retention of that
+metadata, not disk persistence. Once metadata expires, refresh and start return
+not-found errors rather than recreating the devbox.
+Custom container images and persistent-volume settings are not supported.
+
+This initial Windows support covers creation, readback, lifecycle, direct
+`exec(argv)`, shell helpers, services, and terminals. `shell()` and `startShell()`
+use the devbox's configured shell (PowerShell by default); a `shell` option can
+select another executable, such as `cmd.exe`. Commands and services accept Windows
+absolute working directories, while relative paths resolve beneath the workspace.
+Filesystem operations support Windows paths, including recursive directory creation.
+Copy and recursive removal use Git's `cp.exe` and `rm.exe` supplied on PATH by the
+managed Windows image. Windows blueprint authoring, resize, and desktop access are
+outside this early-access scope.
+
+The [Windows tour](examples/devbox/windows-tour.ts) exercises commands, services,
+filesystem, and terminals against a real devbox and deletes it afterward. The display
+section notes that it is not yet available. It skips stop/start because stopped
+ephemeral devboxes can expire immediately under the effective cleanup policy.
+Build the SDK first, then run `npx tsx examples/devbox/windows-tour.ts` using your
+existing credentials.
+
 ### Asynchronous execution
 
 `devbox.executions.start()` and `devbox.executions.startShell()` return an execution handle as soon as the

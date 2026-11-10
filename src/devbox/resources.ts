@@ -77,6 +77,16 @@ class DevboxResources implements DevboxController, DevboxResource {
 		if (input.os === "macos" && input.imageName !== undefined) {
 			throw new TypeError('create option "imageName" cannot be used with os "macos"');
 		}
+		if (input.os === "windows") {
+			if (input.ephemeral !== true && (!input.ephemeral || typeof input.ephemeral !== "object")) {
+				throw new TypeError('Windows devbox creation requires "ephemeral": true or a retention object');
+			}
+			for (const field of ["image", "imageName", "volumeSizeGB", "privileged"] as const) {
+				if (input[field] !== undefined) {
+					throw new TypeError(`create option "${field}" cannot be used with os "windows"`);
+				}
+			}
+		}
 		const shouldStart = input.start ?? true;
 		const response = input.blueprint
 			? await this.createFromBlueprint(input, shouldStart, options)
@@ -86,7 +96,7 @@ class DevboxResources implements DevboxController, DevboxResource {
 					? { imageName: input.imageName }
 					: imageFields(input.image)),
 				instanceShape: toProtoShape(
-					input.os === "macos" ? input.size ?? "m" : input.size,
+					input.os === "macos" || input.os === "windows" ? input.size ?? "m" : input.size,
 					input.os,
 				),
 				site: input.site ?? DEFAULT_SITE,

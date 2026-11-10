@@ -16,7 +16,7 @@ import {
 	type Service as ProtoService,
 	type ServiceProcess as ProtoServiceProcess,
 } from "../proto/namespace/private/devbox/wire/wire_pb.js";
-import { operationDeadline, withDeadline } from "./connection.js";
+import { buildCwd, operationDeadline, withDeadline } from "./connection.js";
 import type { AgentConnection, ConnectionManager } from "./connection.js";
 import {
 	DevboxTimeoutError,
@@ -45,27 +45,26 @@ export class ServiceResources implements ServiceResource {
 	async create(input: CreateServiceInput, options: OperationOptions = {}): Promise<Service> {
 		validateCreateInput(input);
 
-		const request = create(CreateServiceRequestSchema, {
-			spec: {
-				name: input.name,
-				description: input.description ?? "",
-				command: {
-					command: input.command,
-					args: input.args ? [...input.args] : [],
-					cwd: cwd(input.cwd),
-					additionalEnvironment: Object.entries(input.environment ?? {}).map(([name, value]) => ({
-						name,
-						...(typeof value === "string" ? { value } : { fromSecretId: value.secretId }),
-					})),
-				},
-				startPolicy: startPolicy(input.startPolicy),
-				restartPolicy: restartPolicy(input.restartPolicy),
-				preventIdleShutdown: input.preventIdleShutdown ?? false,
-			},
-			initialState: initialState(input.start),
-		});
-
 		return this.withAgent(options, async (agent, callOptions) => {
+			const request = create(CreateServiceRequestSchema, {
+				spec: {
+					name: input.name,
+					description: input.description ?? "",
+					command: {
+						command: input.command,
+						args: input.args ? [...input.args] : [],
+						cwd: buildCwd(input.cwd, agent.os),
+						additionalEnvironment: Object.entries(input.environment ?? {}).map(([name, value]) => ({
+							name,
+							...(typeof value === "string" ? { value } : { fromSecretId: value.secretId }),
+						})),
+					},
+					startPolicy: startPolicy(input.startPolicy),
+					restartPolicy: restartPolicy(input.restartPolicy),
+					preventIdleShutdown: input.preventIdleShutdown ?? false,
+				},
+				initialState: initialState(input.start),
+			});
 			const response = await agent.createService(request, callOptions);
 			return service(required(response.service, "create service response"), response.process);
 		});
@@ -286,14 +285,6 @@ function servicePort(proto: ProtoPort): ServicePort {
 		kind: portKind(proto.spec.kind),
 		owner: portOwner(proto.owner),
 	};
-}
-
-function cwd(value?: string) {
-	if (value === undefined) {
-		return undefined;
-	}
-
-	return value.startsWith("/") ? { absolute: value } : { workspaceRelative: value };
 }
 
 function initialState(value?: boolean): CreateServiceRequest_InitialState {
